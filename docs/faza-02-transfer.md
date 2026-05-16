@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.2 Transfer między rejestrami) |
 | **Pokrycie całości** | 5% |
 | **Zależności** | Fazy: 0, 1 |
 | **Szacowany czas** | 1–2h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 9 |
 
 ---
 
@@ -110,11 +112,24 @@ public void TAX_CopiesAToX()
 
 ## Definition of Done
 
-- [ ] Wszystkie 6 instrukcji zaimplementowanych
-- [ ] Poprawne flagi N, Z dla TAX, TAY, TSX, TXA, TYA
-- [ ] TXS nie modyfikuje flag
-- [ ] 6 testów jednostkowych przechodzi
-- [ ] Kod bez ostrzeżeń
+- [x] Wszystkie 6 instrukcji zaimplementowanych
+- [x] Poprawne flagi N, Z dla TAX, TAY, TSX, TXA, TYA
+- [x] TXS nie modyfikuje flag
+- [x] 9 testów jednostkowych przechodzi
+- [x] Kod bez ostrzeżeń
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.Transfer.cs` | Implementacja 6 instrukcji (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/TransferTests.cs` | 9 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 97/97 (100%)
 
 ---
 

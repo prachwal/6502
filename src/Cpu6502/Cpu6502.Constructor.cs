@@ -108,6 +108,24 @@ public partial class Cpu6502
         _opcodeTable[0xF9] = SbcAbsY; // Absolute,Y
         _opcodeTable[0xE1] = SbcIndX; // (Indirect,X)
         _opcodeTable[0xF1] = SbcIndY; // (Indirect),Y
+
+        // INC - Increment Memory (4 opcode'y)
+        _opcodeTable[0xE6] = IncZp;   // Zero Page
+        _opcodeTable[0xF6] = IncZpX;  // Zero Page,X
+        _opcodeTable[0xEE] = IncAbs;  // Absolute
+        _opcodeTable[0xFE] = IncAbsX; // Absolute,X
+
+        // DEC - Decrement Memory (4 opcode'y)
+        _opcodeTable[0xC6] = DecZp;   // Zero Page
+        _opcodeTable[0xD6] = DecZpX;  // Zero Page,X
+        _opcodeTable[0xCE] = DecAbs;  // Absolute
+        _opcodeTable[0xDE] = DecAbsX; // Absolute,X
+
+        // INX, INY, DEX, DEY - Register Increment/Decrement (4 opcode'y)
+        _opcodeTable[0xE8] = Inx;  // INX
+        _opcodeTable[0xC8] = Iny;  // INY
+        _opcodeTable[0xCA] = Dex;  // DEX
+        _opcodeTable[0x88] = Dey;  // DEY
     }
 
     #endregion

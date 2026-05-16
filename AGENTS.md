@@ -44,7 +44,13 @@ Każda faza implementacji powinna być realizowana zgodnie ze specyfikacją w `d
 3. **Implementacja** - Dodaj nowe pliki/kod
 4. **Testowanie** - `dotnet build && dotnet test`
 5. **Commit** - `git add . && git commit -m "feat: implementacja fazy XX"`
-6. **Aktualizacja dokumentacji** - Zaktualizuj status w `checklista.md`
+6. **Aktualizacja dokumentacji** - Zaktualizuj status w `checklista.md` oraz plik `faza-XX-*.md`:
+   - Zmień status z `[ ] Nie rozpoczęte` na `[x] Zakończone`
+   - Dodaj `Data zakończenia` (2026-05-16)
+   - Dodaj `Liczba testów` (np. 15)
+   - Dodaj sekcję "Pliki implementacyjne" z listą plików
+   - Dodaj sekcję "Wyniki" z Build/Test
+   - Dodaj tabelę opcode'ów (jeśli dotyczy)
 
 ### Kryteria przyjęcia (Definition of Done):
 

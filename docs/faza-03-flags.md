@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.10 Flagi Set/Clear) |
 | **Pokrycie całości** | 7% |
 | **Zależności** | Faza 0 |
 | **Szacowany czas** | 1h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 13 |
 
 ---
 
@@ -111,10 +113,23 @@ public void CLC_ClearsCarry()
 
 ## Definition of Done
 
-- [ ] Wszystkie 7 instrukcji zaimplementowanych
-- [ ] Każda modyfikuje tylko swoją flagę
-- [ ] Wszystkie testy jednostkowe zielone
-- [ ] Kod bez ostrzeżeń
+- [x] Wszystkie 7 instrukcji zaimplementowanych
+- [x] Każda modyfikuje tylko swoją flagę
+- [x] Wszystkie testy jednostkowe zielone (13/13)
+- [x] Kod bez ostrzeżeń
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.FlagsSetClear.cs` | Implementacja 7 instrukcji (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/FlagsSetClearTests.cs` | 13 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 97/97 (100%)
 
 ---
 

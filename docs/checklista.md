@@ -16,9 +16,9 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 0 | Szkielet projektu i struktura .NET | [faza-00-szkielet.md](faza-00-szkielet.md) | [x] | 100% | 1% |
 | 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](faza-01-load-store.md) | [x] | 100% | 3% |
 | 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](faza-02-transfer.md) | [x] | 3% | 5% |
-| 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [x] | 3% | 7% — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [ ] | 3% | 7% |
-| 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [x] | 5% | 10% — ADC, SBC (bez BCD) — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [ ] | 5% | 10% |
-| 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [ ] | 3% | 13% |
+| 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [x] | 3% | 7% |
+| 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [x] | 5% | 10% |
+| 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [x] | 3% | 13% |
 | 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [ ] | 3% | 16% |
 | 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [ ] | 3% | 19% |
 | 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [ ] | 4% | 23% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     3 / 24 faz (12%)
+Całkowity postęp:     5 / 24 faz (21%)
 
-Fazy zakończone   [x]: 0, 1, 2
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,7 +72,7 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 40/40 (100%)
+- Testy: ✅ 97/97 (100%)
 
 ---
 
@@ -97,3 +97,35 @@ Implementacja 6 instrukcji transferu między rejestrami:
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
 - Testy: ✅ 49/49 (100%)
+
+---
+
+## Faza 5 (2026-05-16)
+
+Implementacja 10 instrukcji INC/DEC (Read-Modify-Write):
+
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| INC zp | $E6 | Memory ← Memory+1 | Zero Page | 5 |
+| INC zp,X | $F6 | Memory ← Memory+1 | Zero Page,X | 6 |
+| INC abs | $EE | Memory ← Memory+1 | Absolute | 6 |
+| INC abs,X | $FE | Memory ← Memory+1 | Absolute,X | 7 |
+| DEC zp | $C6 | Memory ← Memory-1 | Zero Page | 5 |
+| DEC zp,X | $D6 | Memory ← Memory-1 | Zero Page,X | 6 |
+| DEC abs | $CE | Memory ← Memory-1 | Absolute | 6 |
+| DEC abs,X | $DE | Memory ← Memory-1 | Absolute,X | 7 |
+| INX | $E8 | X ← X+1 | Implied | 2 |
+| INY | $C8 | Y ← Y+1 | Implied | 2 |
+| DEX | $CA | X ← X-1 | Implied | 2 |
+| DEY | $88 | Y ← Y-1 | Implied | 2 |
+
+**Flagi:** N, Z (C jest niezmieniana)
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.IncDec.cs` - Implementacja 10 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `tests/Cpu6502.Tests/IncDecTests.cs` - 15 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 97/97 (100%)

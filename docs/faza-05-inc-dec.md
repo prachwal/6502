@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.4) |
 | **Pokrycie całości** | 13% |
 | **Zależności** | Fazy: 0, 1 |
 | **Szacowany czas** | 2–3h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 15 |
 
 ---
 
@@ -134,11 +136,41 @@ public void INC_ZP_IncrementsMemory()
 
 ## Definition of Done
 
-- [ ] Wszystkie 10 opcode'ów zaimplementowanych
-- [ ] INC/DEC poprawnie modyfikują pamięć
-- [ ] Wrap-around $FF↔$00 działa
-- [ ] Flagi N, Z poprawnie ustawiane
-- [ ] 10 testów jednostkowych zielonych
+- [x] Wszystkie 10 opcode'ów zaimplementowanych
+- [x] INC/DEC poprawnie modyfikują pamięć
+- [x] Wrap-around $FF↔$00 działa
+- [x] Flagi N, Z poprawnie ustawiane
+- [x] 15 testów jednostkowych zielonych (97/97 łącznie)
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.IncDec.cs` | Implementacja 10 instrukcji (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/IncDecTests.cs` | 15 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 97/97 (100%)
+
+### Zaimplementowane instrukcje
+
+| Opcode | Instrukcja | Opis | Cykle |
+|--------|------------|------|-------|
+| $E6 | INC zp | Memory ← Memory+1 | 5 |
+| $F6 | INC zp,X | Memory ← Memory+1 | 6 |
+| $EE | INC abs | Memory ← Memory+1 | 6 |
+| $FE | INC abs,X | Memory ← Memory+1 | 7 |
+| $C6 | DEC zp | Memory ← Memory-1 | 5 |
+| $D6 | DEC zp,X | Memory ← Memory-1 | 6 |
+| $CE | DEC abs | Memory ← Memory-1 | 6 |
+| $DE | DEC abs,X | Memory ← Memory-1 | 7 |
+| $E8 | INX | X ← X+1 | 2 |
+| $C8 | INY | Y ← Y+1 | 2 |
+| $CA | DEX | X ← X-1 | 2 |
+| $88 | DEY | Y ← Y-1 | 2 |
 
 ---
 

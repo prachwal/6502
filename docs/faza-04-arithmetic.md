@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 5% (sekcje: 4.3 Arytmetyka) |
 | **Pokrycie całości** | 10% |
 | **Zależności** | Fazy: 0, 1, 3 |
 | **Szacowany czas** | 3–5h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 24 |
 
 ---
 
@@ -133,11 +135,24 @@ void ExecuteSBC(byte operand)
 
 ## Definition of Done
 
-- [ ] Wszystkie 16 opcode'ów ADC/SBC zaimplementowanych
-- [ ] Poprawne flagi N, Z, C, V
-- [ ] Algorytmy SBC i ADC zgodne ze specyfikacją
-- [ ] Tryb BCD odkłada wykonanie do fazy 13 (skip lub NotImplemented)
-- [ ] 12 testów jednostkowych zielonych
+- [x] Wszystkie 16 opcode'ów ADC/SBC zaimplementowanych
+- [x] Poprawne flagi N, Z, C, V
+- [x] Algorytmy SBC i ADC zgodne ze specyfikacją
+- [x] Tryb BCD odkłada wykonanie do fazy 13 (skip lub NotImplemented)
+- [x] 24 testów jednostkowych zielonych (97/97 łącznie)
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.Arithmetic.cs` | Implementacja ADC/SBC z wszystkimi trybami (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/ArithmeticTests.cs` | 24 testy jednostkowe |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 97/97 (100%)
 
 ---
 
