@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.11, 7.4) |
 | **Pokrycie całości** | 37% |
 | **Zależności** | Fazy: 0, 1, 3, 9, 10 |
 | **Szacowany czas** | 3–4h |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 6 |
 
 ---
 
@@ -105,11 +107,11 @@ void ExecuteRTI()
 
 ## Definition of Done
 
-- [ ] BRK pushuje PC+2, P z B=1
-- [ ] BRK skacze do $FFFE/$FFFF
-- [ ] RTI przywraca stan sprzed przerwania
-- [ ] Cykle: BRK=7, RTI=6
-- [ ] 6 testów jednostkowych zielonych
+- [x] BRK pushuje PC+2, P z B=1
+- [x] BRK skacze do $FFFE/$FFFF
+- [x] RTI przywraca stan sprzed przerwania
+- [x] Cykle: BRK=7, RTI=6
+- [x] 6 testów jednostkowych zielonych
 
 ---
 
@@ -117,5 +119,28 @@ void ExecuteRTI()
 
 | Plik | Akcja |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj |
-| `tests/Cpu6502.Tests/InterruptTests.cs` | Utwórz |
+| `src/Cpu6502/Cpu6502.Interrupts.cs` | Utworzono |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Zmodyfikowano |
+| `src/Cpu6502/Cpu6502.Properties.cs` | Zmodyfikowano |
+| `src/Cpu6502/Cpu6502.Placeholders.cs` | Zmodyfikowano |
+| `tests/Cpu6502.Tests/InterruptTests.cs` | Utworzono |
+
+## Pliki implementacyjne
+
+- `Cpu6502.Interrupts.cs`: Implementacja BRK i RTI
+- `Cpu6502.Constructor.cs`: Inicjalizacja opcode'ów
+- `Cpu6502.Properties.cs`: Dodano właściwość P
+- `Cpu6502.Placeholders.cs`: Usunięto duplikaty BRK/RTI
+- `InterruptTests.cs`: 6 testów jednostkowych
+
+## Wyniki
+
+- Build: ✅ 0 błędów, 1 ostrzeżenie
+- Testy: ✅ 170/170 (100%)
+
+## Tabela opcode'ów
+
+| Instrukcja | Opcode | Tryb | Cykle |
+|------------|--------|------|-------|
+| BRK | $00 | Implied | 7 |
+| RTI | $40 | Implied | 6 |
