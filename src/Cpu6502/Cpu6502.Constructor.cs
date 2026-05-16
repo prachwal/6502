@@ -79,6 +79,15 @@ public partial class Cpu6502
         _opcodeTable[0x8A] = Txa;  // TXA
         _opcodeTable[0x9A] = Txs;  // TXS
         _opcodeTable[0x98] = Tya;  // TYA
+
+        // Flag Set/Clear instructions - Implied mode (7 opcode'ów)
+        _opcodeTable[0x18] = Clc;  // CLC - Clear Carry
+        _opcodeTable[0x38] = Sec;  // SEC - Set Carry
+        _opcodeTable[0xD8] = Cld;  // CLD - Clear Decimal
+        _opcodeTable[0xF8] = Sed;  // SED - Set Decimal
+        _opcodeTable[0x58] = Cli;  // CLI - Clear Interrupt
+        _opcodeTable[0x78] = Sei;  // SEI - Set Interrupt
+        _opcodeTable[0xB8] = Clv;  // CLV - Clear Overflow
     }
 
     #endregion
