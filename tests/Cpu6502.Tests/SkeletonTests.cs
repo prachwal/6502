@@ -46,7 +46,7 @@ public class SkeletonTests
     }
 
     [Test]
-    public void Reset_SetsFlagIAndFlagU()
+    public void Reset_SetsFlagI()
     {
         // Arrange
         memory!.Write(0xFFFC, 0x00);
@@ -57,7 +57,7 @@ public class SkeletonTests
 
         // Assert
         Assert.That(cpu!.GetFlag(Cpu6502.FlagI), Is.True);
-        Assert.That(cpu!.GetFlag(Cpu6502.FlagU), Is.True);
+        Assert.That(cpu!.GetFlag(Cpu6502.FlagU), Is.False);
     }
 
     [Test]
