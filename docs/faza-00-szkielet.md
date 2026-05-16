@@ -2,11 +2,12 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
-| **Pokrycie dokumentacji** | 5% (rozdział 13: Wymagania i struktura projektu .NET) |
+| **Status** | [x] Zakończone |
+| **Pokrycie dokumentacji** | 100% (rozdział 13: Wymagania i struktura projektu .NET) |
 | **Pokrycie całości** | 1% |
 | **Zależności** | Brak |
 | **Szacowany czas** | 2–4h |
+| **Data zakończenia** | 2026-05-16 |
 
 ---
 
@@ -218,14 +219,14 @@ public void Reset_LoadsVectorAndSetsSP()
 
 ## Definicja zakończenia (Definition of Done)
 
-- [ ] Rozwiązanie .NET się kompiluje
-- [ ] Projekt `Cpu6502` i `Cpu6502.Tests` istnieją
-- [ ] Interfejs `IMemoryBus` zdefiniowany
-- [ ] Klasa `Cpu6502` ma wszystkie pola rejestrowe i stan wewnętrzny
-- [ ] `Reset()` poprawnie ustawia SP=$FD, I=1, PC z wektora $FFFC
-- [ ] `FlatMemory` przechodzi test odczytu/zapisu
-- [ ] Wszystkie testy jednostkowe zielone
-- [ ] Kod nie zawiera ostrzeżeń kompilatora
+- [x] Rozwiązanie .NET się kompiluje
+- [x] Projekt `Cpu6502` i `Cpu6502.Tests` istnieją
+- [x] Interfejs `IMemoryBus` zdefiniowany
+- [x] Klasa `Cpu6502` ma wszystkie pola rejestrowe i stan wewnętrzny
+- [x] `Reset()` poprawnie ustawia SP=$FD, I=1, PC z wektora $FFFC
+- [x] `FlatMemory` przechodzi test odczytu/zapisu
+- [x] Wszystkie testy jednostkowe zielone (8/8)
+- [x] Kod nie zawiera ostrzeżeń kompilatora
 
 ---
 
