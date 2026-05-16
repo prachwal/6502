@@ -221,7 +221,7 @@ public partial class Cpu6502
     /// NOP - No Operation.
     /// Wykonuje pustą operację (zlicza cykle).
     /// </summary>
-    private void Nop() { /* no operation */ }
+    private void NopPlaceholder() { /* no operation */ }
 
     /// <summary>
     /// BVS rel - Branch if Overflow Set (V=1).

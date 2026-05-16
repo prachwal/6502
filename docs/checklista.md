@@ -23,7 +23,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [x] | 3% | 19% |
 | 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [x] | 4% | 23% |
 | 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [x] | 6% | 30% |
-| 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [ ] | 3% | 33% |
+| 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [x] | 3% | 33% |
 | 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](faza-11-brk-rti.md) | [ ] | 3% | 37% |
 | 12 | Pełne tryby adresowania + page crossing | [faza-12-addressing.md](faza-12-addressing.md) | [ ] | 5% | 42% |
 | 13 | Tryb BCD — ADC/SBC decimal mode | [faza-13-bcd.md](faza-13-bcd.md) | [ ] | 3% | 46% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     9 / 24 faz (38%)
+Całkowity postęp:     10 / 24 faz (42%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,7 +72,32 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 156/157 (99.4%)
+- Testy: ✅ 164/164 (100%)
+
+---
+
+## Faza 10 (2026-05-17)
+
+Implementacja 5 instrukcji stosowych i NOP:
+
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| PHA | $48 | Push A | Implied | 3 |
+| PHP | $08 | Push P (z B=1, bit5=1) | Implied | 3 |
+| PLA | $68 | Pull A | Implied | 4 |
+| PLP | $28 | Pull P | Implied | 4 |
+| NOP | $EA | No Operation | Implied | 2 |
+
+**Flagi:** PHA/PHP nie zmieniają flag, PLA ustawia N,Z, PLP ustawia wszystkie flagi
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.StackNop.cs` - Implementacja 5 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `tests/Cpu6502.Tests/StackNopTests.cs` - 8 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 164/164 (100%)
 
 ---
 

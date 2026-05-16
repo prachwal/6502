@@ -226,6 +226,15 @@ public partial class Cpu6502
         _opcodeTable[0x10] = BplRel;  // BPL - Branch if Plus
         _opcodeTable[0x50] = BvcRel;  // BVC - Branch if Overflow Clear
         _opcodeTable[0x70] = BvsRel;  // BVS - Branch if Overflow Set
+
+        // Stack operations - 4 instrukcje
+        _opcodeTable[0x48] = Pha;   // PHA - Push A
+        _opcodeTable[0x08] = Php;   // PHP - Push P
+        _opcodeTable[0x68] = Pla;   // PLA - Pull A
+        _opcodeTable[0x28] = Plp;   // PLP - Pull P
+
+        // NOP
+        _opcodeTable[0xEA] = Nop;  // NOP - No Operation
     }
 
     #endregion
