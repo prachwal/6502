@@ -15,7 +15,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 |---|------|------|--------|----------------:|-------------------:|
 | 0 | Szkielet projektu i struktura .NET | [faza-00-szkielet.md](faza-00-szkielet.md) | [x] | 100% | 1% |
 | 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](faza-01-load-store.md) | [x] | 100% | 3% |
-| 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](faza-02-transfer.md) | [ ] | 3% | 5% |
+| 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](faza-02-transfer.md) | [x] | 3% | 5% |
 | 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [ ] | 3% | 7% |
 | 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [ ] | 5% | 10% |
 | 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [ ] | 3% | 13% |
@@ -43,9 +43,9 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     2 / 24 faz (8%)
+Całkowity postęp:     3 / 24 faz (12%)
 
-Fazy zakończone   [x]: 0, 1
+Fazy zakończone   [x]: 0, 1, 2
 Fazy w trakcie     [~]:
 Fazy nie rozpoczęte [ ]: 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
@@ -73,3 +73,27 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
 - Testy: ✅ 40/40 (100%)
+
+---
+
+## Faza 2 (2026-05-16)
+
+Implementacja 6 instrukcji transferu między rejestrami:
+
+| Instrukcja | Opcode | Opis | Flagi | Cykle |
+|------------|--------|------|-------|-------|
+| TAX | 0xAA | X ← A | N, Z | 2 |
+| TAY | 0xA8 | Y ← A | N, Z | 2 |
+| TSX | 0xBA | X ← SP | N, Z | 2 |
+| TXA | 0x8A | A ← X | N, Z | 2 |
+| TXS | 0x9A | SP ← X | brak | 2 |
+| TYA | 0x98 | A ← Y | N, Z | 2 |
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.Transfer.cs` - Implementacja 6 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `tests/Cpu6502.Tests/TransferTests.cs` - 9 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 49/49 (100%)
