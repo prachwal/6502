@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 2.7, 4.3) |
 | **Pokrycie całości** | 46% |
 | **Zależności** | Faza 4 |
 | **Szacowany czas** | 3–5h |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 9 |
 
 ---
 
@@ -121,11 +123,11 @@ void BCD_SBC(byte operand)
 
 ## Definition of Done
 
-- [ ] ADC w BCD: $09+$01=$10, $99+$01=$00+C
-- [ ] SBC w BCD: $10-$01=$09, $00-$01=$99
-- [ ] Flagi N, V, Z, C poprawne
-- [ ] Tryb binarny nie zepsuty (testy regresyjne)
-- [ ] 8 testów jednostkowych BCD zielonych
+- [x] ADC w BCD: $09+$01=$10, $99+$01=$00+C
+- [x] SBC w BCD: $10-$01=$09, $00-$01=$99
+- [x] Flagi N, V, Z, C poprawne
+- [x] Tryb binarny nie zepsuty (testy regresyjne)
+- [x] 9 testów jednostkowych BCD zielonych
 
 ---
 
@@ -133,5 +135,33 @@ void BCD_SBC(byte operand)
 
 | Plik | Akcja |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj — rozszerz ADC/SBC |
-| `tests/Cpu6502.Tests/BcdTests.cs` | Utwórz |
+| `src/Cpu6502/Cpu6502.Bcd.cs` | Utworzono |
+| `src/Cpu6502/Cpu6502.Arithmetic.cs` | Zmodyfikowano |
+| `tests/Cpu6502.Tests/BcdTests.cs` | Utworzono |
+
+## Pliki implementacyjne
+
+- `Cpu6502.Bcd.cs`: Implementacja ADC/SBC w trybie BCD
+- `Cpu6502.Arithmetic.cs`: Zmodyfikowane ExecuteAdc/ExecuteSbc z obsługą BCD
+- `BcdTests.cs`: 9 testów jednostkowych
+
+## Wyniki
+
+- Build: ✅ 0 błędów, 7 ostrzeżeń (nullable references)
+- Testy: ✅ 186/186 (100%)
+- Testy regresyjne: ✅ Wszystkie poprzednie instrukcje nadal działają
+- Nowe testy: ✅ 9/9 testów BCD passing
+
+## Tabela testów BCD
+
+| Test | Opis | Wynik |
+|------|------|-------|
+| ADC $09 + $01 = $10 | BCD, C=0, Z=0 | ✅ |
+| ADC $99 + $01 = $00, C=1 | Przeniesienie dziesiętne | ✅ |
+| ADC $50 + $50 = $00, C=1, V=1 | Overflow | ✅ |
+| SBC $10 - $01 = $09 | BCD, C=1 | ✅ |
+| SBC $00 - $01 = $99, C=0 | Borrow | ✅ |
+| ADC/SBC bez zmian w D=0 | Tryb binarny nadal działa | ✅ |
+| CLD / SED przełączają tryb | Weryfikacja flagi D | ✅ |
+| ADC $19 + $23 = $42 | Dodatkowy test BCD | ✅ |
+| SBC $30 - $15 = $15 | Dodatkowy test BCD | ✅ |
