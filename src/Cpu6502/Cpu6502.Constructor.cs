@@ -208,6 +208,24 @@ public partial class Cpu6502
         _opcodeTable[0x76] = RorZpX;  // Zero Page,X
         _opcodeTable[0x6E] = RorAbs;  // Absolute
         _opcodeTable[0x7E] = RorAbsX; // Absolute,X
+
+        // JMP - Jump (2 opcode'y)
+        _opcodeTable[0x4C] = JmpAbs;   // Absolute
+        _opcodeTable[0x6C] = JmpInd;   // Indirect
+
+        // JSR/RTS - Subroutine (2 opcode'y)
+        _opcodeTable[0x20] = JsrAbs;  // Absolute
+        _opcodeTable[0x60] = Rts;     // Implied
+
+        // Branch - 8 instrukcji
+        _opcodeTable[0x90] = BccRel;  // BCC - Branch if Carry Clear
+        _opcodeTable[0xB0] = BcsRel;  // BCS - Branch if Carry Set
+        _opcodeTable[0xF0] = BeqRel;  // BEQ - Branch if Equal
+        _opcodeTable[0x30] = BmiRel;  // BMI - Branch if Minus
+        _opcodeTable[0xD0] = BneRel;  // BNE - Branch if Not Equal
+        _opcodeTable[0x10] = BplRel;  // BPL - Branch if Plus
+        _opcodeTable[0x50] = BvcRel;  // BVC - Branch if Overflow Clear
+        _opcodeTable[0x70] = BvsRel;  // BVS - Branch if Overflow Set
     }
 
     #endregion

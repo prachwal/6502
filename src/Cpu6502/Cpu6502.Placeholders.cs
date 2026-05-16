@@ -71,13 +71,13 @@ public partial class Cpu6502
     /// BPL rel - Branch if Plus (N=0).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BplRel() => throw new NotImplementedException("BPL rel not implemented");
+    private void BplRelPlaceholder() => throw new NotImplementedException("BPL rel not implemented");
 
     /// <summary>
     /// JSR abs - Jump to Subroutine, Absolute.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void JsrAbs() => throw new NotImplementedException("JSR abs not implemented");
+    private void JsrAbsPlaceholder() => throw new NotImplementedException("JSR abs not implemented");
 
     /// <summary>
     /// AND (ind,X) - AND with Accumulator, Indirect X.
@@ -137,7 +137,7 @@ public partial class Cpu6502
     /// BMI rel - Branch if Minus (N=1).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BmiRel() => throw new NotImplementedException("BMI rel not implemented");
+    private void BmiRelPlaceholder() => throw new NotImplementedException("BMI rel not implemented");
 
     /// <summary>
     /// RTI - Return from Interrupt.
@@ -203,13 +203,13 @@ public partial class Cpu6502
     /// BVC rel - Branch if Overflow Clear (V=0).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BvcRel() => throw new NotImplementedException("BVC rel not implemented");
+    private void BvcRelPlaceholder() => throw new NotImplementedException("BVC rel not implemented");
 
     /// <summary>
     /// RTS - Return from Subroutine.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void Rts() => throw new NotImplementedException("RTS not implemented");
+    private void RtsPlaceholder() => throw new NotImplementedException("RTS not implemented");
 
     /// <summary>
     /// ROR A - Rotate Right, Accumulator.
@@ -227,19 +227,19 @@ public partial class Cpu6502
     /// BVS rel - Branch if Overflow Set (V=1).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BvsRel() => throw new NotImplementedException("BVS rel not implemented");
+    private void BvsRelPlaceholder() => throw new NotImplementedException("BVS rel not implemented");
 
     /// <summary>
     /// BCC rel - Branch if Carry Clear (C=0).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BccRel() => throw new NotImplementedException("BCC rel not implemented");
+    private void BccRelPlaceholder() => throw new NotImplementedException("BCC rel not implemented");
 
     /// <summary>
     /// BCS rel - Branch if Carry Set (C=1).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BcsRel() => throw new NotImplementedException("BCS rel not implemented");
+    private void BcsRelPlaceholder() => throw new NotImplementedException("BCS rel not implemented");
 
     /// <summary>
     /// CPY #imm - Compare Y Register, Immediate.
@@ -305,7 +305,7 @@ public partial class Cpu6502
     /// BNE rel - Branch if Not Equal (Z=0).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BneRel() => throw new NotImplementedException("BNE rel not implemented");
+    private void BneRelPlaceholder() => throw new NotImplementedException("BNE rel not implemented");
 
     /// <summary>
     /// CPX #imm - Compare X Register, Immediate.
@@ -317,7 +317,7 @@ public partial class Cpu6502
     /// BEQ rel - Branch if Equal (Z=1).
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void BeqRel() => throw new NotImplementedException("BEQ rel not implemented");
+    private void BeqRelPlaceholder() => throw new NotImplementedException("BEQ rel not implemented");
 
     #endregion
 }

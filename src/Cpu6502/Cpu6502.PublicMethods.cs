@@ -83,5 +83,31 @@ public partial class Cpu6502
         _cycle = state.Cycle; _ir = state.IR; _sync = state.Sync;
     }
 
+     #endregion
+
+    #region Metody pomocnicze - Stack Operations
+
+    /// <summary>
+    /// Push - Umieszcza bajt na stosie.
+    /// Stos rośnie w dół: SP--, potem zapis.
+    /// </summary>
+    /// <param name="value">Bajt do umieszczenia na stosie.</param>
+    private void Push(byte value)
+    {
+        _memory.Write((ushort)(0x0100 + _sp), value);
+        _sp--;
+    }
+
+    /// <summary>
+    /// Pop - Pobiera bajt ze stosu.
+    /// SP++, potem odczyt.
+    /// </summary>
+    /// <returns>Bajt pobrany ze stosu.</returns>
+    private byte Pop()
+    {
+        _sp++;
+        return _memory.Read((ushort)(0x0100 + _sp));
+    }
+
     #endregion
 }

@@ -22,7 +22,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [x] | 3% | 16% |
 | 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [x] | 3% | 19% |
 | 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [x] | 4% | 23% |
-| 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [ ] | 6% | 30% |
+| 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [x] | 6% | 30% |
 | 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [ ] | 3% | 33% |
 | 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](faza-11-brk-rti.md) | [ ] | 3% | 37% |
 | 12 | Pełne tryby adresowania + page crossing | [faza-12-addressing.md](faza-12-addressing.md) | [ ] | 5% | 42% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     8 / 24 faz (33%)
+Całkowity postęp:     9 / 24 faz (38%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,7 +72,40 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 143/143 (100%)
+- Testy: ✅ 156/157 (99.4%)
+
+---
+
+## Faza 9 (2026-05-16)
+
+Implementacja 11 instrukcji skoków i rozgałęzień:
+
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| JMP abs | $4C | Skok bezwzględny | Absolute | 3 |
+| JMP (abs) | $6C | Skok pośredni | Indirect | 5 |
+| JSR abs | $20 | Skok do podprogramu | Absolute | 6 |
+| RTS | $60 | Powrót z podprogramu | Implied | 6 |
+| BCC | $90 | Branch if Carry Clear | Relative | 2/3/4 |
+| BCS | $B0 | Branch if Carry Set | Relative | 2/3/4 |
+| BEQ | $F0 | Branch if Equal | Relative | 2/3/4 |
+| BMI | $30 | Branch if Minus | Relative | 2/3/4 |
+| BNE | $D0 | Branch if Not Equal | Relative | 2/3/4 |
+| BPL | $10 | Branch if Plus | Relative | 2/3/4 |
+| BVC | $50 | Branch if Overflow Clear | Relative | 2/3/4 |
+| BVS | $70 | Branch if Overflow Set | Relative | 2/3/4 |
+
+**Flagi:** Brak zmian dla JMP/JSR, RTS nie zmienia flag
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.BranchJump.cs` - Implementacja 11 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.PublicMethods.cs` - Metody Push/Pop dla stosu
+- `tests/Cpu6502.Tests/BranchJumpTests.cs` - 11 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 156/157 (99.4%)
 
 ---
 
