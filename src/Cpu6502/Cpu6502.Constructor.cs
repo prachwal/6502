@@ -180,6 +180,34 @@ public partial class Cpu6502
         _opcodeTable[0x59] = EorAbsY; // Absolute,Y
         _opcodeTable[0x41] = EorIndX; // (Indirect,X)
         _opcodeTable[0x51] = EorIndY; // (Indirect),Y
+
+        // ASL - Arithmetic Shift Left (5 opcode'ów)
+        _opcodeTable[0x0A] = AslAcc;  // Accumulator
+        _opcodeTable[0x06] = AslZp;   // Zero Page
+        _opcodeTable[0x16] = AslZpX;  // Zero Page,X
+        _opcodeTable[0x0E] = AslAbs;  // Absolute
+        _opcodeTable[0x1E] = AslAbsX; // Absolute,X
+
+        // LSR - Logical Shift Right (5 opcode'ów)
+        _opcodeTable[0x4A] = LsrAcc;  // Accumulator
+        _opcodeTable[0x46] = LsrZp;   // Zero Page
+        _opcodeTable[0x56] = LsrZpX;  // Zero Page,X
+        _opcodeTable[0x4E] = LsrAbs;  // Absolute
+        _opcodeTable[0x5E] = LsrAbsX; // Absolute,X
+
+        // ROL - Rotate Left (5 opcode'ów)
+        _opcodeTable[0x2A] = RolAcc;  // Accumulator
+        _opcodeTable[0x26] = RolZp;   // Zero Page
+        _opcodeTable[0x36] = RolZpX;  // Zero Page,X
+        _opcodeTable[0x2E] = RolAbs;  // Absolute
+        _opcodeTable[0x3E] = RolAbsX; // Absolute,X
+
+        // ROR - Rotate Right (5 opcode'ów)
+        _opcodeTable[0x6A] = RorAcc;  // Accumulator
+        _opcodeTable[0x66] = RorZp;   // Zero Page
+        _opcodeTable[0x76] = RorZpX;  // Zero Page,X
+        _opcodeTable[0x6E] = RorAbs;  // Absolute
+        _opcodeTable[0x7E] = RorAbsX; // Absolute,X
     }
 
     #endregion

@@ -59,7 +59,7 @@ public partial class Cpu6502
     /// ASL A - Arithmetic Shift Left, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AslAcc() => throw new NotImplementedException("ASL A not implemented");
+    private void AslAccPlaceholder() => throw new NotImplementedException("ASL A not implemented");
 
     /// <summary>
     /// ORA #imm - OR with Accumulator, Immediate.
@@ -125,7 +125,7 @@ public partial class Cpu6502
     /// ROL A - Rotate Left, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void RolAcc() => throw new NotImplementedException("ROL A not implemented");
+    private void RolAccPlaceholder() => throw new NotImplementedException("ROL A not implemented");
 
     /// <summary>
     /// AND #imm - AND with Accumulator, Immediate.
@@ -191,7 +191,7 @@ public partial class Cpu6502
     /// LSR A - Logical Shift Right, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void LsrAcc() => throw new NotImplementedException("LSR A not implemented");
+    private void LsrAccPlaceholder() => throw new NotImplementedException("LSR A not implemented");
 
     /// <summary>
     /// EOR #imm - Exclusive OR with Accumulator, Immediate.
@@ -215,7 +215,7 @@ public partial class Cpu6502
     /// ROR A - Rotate Right, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void RorAcc() => throw new NotImplementedException("ROR A not implemented");
+    private void RorAccPlaceholder() => throw new NotImplementedException("ROR A not implemented");
 
     /// <summary>
     /// NOP - No Operation.

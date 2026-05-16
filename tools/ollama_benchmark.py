@@ -8,6 +8,7 @@ prompt to each one, and prints a ranked report with tokens per second.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import time
@@ -74,43 +75,70 @@ def run_benchmark(
     payload: dict[str, Any] = {
         "model": model,
         "prompt": prompt,
-        "stream": False,
+        "stream": True,
         "options": {
             "num_predict": num_predict,
             "temperature": 0,
         },
     }
 
-    started = time.perf_counter()
+    request_started = time.perf_counter()
     try:
-        response = requests.post(
+        with requests.post(
             f"{base_url}/api/generate",
             headers=build_headers(),
             json=payload,
+            stream=True,
             timeout=timeout,
+        ) as response:
+            response.raise_for_status()
+            first_token_started: float | None = None
+            prompt_tokens: int | None = None
+            completion_tokens: int | None = None
+            final_data: dict[str, Any] = {}
+
+            for raw_line in response.iter_lines(decode_unicode=True):
+                if not raw_line:
+                    continue
+                chunk = json.loads(raw_line)
+                final_data = chunk
+                if first_token_started is None and chunk.get("response"):
+                    first_token_started = time.perf_counter()
+                if chunk.get("done"):
+                    break
+
+        end_time = time.perf_counter()
+        prompt_tokens_value = final_data.get("prompt_eval_count")
+        completion_tokens_value = final_data.get("eval_count")
+        if isinstance(prompt_tokens_value, int):
+            prompt_tokens = prompt_tokens_value
+        if isinstance(completion_tokens_value, int):
+            completion_tokens = completion_tokens_value
+
+        generation_seconds = (
+            end_time - first_token_started if first_token_started is not None else end_time - request_started
         )
-        response.raise_for_status()
-        data = response.json()
-        elapsed = time.perf_counter() - started
-        completion_tokens = data.get("eval_count")
-        prompt_tokens = data.get("prompt_eval_count")
-        total_tokens = None
-        if isinstance(completion_tokens, int) and isinstance(prompt_tokens, int):
-            total_tokens = completion_tokens + prompt_tokens
-        tokens_per_second = None
-        if isinstance(completion_tokens, int) and elapsed > 0:
-            tokens_per_second = completion_tokens / elapsed
+        total_tokens = (
+            prompt_tokens + completion_tokens
+            if prompt_tokens is not None and completion_tokens is not None
+            else None
+        )
+        tokens_per_second = (
+            completion_tokens / generation_seconds
+            if completion_tokens is not None and generation_seconds > 0
+            else None
+        )
         return BenchmarkResult(
             model=model,
-            prompt_tokens=prompt_tokens if isinstance(prompt_tokens, int) else None,
-            completion_tokens=completion_tokens if isinstance(completion_tokens, int) else None,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
             total_tokens=total_tokens,
-            seconds=elapsed,
+            seconds=generation_seconds,
             tokens_per_second=tokens_per_second,
             status="ok",
         )
     except Exception as exc:  # noqa: BLE001
-        elapsed = time.perf_counter() - started
+        elapsed = time.perf_counter() - request_started
         return BenchmarkResult(
             model=model,
             prompt_tokens=None,
@@ -132,10 +160,10 @@ def format_value(value: Any) -> str:
 
 
 def print_report(results: list[BenchmarkResult], base_url: str, prompt: str) -> None:
-    console = Console()
+    console = Console(width=180)
     table = Table(title="Ollama Cloud Benchmark", show_lines=False)
     table.add_column("#", justify="right", style="cyan", no_wrap=True)
-    table.add_column("Model", style="bold")
+    table.add_column("Model", style="bold", no_wrap=True, overflow="fold")
     table.add_column("Status", justify="center")
     table.add_column("Prompt tok.", justify="right")
     table.add_column("Completion tok.", justify="right")

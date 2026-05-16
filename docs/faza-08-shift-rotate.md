@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 4% (sekcje: 4.5) |
 | **Pokrycie całości** | 23% |
 | **Zależności** | Fazy: 0, 1 |
 | **Szacowany czas** | 2–3h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 14 |
 
 ---
 
@@ -116,11 +118,24 @@ byte ExecuteROR(byte value)
 
 ## Definition of Done
 
-- [ ] 20 opcode'ów zaimplementowanych (4×5)
-- [ ] ASL/ROL/LSR/ROR poprawne na A
-- [ ] Działanie na pamięci poprawne (R-M-W)
-- [ ] C przenoszone poprawnie
-- [ ] 12 testów jednostkowych zielonych
+- [x] 20 opcode'ów zaimplementowanych (4×5)
+- [x] ASL/ROL/LSR/ROR poprawne na A
+- [x] Działanie na pamięci poprawne (R-M-W)
+- [x] C przenoszone poprawnie
+- [x] 14 testów jednostkowych zielonych (143/143 łącznie)
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.ShiftRotate.cs` | Implementacja ASL/LSR/ROL/ROR (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/ShiftRotateTests.cs` | 14 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 143/143 (100%)
 
 ---
 

@@ -21,7 +21,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [x] | 3% | 13% |
 | 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [x] | 3% | 16% |
 | 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [x] | 3% | 19% |
-| 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [ ] | 4% | 23% |
+| 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [x] | 4% | 23% |
 | 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [ ] | 6% | 30% |
 | 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [ ] | 3% | 33% |
 | 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](faza-11-brk-rti.md) | [ ] | 3% | 37% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     7 / 24 faz (29%)
+Całkowity postęp:     8 / 24 faz (33%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,7 +72,47 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 127/127 (100%)
+- Testy: ✅ 143/143 (100%)
+
+---
+
+## Faza 8 (2026-05-16)
+
+Implementacja 20 instrukcji przesunięć i rotacji (ASL, LSR, ROL, ROR):
+
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| ASL A | $0A | A << 1 | Accumulator | 2 |
+| ASL zp | $06 | M << 1 | Zero Page | 5 |
+| ASL zp,X | $16 | M << 1 | Zero Page,X | 6 |
+| ASL abs | $0E | M << 1 | Absolute | 6 |
+| ASL abs,X | $1E | M << 1 | Absolute,X | 7 |
+| LSR A | $4A | A >> 1 | Accumulator | 2 |
+| LSR zp | $46 | M >> 1 | Zero Page | 5 |
+| LSR zp,X | $56 | M >> 1 | Zero Page,X | 6 |
+| LSR abs | $4E | M >> 1 | Absolute | 6 |
+| LSR abs,X | $5E | M >> 1 | Absolute,X | 7 |
+| ROL A | $2A | A ROL | Accumulator | 2 |
+| ROL zp | $26 | M ROL | Zero Page | 5 |
+| ROL zp,X | $36 | M ROL | Zero Page,X | 6 |
+| ROL abs | $2E | M ROL | Absolute | 6 |
+| ROL abs,X | $3E | M ROL | Absolute,X | 7 |
+| ROR A | $6A | A ROR | Accumulator | 2 |
+| ROR zp | $66 | M ROR | Zero Page | 5 |
+| ROR zp,X | $76 | M ROR | Zero Page,X | 6 |
+| ROR abs | $6E | M ROR | Absolute | 6 |
+| ROR abs,X | $7E | M ROR | Absolute,X | 7 |
+
+**Flagi:** N, Z, C (dla wszystkich operacji)
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.ShiftRotate.cs` - Implementacja 20 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `tests/Cpu6502.Tests/ShiftRotateTests.cs` - 14 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 143/143 (100%)
 
 ---
 
