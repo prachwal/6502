@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.9, 4.12) |
 | **Pokrycie całości** | 33% |
 | **Zależności** | Fazy: 0, 1, 2, 3 |
 | **Szacowany czas** | 2h |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 8 |
 
 ---
 
@@ -112,11 +114,11 @@ void ExecuteNOP()
 
 ## Definition of Done
 
-- [ ] PHA, PHP, PLA, PLP, NOP zaimplementowane
-- [ ] PHP ustawia B=1, bit5=1 na stosie
-- [ ] SP poprawnie inkrementowany/dekrementowany
-- [ ] SP wrap-around działa
-- [ ] 8 testów jednostkowych zielonych
+- [x] PHA, PHP, PLA, PLP, NOP zaimplementowane
+- [x] PHP ustawia B=1, bit5=1 na stosie
+- [x] SP poprawnie inkrementowany/dekrementowany
+- [x] SP wrap-around działa
+- [x] 8 testów jednostkowych zielonych
 
 ---
 
@@ -124,5 +126,29 @@ void ExecuteNOP()
 
 | Plik | Akcja |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj |
-| `tests/Cpu6502.Tests/StackNopTests.cs` | Utwórz |
+| `src/Cpu6502/Cpu6502.StackNop.cs` | Utworzono |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Zmodyfikowano |
+| `src/Cpu6502/Cpu6502.PublicMethods.cs` | Zmodyfikowano |
+| `tests/Cpu6502.Tests/StackNopTests.cs` | Utworzono |
+
+## Pliki implementacyjne
+
+- `Cpu6502.StackNop.cs`: Implementacja PHA, PHP, PLA, PLP, NOP
+- `Cpu6502.Constructor.cs`: Inicjalizacja opcode'ów
+- `Cpu6502.PublicMethods.cs`: Metody Push/Pop dla stosu
+- `StackNopTests.cs`: 8 testów jednostkowych
+
+## Wyniki
+
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 164/164 (100%)
+
+## Tabela opcode'ów
+
+| Instrukcja | Opcode | Tryb | Cykle |
+|------------|--------|------|-------|
+| PHA | $48 | Implied | 3 |
+| PHP | $08 | Implied | 3 |
+| PLA | $68 | Implied | 4 |
+| PLP | $28 | Implied | 4 |
+| NOP | $EA | Implied | 2 |
