@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.7) |
 | **Pokrycie całości** | 16% |
 | **Zależności** | Fazy: 0, 1 |
 | **Szacowany czas** | 2–3h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 16 |
 
 ---
 
@@ -112,11 +114,24 @@ void ExecuteBit(byte operand)
 
 ## Definition of Done
 
-- [ ] Wszystkie 13 opcode'ów zaimplementowanych
-- [ ] Porównania poprawnie ustawiają C (>=)
-- [ ] BIT ustawia N, V z bitów operandu
-- [ ] BIT nie modyfikuje A
-- [ ] 10 testów jednostkowych zielonych
+- [x] Wszystkie 13 opcode'ów zaimplementowanych
+- [x] Porównania poprawnie ustawiają C (>=)
+- [x] BIT ustawia N, V z bitów operandu
+- [x] BIT nie modyfikuje A
+- [x] 16 testów jednostkowych zielonych (113/113 łącznie)
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.CompareBit.cs` | Implementacja 13 instrukcji (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/CompareBitTests.cs` | 16 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 113/113 (100%)
 
 ---
 

@@ -19,7 +19,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [x] | 3% | 7% |
 | 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [x] | 5% | 10% |
 | 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [x] | 3% | 13% |
-| 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [ ] | 3% | 16% |
+| 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [x] | 3% | 16% |
 | 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [ ] | 3% | 19% |
 | 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [ ] | 4% | 23% |
 | 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [ ] | 6% | 30% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     5 / 24 faz (21%)
+Całkowity postęp:     6 / 24 faz (25%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,31 +72,43 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 97/97 (100%)
+- Testy: ✅ 113/113 (100%)
 
 ---
 
-## Faza 2 (2026-05-16)
+## Faza 6 (2026-05-16)
 
-Implementacja 6 instrukcji transferu między rejestrami:
+Implementacja 13 instrukcji CMP/CPX/CPY/BIT:
 
-| Instrukcja | Opcode | Opis | Flagi | Cykle |
-|------------|--------|------|-------|-------|
-| TAX | 0xAA | X ← A | N, Z | 2 |
-| TAY | 0xA8 | Y ← A | N, Z | 2 |
-| TSX | 0xBA | X ← SP | N, Z | 2 |
-| TXA | 0x8A | A ← X | N, Z | 2 |
-| TXS | 0x9A | SP ← X | brak | 2 |
-| TYA | 0x98 | A ← Y | N, Z | 2 |
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| CMP #imm | $C9 | A - M | Immediate | 2 |
+| CMP zp | $C5 | A - M | Zero Page | 3 |
+| CMP zp,X | $D5 | A - M | Zero Page,X | 4 |
+| CMP abs | $CD | A - M | Absolute | 4 |
+| CMP abs,X | $DD | A - M | Absolute,X | 4+ |
+| CMP abs,Y | $D9 | A - M | Absolute,Y | 4+ |
+| CMP (ind,X) | $C1 | A - M | (Indirect,X) | 6 |
+| CMP (ind),Y | $D1 | A - M | (Indirect),Y | 5+ |
+| CPX #imm | $E0 | X - M | Immediate | 2 |
+| CPX zp | $E4 | X - M | Zero Page | 3 |
+| CPX abs | $EC | X - M | Absolute | 4 |
+| CPY #imm | $C0 | Y - M | Immediate | 2 |
+| CPY zp | $C4 | Y - M | Zero Page | 3 |
+| CPY abs | $CC | Y - M | Absolute | 4 |
+| BIT zp | $24 | A & M | Zero Page | 3 |
+| BIT abs | $2C | A & M | Absolute | 4 |
+
+**Flagi:** N, Z, C (dla CMP/CPX/CPY), N, V, Z (dla BIT)
 
 **Pliki:**
-- `src/Cpu6502/Cpu6502.Transfer.cs` - Implementacja 6 instrukcji
+- `src/Cpu6502/Cpu6502.CompareBit.cs` - Implementacja 13 instrukcji
 - `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
-- `tests/Cpu6502.Tests/TransferTests.cs` - 9 testów jednostkowych
+- `tests/Cpu6502.Tests/CompareBitTests.cs` - 16 testów jednostkowych
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 49/49 (100%)
+- Testy: ✅ 113/113 (100%)
 
 ---
 

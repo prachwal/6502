@@ -126,6 +126,30 @@ public partial class Cpu6502
         _opcodeTable[0xC8] = Iny;  // INY
         _opcodeTable[0xCA] = Dex;  // DEX
         _opcodeTable[0x88] = Dey;  // DEY
+
+        // CMP - Compare Accumulator (8 opcode'ów)
+        _opcodeTable[0xC9] = CmpImm;  // Immediate
+        _opcodeTable[0xC5] = CmpZp;   // Zero Page
+        _opcodeTable[0xD5] = CmpZpX;  // Zero Page,X
+        _opcodeTable[0xCD] = CmpAbs;  // Absolute
+        _opcodeTable[0xDD] = CmpAbsX; // Absolute,X
+        _opcodeTable[0xD9] = CmpAbsY; // Absolute,Y
+        _opcodeTable[0xC1] = CmpIndX; // (Indirect,X)
+        _opcodeTable[0xD1] = CmpIndY; // (Indirect),Y
+
+        // CPX - Compare X Register (3 opcode'y)
+        _opcodeTable[0xE0] = CpxImm;  // Immediate
+        _opcodeTable[0xE4] = CpxZp;   // Zero Page
+        _opcodeTable[0xEC] = CpxAbs;  // Absolute
+
+        // CPY - Compare Y Register (3 opcode'y)
+        _opcodeTable[0xC0] = CpyImm;  // Immediate
+        _opcodeTable[0xC4] = CpyZp;   // Zero Page
+        _opcodeTable[0xCC] = CpyAbs;  // Absolute
+
+        // BIT - Bit Test (2 opcode'y)
+        _opcodeTable[0x24] = BitZp;   // Zero Page
+        _opcodeTable[0x2C] = BitAbs;  // Absolute
     }
 
     #endregion

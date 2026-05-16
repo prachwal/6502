@@ -245,61 +245,61 @@ public partial class Cpu6502
     /// CPY #imm - Compare Y Register, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CpyImm() => throw new NotImplementedException("CPY #imm not implemented");
+    private void CpyImmPlaceholder() => throw new NotImplementedException("CPY #imm not implemented");
 
     /// <summary>
     /// CMP (ind,X) - Compare with Accumulator, Indirect X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpIndX() => throw new NotImplementedException("CMP (ind,X) not implemented");
+    private void CmpIndXPlaceholder() => throw new NotImplementedException("CMP (ind,X) not implemented");
 
     /// <summary>
     /// CMP zp - Compare with Accumulator, Zero Page.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpZp() => throw new NotImplementedException("CMP zp not implemented");
+    private void CmpZpPlaceholder() => throw new NotImplementedException("CMP zp not implemented");
 
     /// <summary>
     /// CMP zp,X - Compare with Accumulator, Zero Page X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpZpX() => throw new NotImplementedException("CMP zp,X not implemented");
+    private void CmpZpXPlaceholder() => throw new NotImplementedException("CMP zp,X not implemented");
 
     /// <summary>
     /// CMP abs - Compare with Accumulator, Absolute.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpAbs() => throw new NotImplementedException("CMP abs not implemented");
+    private void CmpAbsPlaceholder() => throw new NotImplementedException("CMP abs not implemented");
 
     /// <summary>
     /// CMP abs,X - Compare with Accumulator, Absolute X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpAbsX() => throw new NotImplementedException("CMP abs,X not implemented");
+    private void CmpAbsXPlaceholder() => throw new NotImplementedException("CMP abs,X not implemented");
 
     /// <summary>
     /// CMP abs,Y - Compare with Accumulator, Absolute Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpAbsY() => throw new NotImplementedException("CMP abs,Y not implemented");
+    private void CmpAbsYPlaceholder() => throw new NotImplementedException("CMP abs,Y not implemented");
 
     /// <summary>
     /// CMP (ind),Y - Compare with Accumulator, Indirect Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpIndY() => throw new NotImplementedException("CMP (ind),Y not implemented");
+    private void CmpIndYPlaceholder() => throw new NotImplementedException("CMP (ind),Y not implemented");
 
     /// <summary>
     /// DEC A - Decrement, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void DecAcc() => throw new NotImplementedException("DEC A not implemented");
+    private void DecAccPlaceholder() => throw new NotImplementedException("DEC A not implemented");
 
     /// <summary>
     /// CMP #imm - Compare with Accumulator, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CmpImm() => throw new NotImplementedException("CMP #imm not implemented");
+    private void CmpImmPlaceholder() => throw new NotImplementedException("CMP #imm not implemented");
 
     /// <summary>
     /// BNE rel - Branch if Not Equal (Z=0).
@@ -311,7 +311,7 @@ public partial class Cpu6502
     /// CPX #imm - Compare X Register, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void CpxImm() => throw new NotImplementedException("CPX #imm not implemented");
+    private void CpxImmPlaceholder() => throw new NotImplementedException("CPX #imm not implemented");
 
     /// <summary>
     /// BEQ rel - Branch if Equal (Z=1).
