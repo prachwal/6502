@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 4.6) |
 | **Pokrycie całości** | 19% |
 | **Zależności** | Fazy: 0, 1 |
 | **Szacowany czas** | 2h |
+| **Data zakończenia** | 2026-05-16 |
+| **Liczba testów** | 14 |
 
 ---
 
@@ -88,11 +90,24 @@ void EOR(byte operand)
 
 ## Definition of Done
 
-- [ ] 24 opcode'y zaimplementowane
-- [ ] AND, ORA, EOR poprawne we wszystkich trybach
-- [ ] Flagi N, Z poprawnie ustawiane
-- [ ] Flagi C, V niezmienione
-- [ ] 10 testów jednostkowych zielonych
+- [x] 24 opcode'y zaimplementowane
+- [x] AND, ORA, EOR poprawne we wszystkich trybach
+- [x] Flagi N, Z poprawnie ustawiane
+- [x] Flagi C, V niezmienione
+- [x] 14 testów jednostkowych zielonych (127/127 łącznie)
+
+### Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.Logic.cs` | Implementacja AND/ORA/EOR z wszystkimi trybami (partial class) |
+| `src/Cpu6502/Cpu6502.Constructor.cs` | Inicjalizacja opcode'ów w konstruktorze |
+| `tests/Cpu6502.Tests/LogicTests.cs` | 14 testów jednostkowych |
+
+### Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 127/127 (100%)
 
 ---
 

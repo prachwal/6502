@@ -20,7 +20,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [x] | 5% | 10% |
 | 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [x] | 3% | 13% |
 | 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [x] | 3% | 16% |
-| 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [ ] | 3% | 19% |
+| 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [x] | 3% | 19% |
 | 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [ ] | 4% | 23% |
 | 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [ ] | 6% | 30% |
 | 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [ ] | 3% | 33% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     6 / 24 faz (25%)
+Całkowity postęp:     7 / 24 faz (29%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
 
 ---
@@ -72,7 +72,51 @@ Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
 
 **Wyniki:**
 - Build: ✅ 0 błędów, 0 ostrzeżeń
-- Testy: ✅ 113/113 (100%)
+- Testy: ✅ 127/127 (100%)
+
+---
+
+## Faza 7 (2026-05-16)
+
+Implementacja 24 instrukcji operacji logicznych (AND, ORA, EOR):
+
+| Instrukcja | Opcode | Opis | Tryb | Cykle |
+|------------|--------|------|------|-------|
+| AND #imm | $29 | A &= M | Immediate | 2 |
+| AND zp | $25 | A &= M | Zero Page | 3 |
+| AND zp,X | $35 | A &= M | Zero Page,X | 4 |
+| AND abs | $2D | A &= M | Absolute | 4 |
+| AND abs,X | $3D | A &= M | Absolute,X | 4+ |
+| AND abs,Y | $39 | A &= M | Absolute,Y | 4+ |
+| AND (ind,X) | $21 | A &= M | (Indirect,X) | 6 |
+| AND (ind),Y | $31 | A &= M | (Indirect),Y | 5+ |
+| ORA #imm | $09 | A |= M | Immediate | 2 |
+| ORA zp | $05 | A |= M | Zero Page | 3 |
+| ORA zp,X | $15 | A |= M | Zero Page,X | 4 |
+| ORA abs | $0D | A |= M | Absolute | 4 |
+| ORA abs,X | $1D | A |= M | Absolute,X | 4+ |
+| ORA abs,Y | $19 | A |= M | Absolute,Y | 4+ |
+| ORA (ind,X) | $01 | A |= M | (Indirect,X) | 6 |
+| ORA (ind),Y | $11 | A |= M | (Indirect),Y | 5+ |
+| EOR #imm | $49 | A ^= M | Immediate | 2 |
+| EOR zp | $45 | A ^= M | Zero Page | 3 |
+| EOR zp,X | $55 | A ^= M | Zero Page,X | 4 |
+| EOR abs | $4D | A ^= M | Absolute | 4 |
+| EOR abs,X | $5D | A ^= M | Absolute,X | 4+ |
+| EOR abs,Y | $59 | A ^= M | Absolute,Y | 4+ |
+| EOR (ind,X) | $41 | A ^= M | (Indirect,X) | 6 |
+| EOR (ind),Y | $51 | A ^= M | (Indirect),Y | 5+ |
+
+**Flagi:** N, Z (C, V, I, D niezmienione)
+
+**Pliki:**
+- `src/Cpu6502/Cpu6502.Logic.cs` - Implementacja 24 instrukcji
+- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `tests/Cpu6502.Tests/LogicTests.cs` - 14 testów jednostkowych
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 127/127 (100%)
 
 ---
 

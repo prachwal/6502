@@ -17,43 +17,43 @@ public partial class Cpu6502
     /// ORA (ind,X) - OR with Accumulator, Indirect X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraIndX() => throw new NotImplementedException("ORA (ind,X) not implemented");
+    private void OraIndXPlaceholder() => throw new NotImplementedException("ORA (ind,X) not implemented");
 
     /// <summary>
     /// ORA zp - OR with Accumulator, Zero Page.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraZp() => throw new NotImplementedException("ORA zp not implemented");
+    private void OraZpPlaceholder() => throw new NotImplementedException("ORA zp not implemented");
 
     /// <summary>
     /// ORA zp,X - OR with Accumulator, Zero Page X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraZpX() => throw new NotImplementedException("ORA zp,X not implemented");
+    private void OraZpXPlaceholder() => throw new NotImplementedException("ORA zp,X not implemented");
 
     /// <summary>
     /// ORA abs - OR with Accumulator, Absolute.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraAbs() => throw new NotImplementedException("ORA abs not implemented");
+    private void OraAbsPlaceholder() => throw new NotImplementedException("ORA abs not implemented");
 
     /// <summary>
     /// ORA abs,X - OR with Accumulator, Absolute X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraAbsX() => throw new NotImplementedException("ORA abs,X not implemented");
+    private void OraAbsXPlaceholder() => throw new NotImplementedException("ORA abs,X not implemented");
 
     /// <summary>
     /// ORA abs,Y - OR with Accumulator, Absolute Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraAbsY() => throw new NotImplementedException("ORA abs,Y not implemented");
+    private void OraAbsYPlaceholder() => throw new NotImplementedException("ORA abs,Y not implemented");
 
     /// <summary>
     /// ORA (ind),Y - OR with Accumulator, Indirect Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraIndY() => throw new NotImplementedException("ORA (ind),Y not implemented");
+    private void OraIndYPlaceholder() => throw new NotImplementedException("ORA (ind),Y not implemented");
 
     /// <summary>
     /// ASL A - Arithmetic Shift Left, Accumulator.
@@ -65,7 +65,7 @@ public partial class Cpu6502
     /// ORA #imm - OR with Accumulator, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void OraImm() => throw new NotImplementedException("ORA #imm not implemented");
+    private void OraImmPlaceholder() => throw new NotImplementedException("ORA #imm not implemented");
 
     /// <summary>
     /// BPL rel - Branch if Plus (N=0).
@@ -83,43 +83,43 @@ public partial class Cpu6502
     /// AND (ind,X) - AND with Accumulator, Indirect X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndIndX() => throw new NotImplementedException("AND (ind,X) not implemented");
+    private void AndIndXPlaceholder() => throw new NotImplementedException("AND (ind,X) not implemented");
 
     /// <summary>
     /// AND zp - AND with Accumulator, Zero Page.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndZp() => throw new NotImplementedException("AND zp not implemented");
+    private void AndZpPlaceholder() => throw new NotImplementedException("AND zp not implemented");
 
     /// <summary>
     /// AND zp,X - AND with Accumulator, Zero Page X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndZpX() => throw new NotImplementedException("AND zp,X not implemented");
+    private void AndZpXPlaceholder() => throw new NotImplementedException("AND zp,X not implemented");
 
     /// <summary>
     /// AND abs - AND with Accumulator, Absolute.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndAbs() => throw new NotImplementedException("AND abs not implemented");
+    private void AndAbsPlaceholder() => throw new NotImplementedException("AND abs not implemented");
 
     /// <summary>
     /// AND abs,X - AND with Accumulator, Absolute X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndAbsX() => throw new NotImplementedException("AND abs,X not implemented");
+    private void AndAbsXPlaceholder() => throw new NotImplementedException("AND abs,X not implemented");
 
     /// <summary>
     /// AND abs,Y - AND with Accumulator, Absolute Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndAbsY() => throw new NotImplementedException("AND abs,Y not implemented");
+    private void AndAbsYPlaceholder() => throw new NotImplementedException("AND abs,Y not implemented");
 
     /// <summary>
     /// AND (ind),Y - AND with Accumulator, Indirect Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndIndY() => throw new NotImplementedException("AND (ind),Y not implemented");
+    private void AndIndYPlaceholder() => throw new NotImplementedException("AND (ind),Y not implemented");
 
     /// <summary>
     /// ROL A - Rotate Left, Accumulator.
@@ -131,7 +131,7 @@ public partial class Cpu6502
     /// AND #imm - AND with Accumulator, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void AndImm() => throw new NotImplementedException("AND #imm not implemented");
+    private void AndImmPlaceholder() => throw new NotImplementedException("AND #imm not implemented");
 
     /// <summary>
     /// BMI rel - Branch if Minus (N=1).
@@ -149,43 +149,43 @@ public partial class Cpu6502
     /// EOR (ind,X) - Exclusive OR with Accumulator, Indirect X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorIndX() => throw new NotImplementedException("EOR (ind,X) not implemented");
+    private void EorIndXPlaceholder() => throw new NotImplementedException("EOR (ind,X) not implemented");
 
     /// <summary>
     /// EOR zp - Exclusive OR with Accumulator, Zero Page.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorZp() => throw new NotImplementedException("EOR zp not implemented");
+    private void EorZpPlaceholder() => throw new NotImplementedException("EOR zp not implemented");
 
     /// <summary>
     /// EOR zp,X - Exclusive OR with Accumulator, Zero Page X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorZpX() => throw new NotImplementedException("EOR zp,X not implemented");
+    private void EorZpXPlaceholder() => throw new NotImplementedException("EOR zp,X not implemented");
 
     /// <summary>
     /// EOR abs - Exclusive OR with Accumulator, Absolute.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorAbs() => throw new NotImplementedException("EOR abs not implemented");
+    private void EorAbsPlaceholder() => throw new NotImplementedException("EOR abs not implemented");
 
     /// <summary>
     /// EOR abs,X - Exclusive OR with Accumulator, Absolute X.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorAbsX() => throw new NotImplementedException("EOR abs,X not implemented");
+    private void EorAbsXPlaceholder() => throw new NotImplementedException("EOR abs,X not implemented");
 
     /// <summary>
     /// EOR abs,Y - Exclusive OR with Accumulator, Absolute Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorAbsY() => throw new NotImplementedException("EOR abs,Y not implemented");
+    private void EorAbsYPlaceholder() => throw new NotImplementedException("EOR abs,Y not implemented");
 
     /// <summary>
     /// EOR (ind),Y - Exclusive OR with Accumulator, Indirect Y.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorIndY() => throw new NotImplementedException("EOR (ind),Y not implemented");
+    private void EorIndYPlaceholder() => throw new NotImplementedException("EOR (ind),Y not implemented");
 
     /// <summary>
     /// LSR A - Logical Shift Right, Accumulator.
@@ -197,7 +197,7 @@ public partial class Cpu6502
     /// EOR #imm - Exclusive OR with Accumulator, Immediate.
     /// Obecnie niezaimplementowane.
     /// </summary>
-    private void EorImm() => throw new NotImplementedException("EOR #imm not implemented");
+    private void EorImmPlaceholder() => throw new NotImplementedException("EOR #imm not implemented");
 
     /// <summary>
     /// BVC rel - Branch if Overflow Clear (V=0).

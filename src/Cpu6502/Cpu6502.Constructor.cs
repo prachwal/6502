@@ -150,6 +150,36 @@ public partial class Cpu6502
         // BIT - Bit Test (2 opcode'y)
         _opcodeTable[0x24] = BitZp;   // Zero Page
         _opcodeTable[0x2C] = BitAbs;  // Absolute
+
+        // AND - Logical AND (8 opcode'ów)
+        _opcodeTable[0x29] = AndImm;  // Immediate
+        _opcodeTable[0x25] = AndZp;   // Zero Page
+        _opcodeTable[0x35] = AndZpX;  // Zero Page,X
+        _opcodeTable[0x2D] = AndAbs;  // Absolute
+        _opcodeTable[0x3D] = AndAbsX; // Absolute,X
+        _opcodeTable[0x39] = AndAbsY; // Absolute,Y
+        _opcodeTable[0x21] = AndIndX; // (Indirect,X)
+        _opcodeTable[0x31] = AndIndY; // (Indirect),Y
+
+        // ORA - Logical OR (8 opcode'ów)
+        _opcodeTable[0x09] = OraImm;  // Immediate
+        _opcodeTable[0x05] = OraZp;   // Zero Page
+        _opcodeTable[0x15] = OraZpX;  // Zero Page,X
+        _opcodeTable[0x0D] = OraAbs;  // Absolute
+        _opcodeTable[0x1D] = OraAbsX; // Absolute,X
+        _opcodeTable[0x19] = OraAbsY; // Absolute,Y
+        _opcodeTable[0x01] = OraIndX; // (Indirect,X)
+        _opcodeTable[0x11] = OraIndY; // (Indirect),Y
+
+        // EOR - Exclusive OR (8 opcode'ów)
+        _opcodeTable[0x49] = EorImm;  // Immediate
+        _opcodeTable[0x45] = EorZp;   // Zero Page
+        _opcodeTable[0x55] = EorZpX;  // Zero Page,X
+        _opcodeTable[0x4D] = EorAbs;  // Absolute
+        _opcodeTable[0x5D] = EorAbsX; // Absolute,X
+        _opcodeTable[0x59] = EorAbsY; // Absolute,Y
+        _opcodeTable[0x41] = EorIndX; // (Indirect,X)
+        _opcodeTable[0x51] = EorIndY; // (Indirect),Y
     }
 
     #endregion
