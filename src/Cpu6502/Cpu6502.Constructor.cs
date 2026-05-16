@@ -88,6 +88,26 @@ public partial class Cpu6502
         _opcodeTable[0x58] = Cli;  // CLI - Clear Interrupt
         _opcodeTable[0x78] = Sei;  // SEI - Set Interrupt
         _opcodeTable[0xB8] = Clv;  // CLV - Clear Overflow
+
+        // ADC - Add with Carry (8 opcode'ów)
+        _opcodeTable[0x69] = AdcImm;  // Immediate
+        _opcodeTable[0x65] = AdcZp;   // Zero Page
+        _opcodeTable[0x75] = AdcZpX;  // Zero Page,X
+        _opcodeTable[0x6D] = AdcAbs;  // Absolute
+        _opcodeTable[0x7D] = AdcAbsX; // Absolute,X
+        _opcodeTable[0x79] = AdcAbsY; // Absolute,Y
+        _opcodeTable[0x61] = AdcIndX; // (Indirect,X)
+        _opcodeTable[0x71] = AdcIndY; // (Indirect),Y
+
+        // SBC - Subtract with Carry (8 opcode'ów)
+        _opcodeTable[0xE9] = SbcImm;  // Immediate
+        _opcodeTable[0xE5] = SbcZp;   // Zero Page
+        _opcodeTable[0xF5] = SbcZpX;  // Zero Page,X
+        _opcodeTable[0xED] = SbcAbs;  // Absolute
+        _opcodeTable[0xFD] = SbcAbsX; // Absolute,X
+        _opcodeTable[0xF9] = SbcAbsY; // Absolute,Y
+        _opcodeTable[0xE1] = SbcIndX; // (Indirect,X)
+        _opcodeTable[0xF1] = SbcIndY; // (Indirect),Y
     }
 
     #endregion

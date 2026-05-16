@@ -212,58 +212,10 @@ public partial class Cpu6502
     private void Rts() => throw new NotImplementedException("RTS not implemented");
 
     /// <summary>
-    /// ADC (ind,X) - Add with Carry, Indirect X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcIndX() => throw new NotImplementedException("ADC (ind,X) not implemented");
-
-    /// <summary>
-    /// ADC zp - Add with Carry, Zero Page.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcZp() => throw new NotImplementedException("ADC zp not implemented");
-
-    /// <summary>
-    /// ADC zp,X - Add with Carry, Zero Page X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcZpX() => throw new NotImplementedException("ADC zp,X not implemented");
-
-    /// <summary>
-    /// ADC abs - Add with Carry, Absolute.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcAbs() => throw new NotImplementedException("ADC abs not implemented");
-
-    /// <summary>
-    /// ADC abs,X - Add with Carry, Absolute X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcAbsX() => throw new NotImplementedException("ADC abs,X not implemented");
-
-    /// <summary>
-    /// ADC abs,Y - Add with Carry, Absolute Y.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcAbsY() => throw new NotImplementedException("ADC abs,Y not implemented");
-
-    /// <summary>
-    /// ADC (ind),Y - Add with Carry, Indirect Y.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcIndY() => throw new NotImplementedException("ADC (ind),Y not implemented");
-
-    /// <summary>
     /// ROR A - Rotate Right, Accumulator.
     /// Obecnie niezaimplementowane.
     /// </summary>
     private void RorAcc() => throw new NotImplementedException("ROR A not implemented");
-
-    /// <summary>
-    /// ADC #imm - Add with Carry, Immediate.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void AdcImm() => throw new NotImplementedException("ADC #imm not implemented");
 
     /// <summary>
     /// NOP - No Operation.
@@ -360,60 +312,6 @@ public partial class Cpu6502
     /// Obecnie niezaimplementowane.
     /// </summary>
     private void CpxImm() => throw new NotImplementedException("CPX #imm not implemented");
-
-    /// <summary>
-    /// SBC (ind,X) - Subtract with Carry, Indirect X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcIndX() => throw new NotImplementedException("SBC (ind,X) not implemented");
-
-    /// <summary>
-    /// SBC zp - Subtract with Carry, Zero Page.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcZp() => throw new NotImplementedException("SBC zp not implemented");
-
-    /// <summary>
-    /// SBC zp,X - Subtract with Carry, Zero Page X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcZpX() => throw new NotImplementedException("SBC zp,X not implemented");
-
-    /// <summary>
-    /// SBC abs - Subtract with Carry, Absolute.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcAbs() => throw new NotImplementedException("SBC abs not implemented");
-
-    /// <summary>
-    /// SBC abs,X - Subtract with Carry, Absolute X.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcAbsX() => throw new NotImplementedException("SBC abs,X not implemented");
-
-    /// <summary>
-    /// SBC abs,Y - Subtract with Carry, Absolute Y.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcAbsY() => throw new NotImplementedException("SBC abs,Y not implemented");
-
-    /// <summary>
-    /// SBC (ind),Y - Subtract with Carry, Indirect Y.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcIndY() => throw new NotImplementedException("SBC (ind),Y not implemented");
-
-    /// <summary>
-    /// INC A - Increment, Accumulator.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void IncAcc() => throw new NotImplementedException("INC A not implemented");
-
-    /// <summary>
-    /// SBC #imm - Subtract with Carry, Immediate.
-    /// Obecnie niezaimplementowane.
-    /// </summary>
-    private void SbcImm() => throw new NotImplementedException("SBC #imm not implemented");
 
     /// <summary>
     /// BEQ rel - Branch if Equal (Z=1).
