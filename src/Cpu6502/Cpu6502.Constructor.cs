@@ -71,6 +71,14 @@ public partial class Cpu6502
         _opcodeTable[0x84] = StyZp;   // Zero Page
         _opcodeTable[0x94] = StyZpX;  // Zero Page,X
         _opcodeTable[0x8C] = StyAbs;  // Absolute
+
+        // Transfer instructions - Implied mode (6 opcode'ów)
+        _opcodeTable[0xAA] = Tax;  // TAX
+        _opcodeTable[0xA8] = Tay;  // TAY
+        _opcodeTable[0xBA] = Tsx;  // TSX
+        _opcodeTable[0x8A] = Txa;  // TXA
+        _opcodeTable[0x9A] = Txs;  // TXS
+        _opcodeTable[0x98] = Tya;  // TYA
     }
 
     #endregion
