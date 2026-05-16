@@ -49,3 +49,27 @@ Fazy zakończone   [x]: 0, 1
 Fazy w trakcie     [~]:
 Fazy nie rozpoczęte [ ]: 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```
+
+---
+
+## Refaktoryzacja (2026-05-16)
+
+Plik `Cpu6502.cs` podzielono na 9 plików partial class:
+
+| Plik | Zawartość |
+|------|-----------|
+| `Cpu6502.Constants.cs` | Stałe flag procesora (C, Z, I, D, B, U, V, N) |
+| `Cpu6502.Fields.cs` | Pola rejestrowe i zależności |
+| `Cpu6502.Constructor.cs` | Konstruktor i inicjalizacja tabeli opcode |
+| `Cpu6502.Properties.cs` | Właściwości publiczne |
+| `Cpu6502.AddressingModes.cs` | 9 trybów adresowania (Imm, Zp, ZpX, ZpY, Abs, AbsX, AbsY, IndX, IndY) |
+| `Cpu6502.Flags.cs` | Metody pracy z flagami (GetFlag, SetFlag, SetNZ) |
+| `Cpu6502.LoadStore.cs` | Implementacja LDA, LDX, LDY, STA, STX, STY |
+| `Cpu6502.PublicMethods.cs` | Tick(), Reset(), GetState(), SetState() |
+| `Cpu6502.Placeholders.cs` | Obecnie niezaimplementowane opcode'y (placeholder) |
+
+Wszystkie pliki zawierają szczegółowe komentarze XML dokumentujące funkcje.
+
+**Wyniki:**
+- Build: ✅ 0 błędów, 0 ostrzeżeń
+- Testy: ✅ 40/40 (100%)
