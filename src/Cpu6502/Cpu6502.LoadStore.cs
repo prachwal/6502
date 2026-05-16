@@ -8,14 +8,14 @@ public partial class Cpu6502
     #region Implementacja instrukcji Load (LDA, LDX, LDY)
 
     // LDA - Load Accumulator
-    private void LdaImm() { var (_, val, _) = Imm(); _a = val; SetNZ(_a); }
-    private void LdaZp() { var (_, val, _) = Zp(); _a = val; SetNZ(_a); }
-    private void LdaZpX() { var (_, val, _) = ZpX(); _a = val; SetNZ(_a); }
-    private void LdaAbs() { var (_, val, _) = Abs(); _a = val; SetNZ(_a); }
-    private void LdaAbsX() { var (_, val, _) = AbsX(); _a = val; SetNZ(_a); }
-    private void LdaAbsY() { var (_, val, _) = AbsY(); _a = val; SetNZ(_a); }
-    private void LdaIndX() { var (_, val, _) = IndX(); _a = val; SetNZ(_a); }
-    private void LdaIndY() { var (_, val, _) = IndY(); _a = val; SetNZ(_a); }
+    private void LdaImm() { _a = _memory.Read(AddrImmediate()); SetNZ(_a); }
+    private void LdaZp() { _a = _memory.Read(AddrZp()); SetNZ(_a); }
+    private void LdaZpX() { _a = _memory.Read(AddrZpX()); SetNZ(_a); }
+    private void LdaAbs() { _a = _memory.Read(AddrAbs()); SetNZ(_a); }
+    private void LdaAbsX() { bool pageCrossed; _a = _memory.Read(AddrAbsX(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
+    private void LdaAbsY() { bool pageCrossed; _a = _memory.Read(AddrAbsY(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
+    private void LdaIndX() { _a = _memory.Read(AddrIndX()); SetNZ(_a); }
+    private void LdaIndY() { bool pageCrossed; _a = _memory.Read(AddrIndY(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
 
     // LDX - Load X Register
     private void LdxImm() { var (_, val, _) = Imm(); _x = val; SetNZ(_x); }

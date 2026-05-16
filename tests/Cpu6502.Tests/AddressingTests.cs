@@ -50,16 +50,16 @@ public class AddressingTests
     [Test]
     public void AddrZpX_WrapsWithinZeroPage()
     {
-        // Set up zero page values
-        memory!.Write(0x80, 0xBB);
+        // Set up zero page values - value should be at 0x7F (wrapped address)
+        memory!.Write(0x7F, 0xBB);
         
         // Load program that uses LDA zp,X with X=0xFF (wraps around)
         LoadProgram(0xB5, 0x80); // LDA $80,X
-        cpu.X = 0xFF; // X = 0xFF
+        cpu.X = 0xFF; // X = 0xFF, so 0x80 + 0xFF = 0x7F (wraps)
         
         cpu.Tick();
         
-        // Should wrap: 0x80 + 0xFF = 0x7F
+        // Should wrap: 0x80 + 0xFF = 0x7F and load value 0xBB
         Assert.That(cpu.A, Is.EqualTo(0xBB));
     }
 
@@ -68,7 +68,7 @@ public class AddressingTests
     {
         // Set up memory
         memory!.Write(0x01FF, 0xCC);
-        memory.Write(0x0200, 0xDD);
+        memory.Write(0x0201, 0xDD); // Value should be at 0x0201 (0x01FF + 0x02)
         
         // Load program that uses LDA abs,X with page crossing
         LoadProgram(0xBD, 0xFF, 0x01); // LDA $01FF,X
@@ -84,7 +84,7 @@ public class AddressingTests
     public void AddrAbsX_NoPageCrossing()
     {
         // Set up memory
-        memory!.Write(0x0180, 0xEE);
+        memory!.Write(0x01FF, 0xEE); // Value should be at 0x01FF (0x0180 + 0x7F)
         
         // Load program that uses LDA abs,X without page crossing
         LoadProgram(0xBD, 0x80, 0x01); // LDA $0180,X
@@ -120,7 +120,7 @@ public class AddressingTests
         // Set up indirect address
         memory!.Write(0x40, 0xFF);  // Low byte
         memory.Write(0x41, 0x01);   // High byte
-        memory.Write(0x0200, 0x11); // Target value (0x01FF + 0x02 = 0x0201)
+        memory.Write(0x0201, 0x11); // Target value (0x01FF + 0x02 = 0x0201)
         
         // Load program that uses LDA (zp),Y with page crossing
         LoadProgram(0xB1, 0x40); // LDA ($40),Y
