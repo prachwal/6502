@@ -9,9 +9,9 @@ public partial class Cpu6502
 
     /// <summary>
     /// BRK - Software Interrupt.
-    /// Obecnie niezaimplementowane.
+    /// Zaimplementowane w Cpu6502.Interrupts.cs
     /// </summary>
-    private void Brk() => throw new NotImplementedException("BRK not implemented");
+    // private void Brk() => throw new NotImplementedException("BRK not implemented");
 
     /// <summary>
     /// ORA (ind,X) - OR with Accumulator, Indirect X.
@@ -141,9 +141,9 @@ public partial class Cpu6502
 
     /// <summary>
     /// RTI - Return from Interrupt.
-    /// Obecnie niezaimplementowane.
+    /// Zaimplementowane w Cpu6502.Interrupts.cs
     /// </summary>
-    private void Rti() => throw new NotImplementedException("RTI not implemented");
+    // private void Rti() => throw new NotImplementedException("RTI not implemented");
 
     /// <summary>
     /// EOR (ind,X) - Exclusive OR with Accumulator, Indirect X.

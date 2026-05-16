@@ -235,6 +235,10 @@ public partial class Cpu6502
 
         // NOP
         _opcodeTable[0xEA] = Nop;  // NOP - No Operation
+
+        // Interrupt instructions - 2 instrukcje
+        _opcodeTable[0x00] = Brk;   // BRK - Force Break
+        _opcodeTable[0x40] = Rti;   // RTI - Return from Interrupt
     }
 
     #endregion

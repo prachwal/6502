@@ -13,6 +13,15 @@ public partial class Cpu6502
     public byte Status => _p;
 
     /// <summary>
+    /// Processor Status Register - rejestr flag.
+    /// </summary>
+    public byte P
+    {
+        get => _p;
+        set => _p = value;
+    }
+
+    /// <summary>
     /// Accumulator - główny rejestr arytmetyczny.
     /// </summary>
     public byte A 
