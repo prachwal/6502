@@ -96,15 +96,15 @@ public class SkeletonTests
     }
 
     [Test]
-    public void Tick_ThrowsNotImplementedException()
+    public void Tick_DoesNotThrow_AfterReset()
     {
         // Arrange
         memory!.Write(0xFFFC, 0x00);
         memory!.Write(0xFFFD, 0x00);
         cpu!.Reset();
 
-        // Act & Assert
-        Assert.Throws<NotImplementedException>(() => cpu!.Tick());
+        // Act & Assert - Tick nie rzuca wyjątku, bo wszystkie opkody są mapowane na NOP lub implementacje
+        Assert.DoesNotThrow(() => cpu!.Tick());
     }
 
     [Test]

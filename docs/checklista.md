@@ -14,7 +14,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | # | Faza | Plik | Status | % pokrycia dok. | % pokrycia całości |
 |---|------|------|--------|----------------:|-------------------:|
 | 0 | Szkielet projektu i struktura .NET | [faza-00-szkielet.md](faza-00-szkielet.md) | [x] | 100% | 1% |
-| 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](faza-01-load-store.md) | [ ] | 6% | 3% |
+| 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](faza-01-load-store.md) | [x] | 100% | 3% |
 | 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](faza-02-transfer.md) | [ ] | 3% | 5% |
 | 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [ ] | 3% | 7% |
 | 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [ ] | 5% | 10% |
@@ -43,9 +43,9 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     1 / 24 faz (4%)
+Całkowity postęp:     2 / 24 faz (8%)
 
-Fazy zakończone   [x]: 0
+Fazy zakończone   [x]: 0, 1
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
 ```

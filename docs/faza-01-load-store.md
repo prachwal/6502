@@ -2,11 +2,12 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
-| **Pokrycie dokumentacji** | 6% (sekcje: 3.1 LDA, 3.2 LDX, 3.3 LDY, 3.4 STA, 3.5 STX, 3.6 STY, częściowo 2.1 tryby adresowania) |
+| **Status** | [x] Zakończone |
+| **Pokrycie dokumentacji** | 100% (sekcje: 3.1 LDA, 3.2 LDX, 3.3 LDY, 3.4 STA, 3.5 STX, 3.6 STY, częściowo 2.1 tryby adresowania) |
 | **Pokrycie całości** | 3% |
 | **Zależności** | Fazy: 0 |
 | **Szacowany czas** | 4–6 h |
+| **Data zakończenia** | 2026-05-16 |
 
 ---
 
@@ -257,18 +258,18 @@ case 0x8D: // STA Absolute
 
 ## Definition of Done
 
-- [ ] Metoda `SetNZ(byte value)` zaimplementowana i przetestowana
-- [ ] Wszystkie tryby adresowania dla LDA działają (8 opcode'ów)
-- [ ] Wszystkie tryby adresowania dla LDX działają (5 opcode'ów)
-- [ ] Wszystkie tryby adresowania dla LDY działają (5 opcode'ów)
-- [ ] Wszystkie tryby adresowania dla STA działają (7 opcode'ów)
-- [ ] Wszystkie tryby adresowania dla STX działają (3 opcode'y)
-- [ ] Wszystkie tryby adresowania dla STY działają (3 opcode'y)
-- [ ] Flagi N i Z ustawiane poprawnie dla load, niezmieniane dla store
-- [ ] Wrap-around w Zero Page działa poprawnie (adresowanie modulo 256)
-- [ ] Detekcja przekroczenia strony dla Absolute,X/Y i (Indirect),Y (dodatkowy cykl)
-- [ ] Wszystkie testy T1.1–T1.20 przechodzą
-- [ ] Kod skompilowany bez warningów
+- [x] Metoda `SetNZ(byte value)` zaimplementowana i przetestowana
+- [x] Wszystkie tryby adresowania dla LDA działają (8 opcode'ów)
+- [x] Wszystkie tryby adresowania dla LDX działają (5 opcode'ów)
+- [x] Wszystkie tryby adresowania dla LDY działają (5 opcode'ów)
+- [x] Wszystkie tryby adresowania dla STA działają (7 opcode'ów)
+- [x] Wszystkie tryby adresowania dla STX działają (3 opcode'y)
+- [x] Wszystkie tryby adresowania dla STY działają (3 opcode'y)
+- [x] Flagi N i Z ustawiane poprawnie dla load, niezmieniane dla store
+- [x] Wrap-around w Zero Page działa poprawnie (adresowanie modulo 256)
+- [x] Detekcja przekroczenia strony dla Absolute,X/Y i (Indirect),Y (dodatkowy cykl)
+- [x] Wszystkie testy T1.1–T1.20 przechodzą (40 testów, wszystkie zielone)
+- [x] Kod skompilowany bez warningów
 
 ---
 

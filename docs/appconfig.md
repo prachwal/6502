@@ -92,7 +92,7 @@ Każda faza jest uznawana za zakończoną tylko gdy:
 | # | Faza | Opis | Status |
 |---|------|------|--------|
 | 0 | Szkielet | Struktura .NET, IMemoryBus, Cpu6502 | ✅ Zakończone |
-| 1 | Load/Store | LDA, LDX, LDY, STA, STX, STY | ⏳ Do zrobienia |
+| 1 | Load/Store | LDA, LDX, LDY, STA, STX, STY (wszystkie tryby) | ✅ Zakończone |
 | 2 | Transfer | TAX, TAY, TSX, TXA, TXS, TYA | ⏳ Do zrobienia |
 | 3 | Flagi CLC/SEC | CLC, SEC, CLD, SED, CLI, SEI, CLV | ⏳ Do zrobienia |
 | 4 | Arytmetyka | ADC, SBC (bez BCD) | ⏳ Do zrobienia |
