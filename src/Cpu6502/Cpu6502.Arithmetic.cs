@@ -183,13 +183,14 @@ public partial class Cpu6502
     /// <param name="operand">Operand z pamięci.</param>
     private void ExecuteAdc(byte operand)
     {
-        // Sprawdź tryb BCD - jeśli ustawiony, rzuć exception (BCD w fazie 13)
+        // Check BCD mode
         if ((_p & FlagD) != 0)
         {
-            throw new NotImplementedException("ADC with BCD mode not implemented (Faza 13)");
+            ExecuteAdcBcd(operand);
+            return;
         }
 
-        // ADC = A + M + C
+        // Binary mode ADC = A + M + C
         byte carry = (byte)((_p & FlagC) != 0 ? 1 : 0);
         ushort sum = (ushort)(_a + operand + carry);
         bool carryFlag = sum > 0xFF;
@@ -213,13 +214,14 @@ public partial class Cpu6502
     /// <param name="operand">Operand z pamięci.</param>
     private void ExecuteSbc(byte operand)
     {
-        // Sprawdź tryb BCD - jeśli ustawiony, rzuć exception (BCD w fazie 13)
+        // Check BCD mode
         if ((_p & FlagD) != 0)
         {
-            throw new NotImplementedException("SBC with BCD mode not implemented (Faza 13)");
+            ExecuteSbcBcd(operand);
+            return;
         }
 
-        // SBC = A + ~M + C
+        // Binary mode SBC = A + ~M + C
         byte carry = (byte)((_p & FlagC) != 0 ? 1 : 0);
         byte notOperand = (byte)~operand;
         ushort sum = (ushort)(_a + notOperand + carry);
