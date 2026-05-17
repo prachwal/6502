@@ -2,17 +2,28 @@
 
 Data: 2026-05-17  
 Repozytorium: `prachwal/6502`  
-Status: dokument porządkujący
+Status: techniczny indeks porządkujący / plan migracji
 
 ---
 
 ## 1. Cel
 
-Ten dokument porządkuje istniejące dokumenty planistyczne i architektoniczne. Celem jest rozdzielenie:
+Ten dokument jest technicznym indeksem porządkującym dokumenty planistyczne i architektoniczne.
 
-- dokumentów oceny,
-- dokumentów roadmapy,
-- dokumentów implementacyjnych,
+Głównym wejściem do dokumentacji jest:
+
+```text
+docs/README.md
+```
+
+Ten plik pozostaje jako roboczy plan migracji i klasyfikacji dokumentów.
+
+Celem jest rozdzielenie:
+
+- dokumentów architektonicznych,
+- roadmap,
+- planów implementacyjnych,
+- przeglądów i feedbacku,
 - profili runtime,
 - przyszłych schematów JSON.
 
@@ -20,19 +31,24 @@ Dokumenty w `docs/` nie są konfiguracją uruchomieniową emulatora. Konfiguracj
 
 ---
 
-## 2. Dokumenty architektoniczne nadrzędne
+## 2. Aktualna klasyfikacja dokumentów
+
+### 2.1. Architektura
 
 | Dokument | Rola |
 |---|---|
 | `docs/modular-computer-composition-architecture.md` | nadrzędna architektura składania komputerów z CPU, busa, pamięci i urządzeń |
-| `docs/universal-emulation-elements-roadmap.md` | brakujące elementy uniwersalne dla wielu CPU: address spaces, CPU features, trace, sygnały, DMA, bankowanie |
+| `docs/universal-emulation-elements-roadmap.md` | elementy wspólne dla wielu CPU, address spaces, CPU features, trace, sygnały, DMA, bankowanie, szybki runtime |
 | `docs/video-audio-emulation-roadmap.md` | architektura grafiki, dźwięku, terminala tekstowego, buforów i adapterów PC |
+
+### 2.2. Roadmapy
+
+| Dokument | Rola |
+|---|---|
 | `docs/computer-profiles-and-uart-roadmap.md` | koncepcja profili komputerów, UART i lista kandydatów maszyn |
 | `docs/io-chip-implementation-roadmap.md` | roadmapa układów wejścia/wyjścia |
 
----
-
-## 3. Dokumenty dla konkretnych maszyn
+### 2.3. Plany konkretnych obszarów
 
 | Dokument | Rola |
 |---|---|
@@ -40,41 +56,29 @@ Dokumenty w `docs/` nie są konfiguracją uruchomieniową emulatora. Konfiguracj
 | `docs/pet-chip-implementation-plans.md` | plan układów Commodore PET |
 | `docs/tty-mainframe-link-plan.md` | plan TTY/UART/mainframe link |
 
----
-
-## 4. Dokumenty oceny i feedbacku
+### 2.4. Przeglądy i feedback
 
 | Dokument | Rola |
 |---|---|
 | `docs/zbiorcza-lista-poprawek-2026-05-17.md` | zbiorcza lista poprawek dla zaimplementowanej części |
 
-Jeżeli powstaną kolejne przeglądy, zalecany format nazwy:
-
-```text
-docs/reviews/<yyyy-mm-dd>-<topic>.md
-```
-
-Przykład:
-
-```text
-docs/reviews/2026-05-17-implementation-review.md
-```
-
 ---
 
-## 5. Docelowy podział katalogów
+## 3. Docelowy podział katalogów
 
-### 5.1. Dokumenty
+### 3.1. Dokumenty
 
 ```text
 docs/
+  README.md
   architecture/
   roadmaps/
   plans/
   reviews/
+  profiles-spec/
 ```
 
-### 5.2. Profile runtime
+### 3.2. Profile runtime
 
 ```text
 profiles/
@@ -83,7 +87,7 @@ profiles/
   devices/
 ```
 
-### 5.3. ROM-y
+### 3.3. ROM-y
 
 ```text
 roms/
@@ -96,7 +100,7 @@ roms/
 
 ROM-y nie powinny być commitowane, jeśli licencja na to nie pozwala.
 
-### 5.4. Programy assemblerowe i testowe
+### 3.4. Programy assemblerowe i testowe
 
 ```text
 asm/
@@ -107,50 +111,9 @@ asm/
 
 ---
 
-## 6. Proponowana klasyfikacja dokumentów
+## 4. Rekomendowana migracja dokumentów
 
-### 6.1. Architecture
-
-Dokumenty opisujące decyzje systemowe:
-
-```text
-docs/architecture/modular-computer-composition-architecture.md
-docs/architecture/universal-emulation-elements-roadmap.md
-docs/architecture/video-audio-emulation-roadmap.md
-```
-
-### 6.2. Roadmaps
-
-Dokumenty opisujące kolejność i priorytety:
-
-```text
-docs/roadmaps/computer-profiles-and-uart-roadmap.md
-docs/roadmaps/io-chip-implementation-roadmap.md
-```
-
-### 6.3. Plans
-
-Dokumenty opisujące implementację konkretnego obszaru:
-
-```text
-docs/plans/apple-1-pia-terminal-plan.md
-docs/plans/pet-chip-implementation-plans.md
-docs/plans/tty-mainframe-link-plan.md
-```
-
-### 6.4. Reviews
-
-Dokumenty feedbacku i oceny:
-
-```text
-docs/reviews/zbiorcza-lista-poprawek-2026-05-17.md
-```
-
----
-
-## 7. Rekomendacja migracji dokumentów
-
-Na razie można zostawić pliki w `docs/`, żeby nie robić dużej reorganizacji ścieżek. Przy kolejnym porządkowaniu warto przenieść je do podkatalogów:
+Na razie pliki mogą zostać płasko w `docs/`, ale przy najbliższej większej reorganizacji należy przenieść je do podkatalogów:
 
 ```text
 docs/modular-computer-composition-architecture.md
@@ -183,37 +146,39 @@ docs/zbiorcza-lista-poprawek-2026-05-17.md
 
 ---
 
-## 8. Najważniejsza kolejność czytania
+## 5. Kolejność czytania
 
 Dla nowej osoby w projekcie:
 
-1. `docs/modular-computer-composition-architecture.md`
-2. `docs/universal-emulation-elements-roadmap.md`
-3. `docs/video-audio-emulation-roadmap.md`
-4. `docs/io-chip-implementation-roadmap.md`
-5. `docs/computer-profiles-and-uart-roadmap.md`
-6. `docs/apple-1-pia-terminal-plan.md`
-7. `docs/pet-chip-implementation-plans.md`
-8. `docs/tty-mainframe-link-plan.md`
-9. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
+1. `docs/README.md`
+2. `docs/modular-computer-composition-architecture.md`
+3. `docs/universal-emulation-elements-roadmap.md`
+4. `docs/video-audio-emulation-roadmap.md`
+5. `docs/io-chip-implementation-roadmap.md`
+6. `docs/computer-profiles-and-uart-roadmap.md`
+7. `docs/apple-1-pia-terminal-plan.md`
+8. `docs/pet-chip-implementation-plans.md`
+9. `docs/tty-mainframe-link-plan.md`
+10. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
 
 ---
 
-## 9. Decyzja porządkująca
+## 6. Zasady utrzymania dokumentacji
 
-Od tego momentu:
-
-- nowe decyzje systemowe trafiają do `architecture`,
-- kolejność i priorytety do `roadmaps`,
-- konkretne implementacje do `plans`,
-- oceny kodu do `reviews`,
-- dane uruchomieniowe do `profiles`,
-- ROM-y do `roms`,
-- programy testowe do `asm`.
+1. `docs/README.md` jest głównym wejściem do dokumentacji.
+2. Ten plik jest technicznym indeksem i planem migracji.
+3. Nowe decyzje systemowe trafiają do dokumentów architektury.
+4. Nowe kolejności implementacji trafiają do roadmap.
+5. Szczegółowe plany układów i maszyn trafiają do planów.
+6. Oceny kodu i listy poprawek trafiają do reviews.
+7. Profile runtime nie trafiają do `docs/`.
+8. ROM-y nie trafiają do `docs/`.
+9. Programy testowe i assemblerowe nie trafiają do `docs/`.
+10. Nie powielać tej samej decyzji w kilku dokumentach; dokument podrzędny powinien odwoływać się do dokumentu nadrzędnego.
 
 ---
 
-## 10. Następny krok
+## 7. Najbliższy krok implementacyjny
 
 Najbliższy sensowny krok implementacyjny:
 
@@ -238,6 +203,9 @@ TextScreenSnapshot
 Po tym warto dodać:
 
 ```text
+RuntimeBus
+CompiledMemoryMap
+CompiledPortMap
 IVideoDevice
 VideoFrame
 IAudioDevice
