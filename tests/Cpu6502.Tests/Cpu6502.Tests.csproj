@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\Cpu6502\Cpu6502.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\nestest.nes" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Data\nestest.log" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

@@ -18,7 +18,7 @@ public partial class Cpu6502
         _x = 0;
         _y = 0;
         _sp = 0xFD;
-        _p = FlagI;  // I=1, reszta flag 0 (w realnym HW inne flagi nieokreślone)
+        _p = FlagI | FlagU;  // I=1, U=1 (w realnym 6502 U jest zawsze 1, I=1 po resecie)
         _pc = 0;
 
         // Odczytaj wektor RESET (16-bit, little-endian)

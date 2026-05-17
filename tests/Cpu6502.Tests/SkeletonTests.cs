@@ -57,7 +57,8 @@ public class SkeletonTests
 
         // Assert
         Assert.That(cpu!.GetFlag(Cpu6502.FlagI), Is.True);
-        Assert.That(cpu!.GetFlag(Cpu6502.FlagU), Is.False);
+        // Flag U (bit 5) jest zawsze ustawiona na 1 w prawdziwym 6502
+        Assert.That(cpu!.GetFlag(Cpu6502.FlagU), Is.True);
     }
 
     [Test]
@@ -77,6 +78,8 @@ public class SkeletonTests
         Assert.That(cpu!.GetFlag(Cpu6502.FlagB), Is.False);
         Assert.That(cpu!.GetFlag(Cpu6502.FlagV), Is.False);
         Assert.That(cpu!.GetFlag(Cpu6502.FlagN), Is.False);
+        // Flag U jest zawsze ustawiona na 1 w prawdziwym 6502
+        Assert.That(cpu!.GetFlag(Cpu6502.FlagU), Is.True);
     }
 
     [Test]
