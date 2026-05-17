@@ -58,6 +58,22 @@ public partial class Cpu6502
             case 0xBB << 3 | 2: LasAbsY_Cycle2(); break;
             case 0xBB << 3 | 3: LasAbsY_Cycle3(); break;
             
+            // LAX - LDA + LDX (Illegal Opcode)
+            case 0xA7 << 3 | 0: LaxZp_Cycle0(); break;
+            case 0xB7 << 3 | 0: LaxZpY_Cycle0(); break;
+            case 0xAF << 3 | 0: LaxAbs_Cycle0(); break;
+            case 0xBF << 3 | 0: LaxAbsY_Cycle0(); break;
+            case 0xBF << 3 | 1: LaxAbsY_Cycle1(); break;
+            case 0xA3 << 3 | 0: LaxIndX_Cycle0(); break;
+            case 0xB3 << 3 | 0: LaxIndY_Cycle0(); break;
+            case 0xB3 << 3 | 1: LaxIndY_Cycle1(); break;
+            
+            // SAX - Store A & X (Illegal Opcode)
+            case 0x87 << 3 | 0: SaxZp_Cycle0(); break;
+            case 0x97 << 3 | 0: SaxZpY_Cycle0(); break;
+            case 0x8F << 3 | 0: SaxAbs_Cycle0(); break;
+            case 0x83 << 3 | 0: SaxZpX_Cycle0(); break;
+            
             default: return false;
         }
 

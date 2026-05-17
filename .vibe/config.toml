@@ -14,6 +14,9 @@ include_project_context = true
 include_prompt_detail = true
 voice_mode_enabled = false
 narrator_enabled = false
+installed_agents = [
+    "lean",
+]
 
 [session_logging]
 enabled = true
@@ -33,6 +36,9 @@ allowlist = [
     "dotnet",
     "echo",
     "find",
+    "find src -name \"*.cs\" -exec grep -l \"DCP\\|ISC\\|ISB\\|RLA\\|RRA\\|SLO\\|ASO\\|SRE\\|LSE\\|ANC\\|ALR\\|ASR\\|ARR\\|SBX\\|AXS\" {} \\;",
+    "find src -name \"*.cs\" -exec grep -l \"Dcp\\|DCP\\|Isc\\|ISC\\|ISB\\|Rla\\|RLA\\|Rra\\|RRA\\|Slo\\|SLO\\|Sre\\|SRE\\|AsO\" {} \\;",
+    "find tests -name \"*.cs\" -exec grep -l \"DCP\\|ISC\\|LAX\\|SLO\\|RLA\\|SRE\\|SAX\\|ANC\\|ALR\\|ARR\\|SBX\\|LAS\" {} \\;",
     "g++",
     "gcc",
     "git",
@@ -57,6 +63,7 @@ enable_experimental_hooks = false
 allowlist = [
     "/home/prachwal/.vibe/agents/*",
 ]
+permission = "always"
 
 [tools.read_file]
 allowlist = [

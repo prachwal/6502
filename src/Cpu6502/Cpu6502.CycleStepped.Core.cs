@@ -130,6 +130,11 @@ public partial class Cpu6502
             return;
         }
 
+        if (ExecuteCycleIllegalRMW(key))
+        {
+            return;
+        }
+
         // Jeśli żadna metoda nie obsłużyła cyklu, to jest to nieznany opcode
         // Ustaw sync, aby zapobiec nieskończonej pętli
         _sync = true;

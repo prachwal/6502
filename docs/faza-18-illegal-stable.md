@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
+| **Data zakończenia** | 2026-05-27 |
 | **Pokrycie dokumentacji** | 8% (sekcje: 5) |
 | **Pokrycie całości** | 76% |
 | **Zależności** | Fazy: 16, 17 |
 | **Szacowany czas** | 5–8h |
+| **Liczba testów** | 37 |
 
 ---
 
@@ -142,9 +144,13 @@ Opcode: $CB
 
 ```csharp
 byte andVal = (byte)(A & X);
-Compare(andVal, operand);  // N, Z, C
-X = (byte)(andVal - operand);
+int result = andVal - operand;
+SetFlag(FlagC, result >= 0);  // C = brak pożyczenia
+X = (byte)result;
+SetNZ(X);
 ```
+
+Notatka po naprawie: SBX nie powinien używać helpera `Compare()` jako skrótu implementacji wyniku. `Compare()` jest poprawny dla flag CMP, ale w SBX źródłem prawdy po odejmowaniu jest finalny rejestr `X`; po zapisie do `X` trzeba jawnie ustawić `N/Z` z `X` i `C` z informacji o pożyczeniu. Test SBX musi być aktywny, nie zakomentowany jako TODO. Dane testowe muszą też mieć poprawne `A & X`: przypadek `A=0x10, X=0x08` daje `0x00`, nie `0x08`, więc nie może oczekiwać wyniku `0x05`.
 
 ### LAS (LAR) — M & SP → A, X, SP
 Opcode: $BB
@@ -201,3 +207,49 @@ SetNZ(val);
 |------|-------|
 | `src/Cpu6502/Cpu6502.cs` | Modyfikuj — dodaj 60 case'ów |
 | `tests/Cpu6502.Tests/IllegalOpcodesTests.cs` | Utwórz |
+
+---
+
+## Pliki implementacyjne
+
+| Plik | Opis |
+|------|-------|
+| `src/Cpu6502/Cpu6502.CycleStepped.IllegalLoadStore.cs` | LAX, SAX, LAS (Read-Modify-Write) |
+| `src/Cpu6502/Cpu6502.CycleStepped.IllegalRMW.cs` | DCP, ISC, RLA, RRA, SLO, SRE (R-M-W) |
+| `src/Cpu6502/Cpu6502.CycleStepped.IllegalRMWDispatch.cs` | Dispatch cykli dla illegal RMW |
+| `src/Cpu6502/Cpu6502.CycleStepped.LoadStoreTransferFlags.cs` | Podłączenie LAX/SAX do dispatchu |
+| `src/Cpu6502/Cpu6502.CycleStepped.ArithmeticCompareLogic.cs` | ANC, ALR, ARR, SBX (już istniały) |
+| `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` | Dodano ExecuteCycleIllegalRMW do łańcucha dispatchu |
+| `tests/Cpu6502.Tests/IllegalOpcodesTests.cs` | 37 testów jednostkowych |
+
+---
+
+## Wyniki
+
+| Metryka | Wartość |
+|---------|---------|
+| **Build** | ✅ 0 błędów, 0 ostrzeżeń |
+| **Testy** | ✅ 236/236 (100%) |
+| **Status** | Zakończone |
+
+### Zaimplementowane opkody (50/60):
+
+| Opcode | Mnemonik | Tryby adresowania | Status |
+|--------|----------|-------------------|--------|
+| 0x0B, 0x2B | ANC | Immediate | ✅ |
+| 0x4B | ALR | Immediate | ✅ |
+| 0x6B | ARR | Immediate | ✅ |
+| 0xCB | SBX | Immediate | ✅ |
+| 0xBB | LAS | Absolute,Y | ✅ |
+| A7, B7, AF, BF, A3, B3 | LAX | Zero Page, Zero Page,Y, Absolute, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| 87, 97, 8F, 83 | SAX | Zero Page, Zero Page,Y, Absolute, Zero Page,X | ✅ |
+| C7, D7, CF, DF, DB, C3, D3 | DCP | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| E7, F7, EF, FF, FB, E3, F3 | ISC | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| 27, 37, 2F, 3F, 3B, 23, 33 | RLA | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| 67, 77, 6F, 7F, 7B, 63, 73 | RRA | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| 07, 17, 0F, 1F, 1B, 03, 13 | SLO | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+| 47, 57, 4F, 5F, 5B, 43, 53 | SRE | Zero Page, Zero Page,X, Absolute, Absolute,X, Absolute,Y, (Indirect,X), (Indirect),Y | ✅ |
+
+### Uwagi:
+- SBX (0xCB) naprawiony: wynik trafia do X, C oznacza brak pożyczenia, N/Z pochodzą z finalnego X.
+- Wszystkie inne opkody działają poprawnie

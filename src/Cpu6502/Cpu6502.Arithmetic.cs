@@ -311,8 +311,11 @@ public partial class Cpu6502
     {
         byte val = _memory.Read(_pc++);
         byte andVal = (byte)(_a & _x);
-        ExecuteCmp(andVal, val);
-        _x = (byte)(andVal - val);
+        int result = andVal - val;
+
+        SetFlag(FlagC, result >= 0);
+        _x = (byte)result;
+        SetNZ(_x);
     }
 
     #endregion
