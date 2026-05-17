@@ -2,11 +2,14 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 4% (sekcje: 9, 10) |
 | **Pokrycie całości** | 68% |
 | **Zależności** | Faza 16 |
 | **Szacowany czas** | 3–4h |
+| **Data rozpoczęcia** | 2026-05-17 |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 6 |
 
 ---
 
@@ -35,6 +38,12 @@ memory.Write(addr, modified);
 ```
 
 W modelu cycle-stepped, cykl zapisu niezmodyfikowanej wartości to osobny `case`.
+
+#### Notatka testowa po regresji
+
+Test R-M-W double write ma liczyć wywołania `IMemoryBus.Write()` dla konkretnego adresu docelowego, a nie zmiany wartości w RAM. Dummy write często zapisuje tę samą wartość, która już jest w pamięci, więc porównywanie `Read()` przed i po cyklu zaniża liczbę zapisów.
+
+Jeśli test tworzy lokalne `Cpu6502 cpu = new Cpu6502(memory)`, musi wykonać właśnie ten lokalny `cpu`. Nie wolno w takim teście używać fixture helpera `ExecuteOne()` pracującego na polu `_cpu`, bo wtedy lokalna pamięć śledząca zapisy zobaczy `0` zapisów i test będzie diagnozował zły obiekt.
 
 ### 2. JMP indirect page-crossing bug
 
@@ -69,6 +78,12 @@ Przerwania sprawdzane na przedostatnim cyklu instrukcji. Dla branch:
 - Taken different page (4 cykle): sprawdzane w cyklu 3
 
 W cycle-stepped: umieść `CheckInterrupts()` na odpowiednim case'ie przed Sync=true.
+
+Adres po branchu liczony jest od PC po pobraniu offsetu. Dla programu pod `$8000` z `BCC +2`:
+- branch not taken kończy na `$8002`,
+- branch taken same page kończy na `$8004`.
+
+Testy nie powinny zamieniać tych oczekiwań miejscami.
 
 ### 4. CLI latency
 
@@ -122,9 +137,27 @@ if (shouldClearI)
 
 ---
 
+## Pliki implementacyjne
+
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.FlagsSetClear.cs` | Poprawka CLI - ustawianie `_interruptDelay` |
+| `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` | Poprawka `TryServiceInterruptBoundary()` - obsługa `_interruptDelay` |
+| `src/Cpu6502/Cpu6502.CycleStepped.BranchCycles.cs` | Branch interrupt timing - sprawdzanie przerwań na przedostatnim cyklu |
+| `src/Cpu6502/Cpu6502.CycleStepped.ControlFlowCycles.cs` | JMP indirect bug - już zaimplementowany |
+| `src/Cpu6502/Cpu6502.CycleStepped.RMW.cs` | R-M-W double write - już zaimplementowany |
+| `tests/Cpu6502.Tests/QuirkTests.cs` | 6 testów jednostkowych dla quirków |
+
+## Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 209/209 (100%)
+
 ## Pliki
 
 | Plik | Akcja |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj — poprawki cycle-stepped |
-| `tests/Cpu6502.Tests/QuirkTests.cs` | Utwórz |
+| `src/Cpu6502/Cpu6502.FlagsSetClear.cs` | Modyfikuj — CLI latency |
+| `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` | Modyfikuj — interrupt boundary handling |
+| `src/Cpu6502/Cpu6502.CycleStepped.BranchCycles.cs` | Modyfikuj — branch interrupt timing |
+| `tests/Cpu6502.Tests/QuirkTests.cs` | Utwórz — testy quirków |

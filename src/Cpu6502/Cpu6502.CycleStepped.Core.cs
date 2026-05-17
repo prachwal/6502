@@ -157,7 +157,6 @@ public partial class Cpu6502
         {
             _interruptDelay = false;
             _suppressPostInstructionIrq = true;
-            return false;
         }
 
         if (_irqReadyAtBoundary && _irqPending && !GetFlag(FlagI))

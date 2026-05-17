@@ -25,8 +25,12 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            // Not taken - 2 cykle, sync po tym cyklu
+            // Not taken - 2 cykle, sprawdź przerwania na przedostatnim cyklu
             _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -35,7 +39,12 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
-                // Same page - 3 cykle, sync po następnym cyklu
+                // Same page - 3 cykle, sprawdź przerwania na przedostatnim cyklu
+                _suppressPostInstructionIrq = true;
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -54,6 +63,12 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            // Same page - sprawdź przerwania na przedostatnim cyklu (cykl 2 dla 3-cyklowych)
+            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -65,6 +80,12 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            // Different page - sprawdź przerwania na przedostatnim cyklu (cykl 3 dla 4-cyklowych)
+            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -90,7 +111,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -98,6 +122,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -115,6 +143,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -126,6 +158,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -151,7 +187,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -159,6 +198,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -176,6 +219,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -187,6 +234,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -212,7 +263,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -220,6 +274,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -237,6 +295,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -248,6 +310,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -273,7 +339,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -281,6 +350,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -298,6 +371,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -309,6 +386,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -334,7 +415,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -342,6 +426,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -359,6 +447,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -370,6 +462,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -395,7 +491,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -403,6 +502,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -420,6 +523,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -431,6 +538,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -456,7 +567,10 @@ public partial class Cpu6502
     {
         if (!_branchTaken)
         {
-            _suppressPostInstructionIrq = true;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
         else
@@ -464,6 +578,10 @@ public partial class Cpu6502
             bool pageCrossed = ((_pc >> 8) != (_tempAddr >> 8));
             if (!pageCrossed)
             {
+                if (_irqPending && !GetFlag(FlagI))
+                {
+                    _irqReadyAtBoundary = true;
+                }
                 _pc = _tempAddr;
             }
             else
@@ -481,6 +599,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && !_pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
@@ -492,6 +614,10 @@ public partial class Cpu6502
     {
         if (_branchTaken && _pageCrossed)
         {
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
             _sync = true;
         }
     }
