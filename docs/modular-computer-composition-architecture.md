@@ -23,6 +23,15 @@ Celem jest zaprojektowanie mechanizmu, który pozwala składać różne komputer
 
 Rdzeń CPU nie powinien znać nazw komputerów ani konkretnych układów. Komputer powinien być budowany przez `ComputerBuilder` na podstawie profilu.
 
+Architektura ma rozdzielać:
+
+```text
+kompozycję maszyny: profile, fabryki, walidacja, czytelność
+runtime maszyny: szybkie mapy pamięci/portów, scheduler, minimalny koszt hot path
+```
+
+Komentarz: sama modularność nie wystarczy do wydajnej emulacji. `ComputerBuilder` może używać interfejsów i list urządzeń, ale wynikowy `EmulatedComputer` powinien używać skompilowanych struktur runtime, żeby nie iterować po urządzeniach przy każdym odczycie pamięci albo zapisie portu.
+
 ---
 
 ## 2. Główna zasada
@@ -38,7 +47,9 @@ ComputerBuilder
    |
 EmulatedComputer
    |-- ICpuCore
-   |-- ISystemBus
+   |-- RuntimeBus / ISystemBus
+   |-- CompiledMemoryMap
+   |-- CompiledPortMap
    |-- MemoryRegions
    |-- Devices
    |-- InterruptController
@@ -53,13 +64,16 @@ EmulatedComputer
 | Element | Odpowiedzialność |
 |---|---|
 | `ICpuCore` | wykonuje instrukcje CPU, zgłasza cykle i linie przerwań |
-| `ISystemBus` | udostępnia pamięć i porty I/O |
+| `ISystemBus` | kontrakt pamięci i portów I/O widziany przez CPU |
+| `RuntimeBus` | szybka implementacja busa używana po zbudowaniu maszyny |
+| `CompiledMemoryMap` | szybki routing odczytów/zapisów pamięci |
+| `CompiledPortMap` | szybki routing portów I/O dla Z80/8080 |
 | `IMemoryMappedDevice` | urządzenie widoczne w przestrzeni pamięci |
 | `IPortMappedDevice` | urządzenie widoczne w przestrzeni portów, np. Z80/8080 |
 | `ICycleDevice` | urządzenie aktualizowane cyklowo |
 | `IIrqSource` / `INmiSource` | źródło przerwań |
 | `ComputerProfile` | dane konfiguracyjne maszyny |
-| `ComputerBuilder` | składa maszynę z profilu |
+| `ComputerBuilder` | składa maszynę z profilu i kompiluje mapy runtime |
 | `DeviceFactory` | tworzy urządzenia po typie z profilu |
 | `CpuFactory` | tworzy CPU po typie z profilu |
 | `FrontendAdapter` | łączy terminal/ekran/audio z UI |
@@ -143,9 +157,84 @@ Dla Z80:
 
 ---
 
-## 6. Urządzenia
+## 6. Szybki runtime bus
 
-### 6.1. Bazowy marker
+### 6.1. Problem
+
+Nie używać listy urządzeń jako jedynego mechanizmu odczytu/zapisu w runtime:
+
+```csharp
+foreach (var device in devices)
+{
+    if (device.HandlesMemory(address))
+        return device.ReadMemory(address);
+}
+```
+
+Taki kod jest prosty, ale za wolny dla hot path CPU. Jest akceptowalny w prototypie, walidatorze albo narzędziach diagnostycznych, ale nie jako docelowy runtime.
+
+### 6.2. Rozwiązanie
+
+`ComputerBuilder` powinien kompilować profil do szybkich map:
+
+```text
+Memory range/device definitions
+  -> validation
+  -> CompiledMemoryMap
+  -> RuntimeBus
+```
+
+Dla portów:
+
+```text
+Port definitions
+  -> validation
+  -> CompiledPortMap
+  -> RuntimeBus
+```
+
+### 6.3. Minimalny model
+
+```csharp
+public interface IMemoryPageHandler
+{
+    byte Read(ushort address);
+    void Write(ushort address, byte value);
+}
+
+public sealed class CompiledMemoryMap
+{
+    private readonly IMemoryPageHandler[] _readPages = new IMemoryPageHandler[256];
+    private readonly IMemoryPageHandler[] _writePages = new IMemoryPageHandler[256];
+
+    public byte Read(ushort address)
+        => _readPages[address >> 8].Read(address);
+
+    public void Write(ushort address, byte value)
+        => _writePages[address >> 8].Write(address, value);
+}
+```
+
+### 6.4. Dlaczego strony 256 bajtów
+
+Dla 64 KB przestrzeni adresowej daje to 256 wpisów. To wystarczy dla pierwszych CPU:
+
+- 6502,
+- 6510,
+- 65C02,
+- Ricoh 2A03,
+- 8080,
+- Z80,
+- 6800,
+- 6809.
+
+Dla 65C816/68000 można później dodać większy albo wielopoziomowy model mapowania.
+
+---
+
+## 7. Urządzenia
+
+### 7.1. Bazowy marker
 
 ```csharp
 public interface IDevice
@@ -154,7 +243,7 @@ public interface IDevice
 }
 ```
 
-### 6.2. Memory-mapped device
+### 7.2. Memory-mapped device
 
 ```csharp
 public interface IMemoryMappedDevice : IDevice
@@ -165,7 +254,7 @@ public interface IMemoryMappedDevice : IDevice
 }
 ```
 
-### 6.3. Port-mapped device
+### 7.3. Port-mapped device
 
 ```csharp
 public interface IPortMappedDevice : IDevice
@@ -176,7 +265,7 @@ public interface IPortMappedDevice : IDevice
 }
 ```
 
-### 6.4. Cycle device
+### 7.4. Cycle device
 
 ```csharp
 public interface ICycleDevice : IDevice
@@ -185,7 +274,7 @@ public interface ICycleDevice : IDevice
 }
 ```
 
-### 6.5. IRQ/NMI source
+### 7.5. IRQ/NMI source
 
 ```csharp
 public interface IIrqSource : IDevice
@@ -199,7 +288,7 @@ public interface INmiSource : IDevice
 }
 ```
 
-### 6.6. Resettable device
+### 7.6. Resettable device
 
 ```csharp
 public interface IResettableDevice : IDevice
@@ -210,9 +299,9 @@ public interface IResettableDevice : IDevice
 
 ---
 
-## 7. Pamięć
+## 8. Pamięć
 
-### 7.1. Region pamięci
+### 8.1. Region pamięci
 
 ```csharp
 public sealed record MemoryRegion(
@@ -224,7 +313,7 @@ public sealed record MemoryRegion(
     bool ReadOnly);
 ```
 
-### 7.2. Rodzaje regionów
+### 8.2. Rodzaje regionów
 
 ```csharp
 public enum MemoryRegionKind
@@ -236,7 +325,7 @@ public enum MemoryRegionKind
 }
 ```
 
-### 7.3. Reguły
+### 8.3. Reguły
 
 - ROM jest read-only.
 - RAM jest read/write.
@@ -246,9 +335,9 @@ public enum MemoryRegionKind
 
 ---
 
-## 8. Fabryki CPU i urządzeń
+## 9. Fabryki CPU i urządzeń
 
-### 8.1. CPU factory
+### 9.1. CPU factory
 
 ```csharp
 public interface ICpuFactory
@@ -270,7 +359,7 @@ z80
 intel8080
 ```
 
-### 8.2. Device factory
+### 9.2. Device factory
 
 ```csharp
 public interface IDeviceFactory
@@ -295,7 +384,7 @@ ay-3-8910
 nes-controller-ports
 ```
 
-### 8.3. Factory context
+### 9.3. Factory context
 
 ```csharp
 public sealed class DeviceFactoryContext
@@ -308,9 +397,9 @@ public sealed class DeviceFactoryContext
 
 ---
 
-## 9. Profil komputera
+## 10. Profil komputera
 
-### 9.1. Minimalny schemat logiczny
+### 10.1. Minimalny schemat logiczny
 
 ```json
 {
@@ -352,7 +441,7 @@ public sealed class DeviceFactoryContext
 }
 ```
 
-### 9.2. Profil Z80
+### 10.2. Profil Z80
 
 ```json
 {
@@ -394,23 +483,25 @@ public sealed class DeviceFactoryContext
 
 ---
 
-## 10. `ComputerBuilder`
+## 11. `ComputerBuilder`
 
-### 10.1. Odpowiedzialność
+### 11.1. Odpowiedzialność
 
 `ComputerBuilder` powinien:
 
 1. wczytać profil,
 2. zwalidować schemat,
 3. utworzyć pamięć,
-4. utworzyć magistralę,
-5. utworzyć urządzenia,
-6. wykryć konflikty adresów/portów,
-7. utworzyć CPU,
-8. podłączyć IRQ/NMI,
-9. zwrócić `EmulatedComputer`.
+4. utworzyć urządzenia,
+5. wykryć konflikty adresów/portów,
+6. skompilować `CompiledMemoryMap`,
+7. skompilować `CompiledPortMap`, jeśli CPU albo urządzenia używają portów,
+8. utworzyć `RuntimeBus`,
+9. utworzyć CPU,
+10. podłączyć IRQ/NMI,
+11. zwrócić `EmulatedComputer`.
 
-### 10.2. Proponowany model
+### 11.2. Proponowany model
 
 ```csharp
 public sealed class ComputerBuilder
@@ -419,7 +510,7 @@ public sealed class ComputerBuilder
 }
 ```
 
-### 10.3. Wynik budowania
+### 11.3. Wynik budowania
 
 ```csharp
 public sealed class EmulatedComputer
@@ -438,9 +529,9 @@ public sealed class EmulatedComputer
 
 ---
 
-## 11. Scheduler / zegar
+## 12. Scheduler / zegar
 
-### 11.1. MVP
+### 12.1. MVP
 
 W MVP można użyć prostego modelu:
 
@@ -451,7 +542,7 @@ computer.Tick():
   update interrupt lines
 ```
 
-### 11.2. Później
+### 12.2. Później
 
 Dla C64, Atari, NES, Apple II i dokładnych układów wideo potrzebny będzie scheduler cyklowy z proporcjami zegarów:
 
@@ -466,9 +557,9 @@ Nie blokować MVP pełnym cycle-accurate schedulerem.
 
 ---
 
-## 12. Przerwania
+## 13. Przerwania
 
-### 12.1. MVP
+### 13.1. MVP
 
 Na początku wystarczy agregator:
 
@@ -487,19 +578,19 @@ IRQ = OR wszystkich IIrqSource
 NMI = OR wszystkich INmiSource
 ```
 
-### 12.2. Integracja z CPU
+### 13.2. Integracja z CPU
 
 Jeżeli CPU implementuje `IInterruptibleCpuCore`, `EmulatedComputer.Tick()` ustawia linie IRQ/NMI przed tickiem albo po ticku zgodnie z decyzją implementacyjną.
 
 ---
 
-## 13. Bankowanie pamięci
+## 14. Bankowanie pamięci
 
-### 13.1. Nie w MVP
+### 14.1. Nie w MVP
 
 Bankowanie pamięci nie jest potrzebne do minimalnego SBC, Apple-1 ani prostych profili.
 
-### 13.2. Potrzebne później
+### 14.2. Potrzebne później
 
 | System | Powód |
 |---|---|
@@ -509,7 +600,7 @@ Bankowanie pamięci nie jest potrzebne do minimalnego SBC, Apple-1 ani prostych 
 | Atari XL/XE | bankowanie RAM/ROM |
 | 65C816 systems | adresowanie 24-bit |
 
-### 13.3. Proponowany kontrakt późniejszy
+### 14.3. Proponowany kontrakt późniejszy
 
 ```csharp
 public interface IBankedMemoryController : IDevice
@@ -520,9 +611,9 @@ public interface IBankedMemoryController : IDevice
 
 ---
 
-## 14. Pluginy i dynamiczne ładowanie
+## 15. Pluginy i dynamiczne ładowanie
 
-### 14.1. MVP
+### 15.1. MVP
 
 Na początku rejestracja fabryk w kodzie:
 
@@ -531,7 +622,7 @@ services.AddSingleton<ICpuFactory, Mos6502CpuFactory>();
 services.AddSingleton<IDeviceFactory, UartSimpleDeviceFactory>();
 ```
 
-### 14.2. Później
+### 15.2. Później
 
 Dynamiczne ładowanie assembly:
 
@@ -549,7 +640,7 @@ public interface IEmulatorPlugin
 }
 ```
 
-### 14.3. Rejestr pluginów
+### 15.3. Rejestr pluginów
 
 ```csharp
 public interface IEmulatorPluginRegistry
@@ -561,7 +652,7 @@ public interface IEmulatorPluginRegistry
 
 ---
 
-## 15. Frontendy
+## 16. Frontendy
 
 Frontendy nie powinny być zależne od CPU. Powinny komunikować się przez adaptery:
 
@@ -587,7 +678,7 @@ UartSimpleDevice -> ITerminalLink -> frontend/host
 
 ---
 
-## 16. Walidacja profilu
+## 17. Walidacja profilu
 
 Walidator powinien sprawdzać:
 
@@ -611,38 +702,44 @@ Unknown CPU type: z180.
 
 ---
 
-## 17. Testy
+## 18. Testy
 
-### 17.1. Unit tests
+### 18.1. Unit tests
 
 - `ComputerProfileParserTests`
 - `ComputerProfileValidatorTests`
 - `SystemBusTests`
+- `RuntimeBusTests`
+- `CompiledMemoryMapTests`
+- `CompiledPortMapTests`
 - `MemoryRegionTests`
 - `DeviceFactoryRegistryTests`
 - `CpuFactoryRegistryTests`
 - `ComputerBuilderTests`
 
-### 17.2. Integracyjne
+### 18.2. Integracyjne
 
 - `Build_Custom6502Sbc_CreatesCpuMemoryAndUart`
 - `Build_Apple1_CreatesCpuRomRamAndPiaTerminal`
 - `Build_Z80Sbc_CreatesPortMappedUart`
 - `Build_ProfileWithOverlappingMemory_ThrowsValidationError`
 - `Build_ProfileWithUnknownDevice_ThrowsValidationError`
+- `Build_Profile_CompilesMemoryMap`
+- `Build_Profile_CompilesPortMap_WhenPortDevicesExist`
 - `Tick_UpdatesCpuAndCycleDevices`
 - `Tick_AggregatesIrqSources`
 
-### 17.3. Testy zgodności architektonicznej
+### 18.3. Testy zgodności architektonicznej
 
 - CPU nie referencjonuje nazw komputerów.
 - Urządzenia nie zależą od konkretnego frontendu.
 - Profile runtime są oddzielone od dokumentów planów.
 - Z80 nie wymaga zmian w `Cpu6502`.
+- Runtime bus nie iteruje po wszystkich urządzeniach przy każdym dostępie do pamięci.
 
 ---
 
-## 18. Kolejność implementacji
+## 19. Kolejność implementacji
 
 ### Etap 1 — kontrakty i bus
 
@@ -655,42 +752,54 @@ Unknown CPU type: z180.
 - [ ] Dodać `IIrqSource` / `INmiSource`.
 - [ ] Dodać `SystemBus`.
 
-### Etap 2 — profile runtime
+### Etap 2 — szybkie mapy runtime
+
+- [ ] Dodać `RuntimeBus`.
+- [ ] Dodać `CompiledMemoryMap`.
+- [ ] Dodać `CompiledPortMap`.
+- [ ] Dodać `IMemoryPageHandler`.
+- [ ] Dodać `IPortHandler`.
+- [ ] Dodać `FastRamRegion`.
+- [ ] Dodać `FastRomRegion`.
+- [ ] Dodać `NullPageHandler`.
+
+### Etap 3 — profile runtime
 
 - [ ] Dodać `ComputerProfile`.
 - [ ] Dodać parser JSON.
 - [ ] Dodać walidator.
 - [ ] Dodać model `MemoryRegion`.
 - [ ] Dodać `ComputerBuilder`.
+- [ ] Dodać kompilację profilu do map runtime.
 
-### Etap 3 — migracja 6502
+### Etap 4 — migracja 6502
 
 - [ ] Owinąć istniejący `Cpu6502` w `ICpuCore`.
 - [ ] Usunąć zależności CPU od konkretnego profilu maszyny.
-- [ ] Podłączyć CPU do `ISystemBus`.
+- [ ] Podłączyć CPU do `ISystemBus` / `RuntimeBus`.
 - [ ] Dodać test minimalnego profilu 6502.
 
-### Etap 4 — minimalny SBC
+### Etap 5 — minimalny SBC
 
 - [ ] Dodać `UartSimpleDevice`.
 - [ ] Dodać `ITerminalLink`.
 - [ ] Dodać profil `minimal-sbc-6502.json`.
 - [ ] Dodać test programu UART echo.
 
-### Etap 5 — Apple-1
+### Etap 6 — Apple-1
 
 - [ ] Dodać `Apple1PiaTerminalDevice` albo `Mos6821PiaDevice`.
 - [ ] Dodać profil `apple-1.json`.
 - [ ] Uruchomić WOZ Monitor.
 
-### Etap 6 — Z80 jako proof of architecture
+### Etap 7 — Z80 jako proof of architecture
 
 - [ ] Dodać pusty/stub `CpuZ80Core`.
 - [ ] Dodać `IPortMappedDevice` w praktyce.
 - [ ] Dodać profil `custom-z80-sbc.json`.
 - [ ] Dodać port-mapped UART.
 
-### Etap 7 — większe systemy
+### Etap 8 — większe systemy
 
 - [ ] PET.
 - [ ] KIM-1.
@@ -701,7 +810,7 @@ Unknown CPU type: z180.
 
 ---
 
-## 19. Decyzje architektoniczne
+## 20. Decyzje architektoniczne
 
 1. CPU nie zna komputerów.
 2. Komputer jest składany z profilu.
@@ -709,19 +818,25 @@ Unknown CPU type: z180.
 4. 6502 używa memory-mapped I/O.
 5. Z80 używa memory + port I/O.
 6. `ISystemBus` jest wspólną abstrakcją.
-7. Bankowanie pamięci jest etapem późniejszym.
-8. Dynamiczne pluginy są etapem późniejszym; najpierw rejestracja fabryk w kodzie.
-9. Frontend nie jest częścią CPU ani urządzeń.
-10. Dokumenty planów nie są profilami runtime.
+7. `RuntimeBus` jest szybką implementacją runtime.
+8. `ComputerBuilder` kompiluje profil do `CompiledMemoryMap` i `CompiledPortMap`.
+9. Bankowanie pamięci jest etapem późniejszym.
+10. Dynamiczne pluginy są etapem późniejszym; najpierw rejestracja fabryk w kodzie.
+11. Frontend nie jest częścią CPU ani urządzeń.
+12. Dokumenty planów nie są profilami runtime.
+13. Nie iterować po wszystkich urządzeniach w hot path odczytu/zapisu.
 
 ---
 
-## 20. Definition of Done
+## 21. Definition of Done
 
 Mechanizm składania komputerów można uznać za gotowy w wersji MVP, gdy:
 
 - [ ] istnieje `ICpuCore`,
 - [ ] istnieje `ISystemBus`,
+- [ ] istnieje `RuntimeBus`,
+- [ ] istnieje `CompiledMemoryMap`,
+- [ ] istnieje `CompiledPortMap`,
 - [ ] istnieją kontrakty urządzeń memory/port/cycle/irq,
 - [ ] istnieje `ComputerProfile`,
 - [ ] istnieje `ComputerBuilder`,
@@ -730,4 +845,5 @@ Mechanizm składania komputerów można uznać za gotowy w wersji MVP, gdy:
 - [ ] CPU 6502 nie zna UART ani nazw komputerów,
 - [ ] walidator wykrywa konflikty mapowania,
 - [ ] testy integracyjne potwierdzają składanie przynajmniej jednej maszyny 6502,
-- [ ] architektura pozwala dodać Z80 bez modyfikowania `Cpu6502`.
+- [ ] architektura pozwala dodać Z80 bez modyfikowania `Cpu6502`,
+- [ ] runtime bus nie iteruje po wszystkich urządzeniach przy każdym dostępie do pamięci.
