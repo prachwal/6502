@@ -40,6 +40,7 @@ public partial class Cpu6502
         _suppressPostInstructionIrq = false;
         _branchTaken = false;
         _pageCrossed = false;
+        _halted = false;
     }
 
     #endregion

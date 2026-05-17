@@ -33,7 +33,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [x] | 4% | 68% |
 | 18 | Nieudokumentowane opkody — stabilne | [faza-18-illegal-stable.md](faza-18-illegal-stable.md) | [x] | 8% | 76% |
 | 18C | Nieudokumentowane opkody stabilne - ANC, ALR, ARR, SBX, LAS | [faza-18C-nieudokumentowane-opkody-stabilne.md](faza-18C-nieudokumentowane-opkody-stabilne.md) | [x] | 2% | 78% |
-| 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [ ] | 6% | 84% |
+| 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [x] | 6% | 84% |
 | 20 | Test zgodności — nestest | [faza-20-nestest.md](faza-20-nestest.md) | [ ] | 4% | 88% |
 | 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](faza-21-klaus.md) | [ ] | 4% | 93% |
 | 22 | Test zgodności — Wolfgang Lorenz | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [ ] | 5% | 97% |
@@ -44,11 +44,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     17 / 25 faz (68%)
+Całkowity postęp:     18 / 25 faz (72%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18C
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18C, 19
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 20,21,22,23
 ```
 
 ---

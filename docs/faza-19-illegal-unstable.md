@@ -2,11 +2,14 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 6% (sekcje: 5 — niestabilne, NOP, KIL) |
-| **Pokrycie całości** | 83% |
+| **Pokrycie całości** | 84% |
 | **Zależności** | Faza 18 |
 | **Szacowany czas** | 4–6h |
+| **Data rozpoczęcia** | 2026-05-27 |
+| **Data zakończenia** | 2026-05-27 |
+| **Liczba testów** | 20 |
 
 ---
 
@@ -126,17 +129,31 @@ public void Tick()
 
 ## Definition of Done
 
-- [ ] Wszystkie niestabilne opkody zaimplementowane (ANE, LXA, SHA, SHX, SHY, TAS, USBC)
-- [ ] ~25 nieudokumentowanych NOP-ów
-- [ ] 12 instrukcji KIL
-- [ ] Działanie zgodne z dokumentacją
-- [ ] 12 testów jednostkowych zielonych
+- [x] Wszystkie niestabilne opkody zaimplementowane (ANE, LXA, SHA, SHX, SHY, TAS, USBC)
+- [x] ~25 nieudokumentowanych NOP-ów
+- [x] 12 instrukcji KIL
+- [x] Działanie zgodne z dokumentacją
+- [x] 20 testów jednostkowych zielonych
 
 ---
 
-## Pliki
+## Pliki implementacyjne
 
-| Plik | Akcja |
-|------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj |
-| `tests/Cpu6502.Tests/IllegalOpcodesTests.cs` | Modyfikuj — dodaj testy |
+| Plik | Opis |
+|------|------|
+| `src/Cpu6502/Cpu6502.Fields.cs` | Dodano `_halted` |
+| `src/Cpu6502/Cpu6502.PublicMethods.cs` | `Reset()` ustawia `_halted=false`, `Tick()` sprawdza `_halted` |
+| `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` | Dodano cykle i dispatch dla nowych opcode'ów |
+| `src/Cpu6502/Cpu6502.CycleStepped.UnstableOpcodes.cs` | Implementacja ANE, LXA, SHA, SHX, SHY, TAS, USBC |
+| `src/Cpu6502/Cpu6502.CycleStepped.NopKilOpcodes.cs` | Implementacja 25 NOP-ów + 12 KIL-ów |
+| `tests/Cpu6502.Tests/Phase19UnstableOpcodesTests.cs` | 20 testów jednostkowych |
+
+---
+
+## Wyniki
+
+| Metryka | Wartość |
+|---------|---------|
+| **Build** | ✅ 0 błędów, 9 ostrzeżeń (istniejące) |
+| **Testy** | ✅ 252/252 (100%) |
+| **Status** | Zakończone |

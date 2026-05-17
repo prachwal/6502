@@ -121,6 +121,11 @@ public partial class Cpu6502
     /// </summary>
     private bool _branchTaken;
 
+    /// <summary>
+    /// Flaga sygnalizująca, że CPU jest zatrzymany (KIL/JAM).
+    /// </summary>
+    private bool _halted;
+
     #endregion
 
     #region Zmienne tymczasowe dla wielocyklowych instrukcji

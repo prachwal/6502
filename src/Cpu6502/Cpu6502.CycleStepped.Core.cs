@@ -26,6 +26,11 @@ public partial class Cpu6502
     /// </summary>
     public void Tick()
     {
+        if (_halted)
+        {
+            return;
+        }
+
         if (TryServiceInterruptBoundary())
         {
             return;
@@ -94,6 +99,21 @@ public partial class Cpu6502
             0x00 => 7, 0x40 => 6,
             0x24 => 3, 0x2C => 4,
             0x0B => 2, 0x2B => 2, 0x4B => 2, 0x6B => 2, 0xCB => 2, 0xBB => 4,
+            // Faza 19 - Niestabilne opkody
+            0x8B => 2, 0xAB => 2, 0xEB => 2,  // ANE, LXA, USBC - Immediate
+            0x9F => 5, 0x93 => 6,  // SHA - abs,Y, ind,Y
+            0x9E => 5,  // SHX - abs,Y
+            0x9C => 5,  // SHY - abs,X
+            0x9B => 5,  // TAS - abs,Y
+            // Faza 19 - NOP-y
+            0x04 => 3, 0x44 => 3, 0x64 => 3,  // NOP zp
+            0x14 => 4, 0x34 => 4, 0x54 => 4, 0x74 => 4, 0x0C => 4,  // NOP zp,X
+            0x1C => 4, 0x3C => 4, 0x5C => 4, 0x7C => 4, 0xDC => 4, 0xFC => 4,  // NOP abs,X
+            0x80 => 2, 0x82 => 2, 0x89 => 2, 0xC2 => 2, 0xE2 => 2,  // NOP imm
+            0x1A => 2, 0x3A => 2, 0x5A => 2, 0x7A => 2, 0xDA => 2, 0xFA => 2,  // NOP impl
+            // Faza 19 - KIL
+            0x02 => 1, 0x12 => 1, 0x22 => 1, 0x32 => 1, 0x42 => 1, 0x52 => 1,
+            0x62 => 1, 0x72 => 1, 0x92 => 1, 0xB2 => 1, 0xD2 => 1, 0xF2 => 1,
             _ => 2
         };
     }
@@ -131,6 +151,16 @@ public partial class Cpu6502
         }
 
         if (ExecuteCycleIllegalRMW(key))
+        {
+            return;
+        }
+
+        if (ExecuteCycleUnstableOpcodes(key))
+        {
+            return;
+        }
+
+        if (ExecuteCycleNopKilOpcodes(key))
         {
             return;
         }
@@ -173,6 +203,149 @@ public partial class Cpu6502
             return true;
         }
 
+        return false;
+    }
+
+    /// <summary>
+    /// Wykonuje cykl dla niestabilnych opcode'ów (ANE, LXA, SHA, SHX, SHY, TAS, USBC).
+    /// </summary>
+    private bool ExecuteCycleUnstableOpcodes(ushort key)
+    {
+        switch (key)
+        {
+            // ANE (XAA) - $8B
+            case 0x8B << 3 | 0: AneImm(); return true;
+            // LXA (LAX Immediate) - $AB
+            case 0xAB << 3 | 0: LxaImm(); return true;
+            // USBC - $EB
+            case 0xEB << 3 | 0: UsbcImm(); return true;
+            // SHA - $9F (abs,Y)
+            case 0x9F << 3 | 0: ShaAbsY_Cycle0(); break;
+            case 0x9F << 3 | 1: ShaAbsY_Cycle1(); break;
+            case 0x9F << 3 | 2: ShaAbsY_Cycle2(); break;
+            case 0x9F << 3 | 3: ShaAbsY_Cycle3(); break;
+            case 0x9F << 3 | 4: ShaAbsY_Cycle4(); return true;
+            // SHA - $93 (ind,Y)
+            case 0x93 << 3 | 0: ShaIndY_Cycle0(); break;
+            case 0x93 << 3 | 1: ShaIndY_Cycle1(); break;
+            case 0x93 << 3 | 2: ShaIndY_Cycle2(); break;
+            case 0x93 << 3 | 3: ShaIndY_Cycle3(); break;
+            case 0x93 << 3 | 4: ShaIndY_Cycle4(); break;
+            case 0x93 << 3 | 5: ShaIndY_Cycle5(); return true;
+            // SHX - $9E (abs,Y)
+            case 0x9E << 3 | 0: ShxAbsY_Cycle0(); break;
+            case 0x9E << 3 | 1: ShxAbsY_Cycle1(); break;
+            case 0x9E << 3 | 2: ShxAbsY_Cycle2(); break;
+            case 0x9E << 3 | 3: ShxAbsY_Cycle3(); break;
+            case 0x9E << 3 | 4: ShxAbsY_Cycle4(); return true;
+            // SHY - $9C (abs,X)
+            case 0x9C << 3 | 0: ShyAbsX_Cycle0(); break;
+            case 0x9C << 3 | 1: ShyAbsX_Cycle1(); break;
+            case 0x9C << 3 | 2: ShyAbsX_Cycle2(); break;
+            case 0x9C << 3 | 3: ShyAbsX_Cycle3(); break;
+            case 0x9C << 3 | 4: ShyAbsX_Cycle4(); return true;
+            // TAS - $9B (abs,Y)
+            case 0x9B << 3 | 0: TasAbsY_Cycle0(); break;
+            case 0x9B << 3 | 1: TasAbsY_Cycle1(); break;
+            case 0x9B << 3 | 2: TasAbsY_Cycle2(); break;
+            case 0x9B << 3 | 3: TasAbsY_Cycle3(); break;
+            case 0x9B << 3 | 4: TasAbsY_Cycle4(); return true;
+            default: return false;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Wykonuje cykl dla NOP i KIL opcode'ów.
+    /// </summary>
+    private bool ExecuteCycleNopKilOpcodes(ushort key)
+    {
+        switch (key)
+        {
+            // NOP - Zero Page ($04, $44, $64)
+            case 0x04 << 3 | 0: NopZp_04_Cycle0(); break;
+            case 0x04 << 3 | 1: NopZp_04_Cycle1(); break;
+            case 0x04 << 3 | 2: NopZp_04_Cycle2(); return true;
+            case 0x44 << 3 | 0: NopZp_44_Cycle0(); break;
+            case 0x44 << 3 | 1: NopZp_44_Cycle1(); break;
+            case 0x44 << 3 | 2: NopZp_44_Cycle2(); return true;
+            case 0x64 << 3 | 0: NopZp_64_Cycle0(); break;
+            case 0x64 << 3 | 1: NopZp_64_Cycle1(); break;
+            case 0x64 << 3 | 2: NopZp_64_Cycle2(); return true;
+            // NOP - Zero Page,X ($14, $34, $54, $74, $0C)
+            case 0x14 << 3 | 0: NopZpX_14_Cycle0(); break;
+            case 0x14 << 3 | 1: NopZpX_14_Cycle1(); break;
+            case 0x14 << 3 | 2: NopZpX_14_Cycle2(); break;
+            case 0x14 << 3 | 3: NopZpX_14_Cycle3(); return true;
+            case 0x34 << 3 | 0: NopZpX_34_Cycle0(); break;
+            case 0x34 << 3 | 1: NopZpX_34_Cycle1(); break;
+            case 0x34 << 3 | 2: NopZpX_34_Cycle2(); break;
+            case 0x34 << 3 | 3: NopZpX_34_Cycle3(); return true;
+            case 0x54 << 3 | 0: NopZpX_54_Cycle0(); break;
+            case 0x54 << 3 | 1: NopZpX_54_Cycle1(); break;
+            case 0x54 << 3 | 2: NopZpX_54_Cycle2(); break;
+            case 0x54 << 3 | 3: NopZpX_54_Cycle3(); return true;
+            case 0x74 << 3 | 0: NopZpX_74_Cycle0(); break;
+            case 0x74 << 3 | 1: NopZpX_74_Cycle1(); break;
+            case 0x74 << 3 | 2: NopZpX_74_Cycle2(); break;
+            case 0x74 << 3 | 3: NopZpX_74_Cycle3(); return true;
+            case 0x0C << 3 | 0: NopZpX_0C_Cycle0(); break;
+            case 0x0C << 3 | 1: NopZpX_0C_Cycle1(); break;
+            case 0x0C << 3 | 2: NopZpX_0C_Cycle2(); break;
+            case 0x0C << 3 | 3: NopZpX_0C_Cycle3(); return true;
+            // NOP - Absolute,X ($1C, $3C, $5C, $7C, $DC, $FC)
+            case 0x1C << 3 | 0: NopAbsX_1C_Cycle0(); break;
+            case 0x1C << 3 | 1: NopAbsX_1C_Cycle1(); break;
+            case 0x1C << 3 | 2: NopAbsX_1C_Cycle2(); break;
+            case 0x1C << 3 | 3: NopAbsX_1C_Cycle3(); return true;
+            case 0x3C << 3 | 0: NopAbsX_3C_Cycle0(); break;
+            case 0x3C << 3 | 1: NopAbsX_3C_Cycle1(); break;
+            case 0x3C << 3 | 2: NopAbsX_3C_Cycle2(); break;
+            case 0x3C << 3 | 3: NopAbsX_3C_Cycle3(); return true;
+            case 0x5C << 3 | 0: NopAbsX_5C_Cycle0(); break;
+            case 0x5C << 3 | 1: NopAbsX_5C_Cycle1(); break;
+            case 0x5C << 3 | 2: NopAbsX_5C_Cycle2(); break;
+            case 0x5C << 3 | 3: NopAbsX_5C_Cycle3(); return true;
+            case 0x7C << 3 | 0: NopAbsX_7C_Cycle0(); break;
+            case 0x7C << 3 | 1: NopAbsX_7C_Cycle1(); break;
+            case 0x7C << 3 | 2: NopAbsX_7C_Cycle2(); break;
+            case 0x7C << 3 | 3: NopAbsX_7C_Cycle3(); return true;
+            case 0xDC << 3 | 0: NopAbsX_DC_Cycle0(); break;
+            case 0xDC << 3 | 1: NopAbsX_DC_Cycle1(); break;
+            case 0xDC << 3 | 2: NopAbsX_DC_Cycle2(); break;
+            case 0xDC << 3 | 3: NopAbsX_DC_Cycle3(); return true;
+            case 0xFC << 3 | 0: NopAbsX_FC_Cycle0(); break;
+            case 0xFC << 3 | 1: NopAbsX_FC_Cycle1(); break;
+            case 0xFC << 3 | 2: NopAbsX_FC_Cycle2(); break;
+            case 0xFC << 3 | 3: NopAbsX_FC_Cycle3(); return true;
+            // NOP - Immediate ($80, $82, $89, $C2, $E2)
+            case 0x80 << 3 | 0: NopImm_80(); return true;
+            case 0x82 << 3 | 0: NopImm_82(); return true;
+            case 0x89 << 3 | 0: NopImm_89(); return true;
+            case 0xC2 << 3 | 0: NopImm_C2(); return true;
+            case 0xE2 << 3 | 0: NopImm_E2(); return true;
+            // NOP - Implied ($1A, $3A, $5A, $7A, $DA, $FA)
+            case 0x1A << 3 | 0: NopImpl_1A(); return true;
+            case 0x3A << 3 | 0: NopImpl_3A(); return true;
+            case 0x5A << 3 | 0: NopImpl_5A(); return true;
+            case 0x7A << 3 | 0: NopImpl_7A(); return true;
+            case 0xDA << 3 | 0: NopImpl_DA(); return true;
+            case 0xFA << 3 | 0: NopImpl_FA(); return true;
+            // KIL ($02, $12, $22, $32, $42, $52, $62, $72, $92, $B2, $D2, $F2)
+            case 0x02 << 3 | 0: Kil_02(); return true;
+            case 0x12 << 3 | 0: Kil_12(); return true;
+            case 0x22 << 3 | 0: Kil_22(); return true;
+            case 0x32 << 3 | 0: Kil_32(); return true;
+            case 0x42 << 3 | 0: Kil_42(); return true;
+            case 0x52 << 3 | 0: Kil_52(); return true;
+            case 0x62 << 3 | 0: Kil_62(); return true;
+            case 0x72 << 3 | 0: Kil_72(); return true;
+            case 0x92 << 3 | 0: Kil_92(); return true;
+            case 0xB2 << 3 | 0: Kil_B2(); return true;
+            case 0xD2 << 3 | 0: Kil_D2(); return true;
+            case 0xF2 << 3 | 0: Kil_F2(); return true;
+            default: return false;
+        }
         return false;
     }
 

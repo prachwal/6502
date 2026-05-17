@@ -52,6 +52,7 @@ allowlist = [
     "pip3",
     "python",
     "python3",
+    "rm",
     "tail",
     "vibe",
     "which",
