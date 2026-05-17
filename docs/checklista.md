@@ -32,6 +32,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 16 | Architektura cycle-stepped — Tick() per cykl | [faza-16-cycle-stepped.md](faza-16-cycle-stepped.md) | [x] | 6% | 63% |
 | 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [x] | 4% | 68% |
 | 18 | Nieudokumentowane opkody — stabilne | [faza-18-illegal-stable.md](faza-18-illegal-stable.md) | [ ] | 8% | 76% |
+| 18C | Nieudokumentowane opkody stabilne - ANC, ALR, ARR, SBX, LAS | [faza-18C-nieudokumentowane-opkody-stabilne.md](faza-18C-nieudokumentowane-opkody-stabilne.md) | [x] | 2% | 78% |
 | 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [ ] | 6% | 83% |
 | 20 | Test zgodności — nestest | [faza-20-nestest.md](faza-20-nestest.md) | [ ] | 4% | 88% |
 | 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](faza-21-klaus.md) | [ ] | 4% | 93% |
@@ -43,10 +44,10 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     14 / 24 faz (58%)
+Całkowity postęp:     15 / 25 faz (60%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
-Fazy w trakcie     [~]: 
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18C
+Fazy w trakcie     [~]:
 Fazy nie rozpoczęte [ ]: 18,19,20,21,22,23
 ```
 

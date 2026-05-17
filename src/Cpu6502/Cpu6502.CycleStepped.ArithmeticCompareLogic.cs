@@ -60,6 +60,15 @@ public partial class Cpu6502
             case 0x59 << 3 | 0: EorAbsY(); _sync = true; break;
             case 0x41 << 3 | 0: EorIndX(); _sync = true; break;
             case 0x51 << 3 | 0: EorIndY(); _sync = true; break;
+            // ANC
+            case 0x0B << 3 | 0: AncImm(); _sync = true; break;
+            case 0x2B << 3 | 0: AncImm2(); _sync = true; break;
+            // ALR
+            case 0x4B << 3 | 0: AlrImm(); _sync = true; break;
+            // ARR
+            case 0x6B << 3 | 0: ArrImm(); _sync = true; break;
+            // SBX
+            case 0xCB << 3 | 0: SbxImm(); _sync = true; break;
             default: return false;
         }
 

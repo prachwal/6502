@@ -239,4 +239,81 @@ public partial class Cpu6502
     }
 
     #endregion
+
+    #region Illegal Opcodes - Arithmetic
+
+    /// <summary>
+    /// AncImm - AND + C ← bit7
+    /// Opcode: 0x0B, Tryb: Immediate, Cykle: 2
+    /// Flagi: N, Z, C
+    /// </summary>
+    private void AncImm()
+    {
+        byte val = _memory.Read(_pc++);
+        _a &= val;
+        SetNZ(_a);
+        SetFlag(FlagC, (_a & 0x80) != 0);
+    }
+
+    /// <summary>
+    /// AncImm2 - AND + C ← bit7 (alternate opcode)
+    /// Opcode: 0x2B, Tryb: Immediate, Cykle: 2
+    /// Flagi: N, Z, C
+    /// </summary>
+    private void AncImm2()
+    {
+        byte val = _memory.Read(_pc++);
+        _a &= val;
+        SetNZ(_a);
+        SetFlag(FlagC, (_a & 0x80) != 0);
+    }
+
+    /// <summary>
+    /// AlrImm - AND + LSR
+    /// Opcode: 0x4B, Tryb: Immediate, Cykle: 2
+    /// Flagi: C, N, Z
+    /// </summary>
+    private void AlrImm()
+    {
+        byte val = _memory.Read(_pc++);
+        _a &= val;
+        SetFlag(FlagC, (_a & 0x01) != 0);
+        _a >>= 1;
+        SetNZ(_a);
+    }
+
+    /// <summary>
+    /// ArrImm - AND + ROR
+    /// Opcode: 0x6B, Tryb: Immediate, Cykle: 2
+    /// Flagi: C, V, N, Z
+    /// </summary>
+    private void ArrImm()
+    {
+        byte val = _memory.Read(_pc++);
+        _a &= val;
+        
+        bool carryIn = (_p & FlagC) != 0;
+        bool carryOut = (_a & 0x01) != 0;
+        _a = (byte)((_a >> 1) | (carryIn ? 0x80 : 0x00));
+        SetFlag(FlagC, carryOut);
+        SetNZ(_a);
+        
+        // V = (A ^ (A >> 1)) & 0x40
+        SetFlag(FlagV, ((_a ^ (_a >> 1)) & 0x40) != 0);
+    }
+
+    /// <summary>
+    /// SbxImm - (A & X) - operand → X
+    /// Opcode: 0xCB, Tryb: Immediate, Cykle: 2
+    /// Flagi: N, Z, C
+    /// </summary>
+    private void SbxImm()
+    {
+        byte val = _memory.Read(_pc++);
+        byte andVal = (byte)(_a & _x);
+        ExecuteCmp(andVal, val);
+        _x = (byte)(andVal - val);
+    }
+
+    #endregion
 }

@@ -1,0 +1,69 @@
+active_model = "mistral-medium-3.5"
+vim_keybindings = false
+disable_welcome_banner_animation = true
+autocopy_to_clipboard = true
+bypass_tool_permissions = false
+system_prompt_id = "cli"
+enable_telemetry = true
+enable_update_checks = true
+auto_compact_threshold = 200000
+api_timeout = 720.0
+include_commit_signature = true
+include_model_info = true
+include_project_context = true
+include_prompt_detail = true
+voice_mode_enabled = false
+narrator_enabled = false
+
+[session_logging]
+enabled = true
+save_dir = ""
+session_prefix = "session"
+
+[tools.bash]
+allowlist = [
+    "/home/prachwal/.config/vibe/*",
+    "/home/prachwal/.vibe/*",
+    "cargo",
+    "cat",
+    "cd",
+    "clang",
+    "clang++",
+    "cmake",
+    "dotnet",
+    "echo",
+    "find",
+    "g++",
+    "gcc",
+    "git",
+    "grep",
+    "head",
+    "kilo",
+    "ls",
+    "make",
+    "mkdir",
+    "npm",
+    "pip3",
+    "python",
+    "python3",
+    "tail",
+    "vibe",
+    "which",
+]
+default_agent = "plan"
+enable_experimental_hooks = false
+
+[tools.write_file]
+allowlist = [
+    "/home/prachwal/.vibe/agents/*",
+]
+
+[tools.read_file]
+allowlist = [
+    "/home/prachwal/.vibe/*",
+]
+
+[tools.search_replace]
+allowlist = [
+    "/home/prachwal/.vibe/*",
+]

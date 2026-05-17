@@ -51,6 +51,13 @@ public partial class Cpu6502
             case 0x58 << 3 | 0: Cli(); _sync = true; break;
             case 0x78 << 3 | 0: Sei(); _sync = true; break;
             case 0xB8 << 3 | 0: Clv(); _sync = true; break;
+            
+            // LAS - Load A, X, SP from memory AND SP
+            case 0xBB << 3 | 0: LasAbsY_Cycle0(); break;
+            case 0xBB << 3 | 1: LasAbsY_Cycle1(); break;
+            case 0xBB << 3 | 2: LasAbsY_Cycle2(); break;
+            case 0xBB << 3 | 3: LasAbsY_Cycle3(); break;
+            
             default: return false;
         }
 
