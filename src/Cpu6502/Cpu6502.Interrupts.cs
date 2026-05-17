@@ -7,39 +7,7 @@ public partial class Cpu6502
 {
     #region Obsługa przerwań
 
-    /// <summary>
-    /// BRK - Software Interrupt.
-    /// Opcode: 0x00, Tryb: Implied, Cykle: 7
-    /// </summary>
-    private void Brk()
-    {
-        // BRK to 2-bajtowa instrukcja (opcode + signature byte)
-        // PC wskazuje już na signature byte po fetchu — pomiń go
-        _pc++;
-        // Wstrzykuje przerwanie z B=1 (pushuje PC za signature byte)
-        InjectInterrupt(InterruptType.BRK);
-    }
 
-    /// <summary>
-    /// RTI - Return from Interrupt.
-    /// Opcode: 0x40, Tryb: Implied, Cykle: 6
-    /// </summary>
-    private void Rti()
-    {
-        // Pull P (z flagami)
-        _p = Pop();
-        
-        // Pull PCL i PCH
-        byte lo = Pop();
-        byte hi = Pop();
-        _pc = (ushort)((hi << 8) | lo);
-        
-        // Ustaw sygnalizację pobrania nowego opcode
-        _sync = true;
-
-        // RTI może zmienić flagę I — opóźnij sprawdzenie IRQ o 1 instrukcję
-        _interruptDelay = true;
-    }
 
     /// <summary>
     /// Wstrzykuje sekwencję obsługi przerwania.

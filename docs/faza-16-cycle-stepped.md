@@ -19,6 +19,20 @@ Przebudowa emulatora z modelu instruction-stepped (każda instrukcja w jednym wy
 
 ---
 
+## Notatka utrzymaniowa: przyczyna regresji JMP/BRK/RTI/BIT/IRQ
+
+W trakcie debugowania testów `JMP`, `BRK`, `RTI`, `BIT`, `CLI` i branch/IRQ znaleziono trzy źródła problemu:
+
+1. Główna przyczyna: dispatchery `ExecuteCycle*` mieszały znaczenie wartości `false`. Dla części ścieżek `false` oznaczało "nie moja grupa opcode", ale dla cykli pośrednich bywało traktowane jak "cykl wykonany, instrukcja jeszcze trwa". Fallback w `ExecuteCycle()` interpretował to jako brak obsługi i ustawiał `_sync = true`, przez co instrukcje wielocyklowe kończyły się po pierwszym cyklu.
+2. Pułapka testowa: test `JMP ($01FF)` ładował program pod `$0100`, a następnie zapisywał high byte błędu NMOS również pod `$0100`, nadpisując opcode `0x6C`.
+3. Sprzeczne oczekiwania testów IRQ: testy `CLI` różnie interpretowały, czy IRQ ma wejść w tym samym `ExecuteOne()` po `NOP`, czy dopiero na kolejnej granicy. Kontrakt projektu został ujednolicony: `CLI, NOP` daje kolejno PC `0101`, `0102`, a dopiero następne wejście obsługuje wektor IRQ.
+
+Stała zasada projektowa: metoda dispatchera ma zwrócić `true` dla każdego obsłużonego `(opcode, cycle)`, nawet jeśli instrukcja nie zakończyła się w tym cyklu. Koniec instrukcji sygnalizuje tylko `_sync`.
+
+Przed naprawą pojedynczego opcode'u należy najpierw potwierdzić małym testem/harnessem, że wykonywane są wszystkie jego cykle. Objaw "PC zostało na `$0101`/`$0102`" przy instrukcji wielocyklowej zwykle oznacza problem dispatchera, nie semantyki samej instrukcji.
+
+---
+
 ## Co implementujemy
 
 ### Rejestr IR (Instruction Register)

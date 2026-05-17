@@ -38,6 +38,48 @@ _opcodeTable[0x65] = () => AdcZp();    // ADC Zero Page
 
 ## 📝 Implementacja instrukcji
 
+### 0. Kontrakt dispatchera cycle-stepped
+
+W architekturze cycle-stepped metoda dispatchująca grupę opcode'ów **MUSI** rozróżniać dwa stany:
+
+1. `true` = ten `(opcode, cycle)` został obsłużony
+2. `false` = ten `(opcode, cycle)` nie należy do tej grupy dispatchera
+
+`false` **NIE MOŻE** oznaczać "cykl pośredni wykonany, instrukcja jeszcze trwa". Jeśli cykl pośredni został wykonany, dispatcher ma zwrócić `true`, a o zakończeniu instrukcji decyduje wyłącznie `_sync` ustawiony przez metodę cyklu.
+
+Stała reguła dla `ExecuteCycle*`:
+
+```csharp
+if (opcode == 0x6C && cycle == 0)
+{
+    JmpInd_Cycle0();
+    return true; // obsłużone, nawet jeśli _sync nadal false
+}
+```
+
+Nieprzestrzeganie tej reguły powoduje bardzo mylący objaw: wiele instrukcji wielocyklowych (`JMP`, `BRK`, `RTI`, `BIT`, RMW) kończy się po pierwszym cyklu, bo fallback w `ExecuteCycle()` ustawia `_sync = true`.
+
+### 0.1. Diagnoza przed poprawką opcode'u
+
+Przed zmianą logiki konkretnej instrukcji wielocyklowej należy najpierw potwierdzić, czy dispatcher w ogóle dochodzi do jej kolejnych cykli.
+
+Minimalna procedura:
+
+1. Uruchom tylko zawężony scenariusz lub mały harness dla jednego opcode'u.
+2. Zapisz dla każdego `Tick()` wartości: opcode, cycle, PC, `_sync`.
+3. Jeśli PC wygląda jak po samym fetchu (`$0101`, `$0102`) zamiast jak wynik instrukcji, sprawdź kontrakt `return true/false` w dispatcherze, a nie tylko kod opcode'u.
+
+### 0.2. Kontrakt IRQ na granicy instrukcji
+
+IRQ jest próbkowane na granicach instrukcji. Instrukcje odblokowujące IRQ (`CLI`, `RTI`) mają opóźnienie: po `CLI` kolejna instrukcja musi zakończyć się normalnie, a dopiero następna granica może wejść w IRQ.
+
+Reguły projektowe:
+
+1. `CLI` czyści flagę `I` i ustawia `_interruptDelay`.
+2. Opóźnienie CLI/RTI jednorazowo blokuje post-instruction IRQ boundary.
+3. Test `CLI, NOP` powinien oczekiwać: po `CLI` PC na `NOP`, po `NOP` PC za `NOP`, a dopiero kolejne wejście w wykonanie obsługuje wektor IRQ.
+4. Branch not-taken ma testowaną osobną właściwość: IRQ nie może przerwać w cyklu 1 i nie może zostać obsłużone w tym samym `ExecuteOne()` po zakończeniu branch not-taken.
+
 ### 1. Struktura metody instrukcji
 Każda instrukcja powinna:
 1. Mieć **opisową nazwę** (np. `AdcImm`, `LdaZpX`)

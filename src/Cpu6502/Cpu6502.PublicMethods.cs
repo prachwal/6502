@@ -31,6 +31,15 @@ public partial class Cpu6502
         _cycle = 0;
         _cycleCount = 0;
         _currentOpcode = 0;
+        _irqPending = false;
+        _nmiLatched = false;
+        _previousNMI = false;
+        _interruptDelay = false;
+        _shouldClearI = false;
+        _irqReadyAtBoundary = false;
+        _suppressPostInstructionIrq = false;
+        _branchTaken = false;
+        _pageCrossed = false;
     }
 
     #endregion
@@ -73,6 +82,10 @@ public partial class Cpu6502
     public void SetIRQ(bool active)
     {
         _irqPending = active;
+        if (!active)
+        {
+            _irqReadyAtBoundary = false;
+        }
     }
 
     /// <summary>

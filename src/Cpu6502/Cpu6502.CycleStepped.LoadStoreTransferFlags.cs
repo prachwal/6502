@@ -48,7 +48,7 @@ public partial class Cpu6502
             case 0x38 << 3 | 0: Sec(); _sync = true; break;
             case 0xD8 << 3 | 0: Cld(); _sync = true; break;
             case 0xF8 << 3 | 0: Sed(); _sync = true; break;
-            case 0x58 << 3 | 0: Cli(); _interruptDelay = true; _sync = true; break;
+            case 0x58 << 3 | 0: Cli(); _sync = true; break;
             case 0x78 << 3 | 0: Sei(); _sync = true; break;
             case 0xB8 << 3 | 0: Clv(); _sync = true; break;
             default: return false;

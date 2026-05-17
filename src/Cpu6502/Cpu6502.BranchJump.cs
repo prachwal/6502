@@ -21,29 +21,11 @@ public partial class Cpu6502
     /// <summary>
     /// JmpInd - Jump Indirect.
     /// Opcode: 0x6C, Tryb: Indirect, Cykle: 5
-    /// Uwaga: Implementacja NMOS bug - gdy adres ma $xxFF, high byte czytany z tej samej strony.
+    /// Uwaga: Implementacja NMOS bug - gdy adres ma $xxFF, high byte czytany z $xx00 zamiast $(xx+1)00.
     /// </summary>
     private void JmpInd()
     {
-        byte loAddr = _memory.Read(_pc++);
-        byte hiAddr = _memory.Read(_pc);
-        ushort indirectAddr = (ushort)((hiAddr << 8) | loAddr);
-        
-        // NMOS 6502 bug: jeśli low byte adresu to $xxFF, high byte jest czytany z $xx00
-        if ((indirectAddr & 0x00FF) == 0x00FF)
-        {
-            // Bug: high byte czytany z tej samej strony
-            byte lo = _memory.Read(indirectAddr);
-            byte hi = _memory.Read((ushort)(indirectAddr & 0xFF00));
-            _pc = (ushort)((hi << 8) | lo);
-        }
-        else
-        {
-            // Normalne działanie
-            byte lo = _memory.Read(indirectAddr);
-            byte hi = _memory.Read((ushort)(indirectAddr + 1));
-            _pc = (ushort)((hi << 8) | lo);
-        }
+        _pc = AddrIndirectAbs();
     }
 
     #endregion

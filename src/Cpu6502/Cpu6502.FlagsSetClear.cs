@@ -56,7 +56,7 @@ public partial class Cpu6502
     private void Cli()
     {
         SetFlag(FlagI, false);
-        _interruptDelay = true; // opóźnij sprawdzenie IRQ o 1 instrukcję
+        _interruptDelay = true;
     }
 
     /// <summary>

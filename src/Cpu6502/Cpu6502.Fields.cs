@@ -101,6 +101,26 @@ public partial class Cpu6502
     /// </summary>
     private bool _interruptDelay;
 
+    /// <summary>
+    /// Flaga sygnalizująca, że CLI ma zostać wykonane z opóźnieniem o 1 instrukcję.
+    /// </summary>
+    private bool _shouldClearI;
+
+    /// <summary>
+    /// IRQ gotowe do obsługi na początku następnego Tick().
+    /// </summary>
+    private bool _irqReadyAtBoundary;
+
+    /// <summary>
+    /// Jednorazowo blokuje obsługę IRQ na końcu bieżącej instrukcji.
+    /// </summary>
+    private bool _suppressPostInstructionIrq;
+
+    /// <summary>
+    /// Flaga sygnalizująca, czy branch został wykonany.
+    /// </summary>
+    private bool _branchTaken;
+
     #endregion
 
     #region Zmienne tymczasowe dla wielocyklowych instrukcji

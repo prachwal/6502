@@ -26,22 +26,15 @@ public partial class Cpu6502
     /// </summary>
     public void Tick()
     {
+        if (TryServiceInterruptBoundary())
+        {
+            return;
+        }
+
         if (_sync)
         {
-            if (_interruptDelay)
+            if (TryServiceInterruptBoundary())
             {
-                _interruptDelay = false;
-            }
-            else if (_nmiLatched)
-            {
-                _nmiLatched = false;
-                InjectInterrupt(InterruptType.NMI);
-                return;
-            }
-            else if (_irqPending && !GetFlag(FlagI))
-            {
-                _irqPending = false;
-                InjectInterrupt(InterruptType.IRQ);
                 return;
             }
 
@@ -57,9 +50,11 @@ public partial class Cpu6502
         {
             var key = (ushort)((_currentOpcode << 3) | _cycleCount);
             ExecuteCycle(key);
+            _cycleCount++;
+            _cycle++;
         }
-        _cycleCount++;
-        _cycle++;
+
+        ServicePostInstructionIrqBoundary();
     }
 
     /// <summary>
@@ -121,75 +116,92 @@ public partial class Cpu6502
 
         if (ExecuteCycleMathsStackBranches(key))
         {
-            _sync = true;
             return;
         }
 
         if (ExecuteCycleControlFlow(key))
         {
-            _sync = true;
             return;
         }
 
         if (ExecuteCycleBranches(key))
         {
-            _sync = true;
             return;
         }
 
+        // Jeśli żadna metoda nie obsłużyła cyklu, to jest to nieznany opcode
+        // Ustaw sync, aby zapobiec nieskończonej pętli
         _sync = true;
     }
 
-    private void AddWithCarry(byte value)
+    /// <summary>
+    /// Obsługuje przerwania na granicy instrukcji.
+    /// Zwraca true, jeśli CPU wstrzyknął przerwanie i Tick() powinien zakończyć się natychmiast.
+    /// </summary>
+    private bool TryServiceInterruptBoundary()
     {
-        byte oldA = _a;
-        byte oldC = GetFlag(FlagC) ? (byte)1 : (byte)0;
-        _a = (byte)(value + oldA + oldC);
-        SetFlag(FlagV, ((oldA ^ _a) & (value ^ _a) & 0x80) != 0);
-        SetFlag(FlagC, value + oldA + oldC > 0xFF);
-        SetNZ(_a);
-        _sync = true;
-    }
-
-    private void SubtractWithBorrow(byte value)
-    {
-        byte oldA = _a;
-        byte carry = GetFlag(FlagC) ? (byte)1 : (byte)0;
-        byte operand = (byte)~value;
-        _a = (byte)(oldA + operand + carry);
-        SetFlag(FlagV, ((oldA ^ _a) & (operand ^ _a) & 0x80) != 0);
-        SetFlag(FlagC, oldA + operand + carry > 0xFF);
-        SetNZ(_a);
-        _sync = true;
-    }
-
-    private void Compare(byte left, byte right)
-    {
-        ushort diff = (ushort)(left - right);
-        SetFlag(FlagC, left >= right);
-        SetFlag(FlagZ, (diff & 0xFF) == 0);
-        SetFlag(FlagN, (diff & 0x80) != 0);
-        _sync = true;
-    }
-
-    private void Branch(bool condition)
-    {
-        _tempValue = _memory.Read(_pc++);
-        _tempAddr = (ushort)(_pc + (sbyte)_tempValue);
-        if (!condition)
+        if (_shouldClearI)
         {
-            _sync = true;
+            SetFlag(FlagI, false);
+            _shouldClearI = false;
+        }
+
+        if (_nmiLatched)
+        {
+            _nmiLatched = false;
+            InjectInterrupt(InterruptType.NMI);
+            return true;
+        }
+
+        if (_interruptDelay)
+        {
+            _interruptDelay = false;
+            _suppressPostInstructionIrq = true;
+            return false;
+        }
+
+        if (_irqReadyAtBoundary && _irqPending && !GetFlag(FlagI))
+        {
+            _irqPending = false;
+            _irqReadyAtBoundary = false;
+            InjectInterrupt(InterruptType.IRQ);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Obsługuje IRQ po zakończeniu instrukcji, o ile dana instrukcja nie blokuje tej granicy.
+    /// </summary>
+    private void ServicePostInstructionIrqBoundary()
+    {
+        if (_interruptDelay)
+        {
             return;
         }
 
-        ushort oldPc = _pc;
-        _pc = _tempAddr;
-        if ((oldPc >> 8) != (_tempAddr >> 8))
+        if (_suppressPostInstructionIrq)
         {
-            _cycleCount = 1;
+            _suppressPostInstructionIrq = false;
+            if (_irqPending && !GetFlag(FlagI))
+            {
+                _irqReadyAtBoundary = true;
+            }
+            return;
         }
-        _sync = true;
+
+        if (_irqPending && !GetFlag(FlagI))
+        {
+            _irqPending = false;
+            _irqReadyAtBoundary = false;
+            InjectInterrupt(InterruptType.IRQ);
+        }
     }
+
+
+
+
 
     #endregion
 }

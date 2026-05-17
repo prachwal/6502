@@ -120,5 +120,30 @@ public partial class Cpu6502
         return addr;
     }
 
+    /// <summary>
+    /// Indirect Absolute addressing mode for JMP (6C).
+    /// NMOS 6502 bug: when indirect address ends with $xxFF, high byte is read from $xx00 instead of $(xx+1)00.
+    /// </summary>
+    /// <returns>Indirect absolute address</returns>
+    private ushort AddrIndirectAbs()
+    {
+        byte lo = _memory.Read(_pc++);
+        byte hi = _memory.Read(_pc++);
+        ushort ptrAddr = (ushort)((hi << 8) | lo);
+
+        byte addrLo = _memory.Read(ptrAddr);
+
+        // NMOS bug: if ptrAddr ends with $xxFF, high byte is read from $xx00 instead of $(xx+1)00
+        ushort ptrAddrHi;
+        if ((ptrAddr & 0xFF) == 0xFF)
+            ptrAddrHi = (ushort)(ptrAddr & 0xFF00);  // same page
+        else
+            ptrAddrHi = (ushort)(ptrAddr + 1);
+
+        byte addrHi = _memory.Read(ptrAddrHi);
+
+        return (ushort)((addrHi << 8) | addrLo);
+    }
+
     #endregion
 }

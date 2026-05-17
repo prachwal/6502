@@ -63,6 +63,46 @@ public class TransferTests
 
 ## 🧪 Typy testów
 
+### 0. Testy cycle-stepped i przerwań
+
+Testy dla instrukcji wielocyklowych muszą odróżniać koniec instrukcji od obsługi przerwania na kolejnej granicy. W helperach typu `ExecuteOne()` przyjmujemy, że jedno wywołanie wykonuje CPU do następnego `Sync`.
+
+Stałe oczekiwania projektu:
+
+1. `CLI, NOP` z aktywnym IRQ: po pierwszym `ExecuteOne()` PC wskazuje `NOP`, po drugim PC wskazuje bajt po `NOP`, po trzecim CPU wchodzi w wektor IRQ.
+2. Branch not-taken z aktywnym IRQ: po jednym `ExecuteOne()` PC wskazuje następną instrukcję, a flaga `I` pozostaje bez zmian.
+3. Testy opisujące tę samą właściwość nie mogą mieć sprzecznych asercji. Gdy zmieniasz kontrakt timingowy, wyszukaj duplikaty przez `rg "CLI|IRQ|Branch_InterruptTiming|JMP_Indirect" tests`.
+
+### 0.1. Pułapka testu JMP indirect bug
+
+Przy testowaniu błędu NMOS `JMP ($xxFF)` high byte jest czytany z `$xx00`. Nie wolno umieszczać kodu testowego pod tym samym adresem, który służy jako `$xx00`, bo zapis high byte nadpisze opcode.
+
+Poprawny wzorzec:
+
+```csharp
+LoadProgram(0x0300, 0x6C, 0xFF, 0x01); // JMP ($01FF)
+memory.Write(0x01FF, 0x12);            // low
+memory.Write(0x0100, 0x34);            // high z tej samej strony
+```
+
+Niepoprawny wzorzec:
+
+```csharp
+LoadProgram(0x0100, 0x6C, 0xFF, 0x01);
+memory.Write(0x0100, 0x34); // nadpisuje opcode 0x6C
+```
+
+### 0.2. Jak unikać zapętlenia debugowania
+
+Jeśli wiele niepowiązanych testów wielocyklowych zaczyna kończyć się z PC tuż po operandzie, najpierw sprawdź mechanikę dispatchera i `_sync`, nie pojedyncze implementacje opcode'ów.
+
+Procedura:
+
+1. Zawęź do jednego testu i jednego opcode'u.
+2. Uruchom mały harness albo test z logowaniem cykli.
+3. Potwierdź, że każdy cykl instrukcji wraca z dispatchera jako obsłużony.
+4. Dopiero potem poprawiaj semantykę danej instrukcji.
+
 ### 1. Testy funkcjonalne
 Testują podstawową funkcjonalność instrukcji.
 

@@ -19,6 +19,7 @@ public partial class Cpu6502
     /// <param name="operand">Operand from memory.</param>
     private void ExecuteAdcBcd(byte operand)
     {
+        byte oldA = _a;
         byte al = (byte)(_a & 0x0F);      // Low nibble of A
         byte ml = (byte)(operand & 0x0F);  // Low nibble of operand
         byte ah = (byte)(_a >> 4);        // High nibble of A
@@ -39,20 +40,13 @@ public partial class Cpu6502
             carry = true;
         }
 
+        // Overflow must be derived from the pre-adjusted binary sum.
+        bool overflow = ((oldA ^ (byte)sum) & (operand ^ (byte)sum) & 0x80) != 0;
+
         _a = result;
-        
+
         // Set flags based on BCD-corrected result (NMOS 6502 behavior)
         SetFlag(FlagN, (result & 0x80) != 0);
-        
-        // Overflow: set if result > 127 or result < -128 in signed interpretation
-        // For BCD, overflow occurs when binary result would overflow signed byte
-        bool overflow = ((_a ^ result) & (operand ^ result) & 0x80) != 0;
-        // Additional check for BCD-specific overflow cases
-        if (result == 0x00 && carry) // $50 + $50 = $00 case
-        {
-            overflow = true;
-        }
-        
         SetFlag(FlagV, overflow);
         SetFlag(FlagZ, result == 0);
         SetFlag(FlagC, carry);
@@ -65,6 +59,7 @@ public partial class Cpu6502
     /// <param name="operand">Operand from memory.</param>
     private void ExecuteSbcBcd(byte operand)
     {
+        byte oldA = _a;
         bool c = (_p & FlagC) != 0;  // Carry flag (inverted for borrow)
 
         // Binary subtraction via complement
@@ -89,12 +84,15 @@ public partial class Cpu6502
             result -= 0x60;
         }
 
-        _a = result;
-        
-        // Set flags based on BCD-corrected result
+        // Overflow must be derived from the binary sum before decimal correction.
         byte notOperand = (byte)~operand;
+        bool overflow = ((oldA ^ (byte)sum) & (notOperand ^ (byte)sum) & 0x80) != 0;
+
+        _a = result;
+
+        // Set flags based on BCD-corrected result
         SetFlag(FlagN, (result & 0x80) != 0);
-        SetFlag(FlagV, ((_a ^ result) & (notOperand ^ result) & 0x80) != 0);
+        SetFlag(FlagV, overflow);
         SetFlag(FlagZ, result == 0);
         SetFlag(FlagC, carry);
     }
