@@ -16,6 +16,24 @@ public partial class Cpu6502
         byte opcode;
         if (_sync)
         {
+            // Sprawdź przerwania PRZED pobraniem nowego opcode
+            // (z opóźnieniem 1 instrukcji po CLI/SEI/PLP/RTI)
+            if (!_interruptDelay)
+            {
+                if (_nmiLatched)
+                {
+                    _nmiLatched = false;
+                    InjectInterrupt(InterruptType.NMI);
+                    return;
+                }
+                else if (_irqPending && !GetFlag(FlagI))
+                {
+                    InjectInterrupt(InterruptType.IRQ);
+                    return;
+                }
+            }
+            _interruptDelay = false;
+
             // Pobierz nowy opcode z pamięci
             opcode = _memory.Read(_pc);
             _ir = opcode;  // przechowuj opcode bezpośrednio
@@ -28,6 +46,9 @@ public partial class Cpu6502
             opcode = _ir;
         }
         _opcodeTable[opcode]();
+
+        // Po wykonaniu instrukcji, ustaw sync na następny fetch
+        _sync = true;
     }
 
     /// <summary>
@@ -84,6 +105,33 @@ public partial class Cpu6502
     }
 
      #endregion
+
+    #region Metody publiczne - Obsługa przerwań
+
+    /// <summary>
+    /// Ustawia stan pinu IRQ.
+    /// </summary>
+    /// <param name="active">True = pin niski (aktywne przerwanie).</param>
+    public void SetIRQ(bool active)
+    {
+        _irqPending = active;
+    }
+
+    /// <summary>
+    /// Ustawia stan pinu NMI.
+    /// Wykrywa opadające zbocze i zatrzaskuje przerwanie.
+    /// </summary>
+    /// <param name="active">True = pin niski (aktywne przerwanie).</param>
+    public void SetNMI(bool active)
+    {
+        if (_previousNMI && !active)
+        {
+            _nmiLatched = true;
+        }
+        _previousNMI = active;
+    }
+
+    #endregion
 
     #region Metody pomocnicze - Stack Operations
 

@@ -48,4 +48,18 @@ public partial class Cpu6502
     public const byte FlagN = 0x80;
 
     #endregion
+
+    #region Typy przerwań
+
+    /// <summary>
+    /// Typ przerwania.
+    /// </summary>
+    private enum InterruptType
+    {
+        IRQ,
+        NMI,
+        BRK
+    }
+
+    #endregion
 }

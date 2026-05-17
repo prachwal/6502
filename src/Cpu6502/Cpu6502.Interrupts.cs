@@ -1,51 +1,93 @@
-// <copyright file="Cpu6502.Interrupts.cs" company="6502 Emulator">
-// Copyright © 2026 6502 Emulator. All rights reserved.
-// Licensed under the MIT License.
-// </copyright>
+namespace Cpu6502;
 
-using System;
-
-namespace Cpu6502
+/// <summary>
+/// Reprezentacja procesora MOS 6502.
+/// </summary>
+public partial class Cpu6502
 {
-    public partial class Cpu6502
+    #region Obsługa przerwań
+
+    /// <summary>
+    /// BRK - Software Interrupt.
+    /// Opcode: 0x00, Tryb: Implied, Cykle: 7
+    /// </summary>
+    private void Brk()
     {
-        /// <summary>
-        /// BRK - Force Break (Software Interrupt)
-        /// Pushes PC+2 and P (with B=1) onto stack, then jumps to IRQ vector
-        /// </summary>
-        private void Brk()
+        // BRK to 2-bajtowa instrukcja (opcode + signature byte)
+        // PC wskazuje już na signature byte po fetchu — pomiń go
+        _pc++;
+        // Wstrzykuje przerwanie z B=1 (pushuje PC za signature byte)
+        InjectInterrupt(InterruptType.BRK);
+    }
+
+    /// <summary>
+    /// RTI - Return from Interrupt.
+    /// Opcode: 0x40, Tryb: Implied, Cykle: 6
+    /// </summary>
+    private void Rti()
+    {
+        // Pull P (z flagami)
+        _p = Pop();
+        
+        // Pull PCL i PCH
+        byte lo = Pop();
+        byte hi = Pop();
+        _pc = (ushort)((hi << 8) | lo);
+        
+        // Ustaw sygnalizację pobrania nowego opcode
+        _sync = true;
+
+        // RTI może zmienić flagę I — opóźnij sprawdzenie IRQ o 1 instrukcję
+        _interruptDelay = true;
+    }
+
+    /// <summary>
+    /// Wstrzykuje sekwencję obsługi przerwania.
+    /// </summary>
+    /// <param name="type">Typ przerwania (IRQ, NMI, BRK).</param>
+    private void InjectInterrupt(InterruptType type)
+    {
+        // Zapamiętaj bieżący PC (dla pushowania)
+        ushort returnPC = _pc;
+
+        // Push PCH i PCL
+        Push((byte)(returnPC >> 8));
+        Push((byte)(returnPC & 0xFF));
+
+        // Push rejestru P z odpowiednimi flagami
+        byte pushedP = _p;
+        if (type == InterruptType.BRK)
         {
-            // BRK is a 2-byte instruction (opcode + signature byte)
-            // We push PC+2 to skip both bytes
-            ushort returnAddress = (ushort)(_pc + 1); // PC already points to next byte after opcode
-            Push((byte)(returnAddress >> 8));    // Push PCH
-            Push((byte)(returnAddress & 0xFF));  // Push PCL
-            
-            // Push P with B=1 and bit5=1 (NMOS behavior)
-            Push((byte)(_p | FlagB | FlagU));
-            
-            // Set I flag (BRK does set interrupt disable flag)
-            _p |= FlagI;
-            
-            // Jump to IRQ vector at $FFFE/$FFFF
-            byte vectorLo = _memory.Read(0xFFFE);
-            byte vectorHi = _memory.Read(0xFFFF);
-            _pc = (ushort)((vectorHi << 8) | vectorLo);
+            pushedP |= FlagB;  // B=1 tylko dla BRK
+        }
+        else
+        {
+            pushedP &= unchecked((byte)~FlagB);  // B=0 dla IRQ/NMI
+        }
+        pushedP |= FlagU;  // bit5=1
+        Push(pushedP);
+
+        // Ustaw flagę I (wyłącz dalsze IRQ)
+        SetFlag(FlagI, true);
+
+        // Odczytaj wektor przerwania
+        ushort vector;
+        if (type == InterruptType.NMI)
+        {
+            vector = 0xFFFA;
+        }
+        else
+        {
+            vector = 0xFFFE;
         }
 
-        /// <summary>
-        /// RTI - Return from Interrupt
-        /// Pulls P and PC from stack, restoring state before interrupt
-        /// </summary>
-        private void Rti()
-        {
-            // Pull P from stack (including B and bit5 for compatibility)
-            _p = Pop();
-            
-            // Pull PC from stack (little-endian: PCL then PCH)
-            byte pcl = Pop();
-            byte pch = Pop();
-            _pc = (ushort)((pch << 8) | pcl);
-        }
+        byte lo = _memory.Read(vector);
+        byte hi = _memory.Read((ushort)(vector + 1));
+        _pc = (ushort)(hi << 8 | lo);
+
+        // Ustaw sygnalizację pobrania nowego opcode
+        _sync = true;
     }
+
+    #endregion
 }

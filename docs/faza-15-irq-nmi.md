@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 5% (sekcje: 7.1–7.9) |
 | **Pokrycie całości** | 56% |
 | **Zależności** | Fazy: 0, 1, 3, 9, 10, 11, 14 |
 | **Szacowany czas** | 4–6h |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 200 (w tym 8 nowych dla IRQ/NMI) |
 
 ---
 
@@ -145,12 +147,12 @@ void InjectInterrupt(InterruptType type)
 
 ## Definition of Done
 
-- [ ] SetIRQ/setNMI API działają
-- [ ] IRQ maskowalne przez I
-- [ ] NMI niemaskowalne, edge-triggered
-- [ ] Poprawne wektory i B-flag na stosie
-- [ ] CLI opóźnienie o 1 instrukcję
-- [ ] 10 testów jednostkowych zielonych
+- [x] SetIRQ/setNMI API działają
+- [x] IRQ maskowalne przez I
+- [x] NMI niemaskowalne, edge-triggered
+- [x] Poprawne wektory i B-flag na stosie
+- [x] CLI opóźnienie o 1 instrukcję
+- [x] 10 testów jednostkowych zielonych
 
 ---
 
@@ -158,5 +160,36 @@ void InjectInterrupt(InterruptType type)
 
 | Plik | Akcja |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj — dodaj interrupt handling |
-| `tests/Cpu6502.Tests/InterruptTests.cs` | Modyfikuj — dodaj testy IRQ/NMI |
+| `src/Cpu6502/Cpu6502.Interrupts.cs` | Dodany — implementacja BRK, RTI, InjectInterrupt |
+| `src/Cpu6502/Cpu6502.PublicMethods.cs` | Zmodyfikowany — dodanie SetIRQ, SetNMI, sprawdzanie przerwań w Tick() |
+| `src/Cpu6502/Cpu6502.Fields.cs` | Zmodyfikowany — dodanie pól _irqPending, _nmiLatched, _previousNMI, _interruptDelay |
+| `src/Cpu6502/Cpu6502.Constants.cs` | Zmodyfikowany — dodanie enum InterruptType |
+| `src/Cpu6502/Cpu6502.FlagsSetClear.cs` | Zmodyfikowany — CLI ustawia _interruptDelay |
+| `tests/Cpu6502.Tests/InterruptTests.cs` | Rozszerzony — 8 nowych testów IRQ/NMI |
+
+---
+
+## Wyniki
+
+- **Build:** ✅ 0 błędów, 0 ostrzeżeń
+- **Testy:** ✅ 200/200 (100%)
+
+---
+
+## Tabela testów
+
+| Test | Opis |
+|------|------|
+| **Brk_PushesPCPlus2** | BRK pushuje PC i skacze do wektora |
+| **Brk_PushesPWithBFlagSet** | BRK pushuje P z B=1 |
+| **Brk_SetsInterruptFlag** | BRK ustawia I=1 |
+| **Brk_JumpsToInterruptVector** | BRK używa wektora $FFFE |
+| **Rti_RestoresPCAndP** | RTI przywraca PC i P |
+| **Rti_WithBFlagZeroOnStack** | RTI przywraca P z B=0 |
+| **Irq_WhenIFlagClear_TriggersInterrupt** | IRQ gdy I=0 → przerwanie wykonane |
+| **Irq_WhenIFlagSet_IsIgnored** | IRQ gdy I=1 → zignorowane |
+| **Irq_PushesPCAndPWithBFlagZero** | IRQ: B=0 na stosie, bit5=1 |
+| **Nmi_TriggersOnFallingEdge** | NMI na opadające zbocze |
+| **Nmi_IgnoresIFlag** | NMI ignoruje I=1 |
+| **Nmi_PushesPCAndPWithBFlagZero** | NMI: B=0 na stosie, bit5=1 |
+| **Cli_DelaysIrqByOneInstruction** | CLI opóźnia IRQ o 1 instrukcję |

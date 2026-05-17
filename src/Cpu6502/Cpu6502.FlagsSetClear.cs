@@ -51,10 +51,12 @@ public partial class Cpu6502
     /// CLI - Clear Interrupt Disable.
     /// Czyści flagę Interrupt Disable (I=0). Inne flagi pozostają bez zmian.
     /// Opcode: 0x58, Tryb: Implied, Cykle: 2
+    /// Uwaga: IRQ jest opóźnione o 1 instrukcję po CLI.
     /// </summary>
     private void Cli()
     {
         SetFlag(FlagI, false);
+        _interruptDelay = true; // opóźnij sprawdzenie IRQ o 1 instrukcję
     }
 
     /// <summary>

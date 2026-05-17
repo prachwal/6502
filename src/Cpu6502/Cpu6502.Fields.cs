@@ -75,4 +75,30 @@ public partial class Cpu6502
     private Action[] _opcodeTable = null!;
 
     #endregion
+
+    #region Obsługa przerwań
+
+    /// <summary>
+    /// Flaga sygnalizująca oczekujące przerwanie IRQ.
+    /// </summary>
+    private bool _irqPending;
+
+    /// <summary>
+    /// Flaga sygnalizująca zatrzaskane przerwanie NMI.
+    /// </summary>
+    private bool _nmiLatched;
+
+    /// <summary>
+    /// Poprzedni stan pinu NMI (do wykrywania zbocza).
+    /// </summary>
+    private bool _previousNMI;
+
+    /// <summary>
+    /// Opóźnienie sprawdzania przerwań o 1 instrukcję.
+    /// Używane po CLI i RTI (instrukcje które mogą odblokować IRQ).
+    /// </summary>
+    private bool _interruptDelay;
+
+    #endregion
 }
+
