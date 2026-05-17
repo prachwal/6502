@@ -2,11 +2,13 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 2.8, 8) |
 | **Pokrycie całości** | 50% |
 | **Zależności** | Fazy: 0, 1, 3, 9, 10 |
 | **Szacowany czas** | 2–3h |
+| **Data zakończenia** | 2026-05-17 |
+| **Liczba testów** | 7 |
 
 ---
 
@@ -85,17 +87,43 @@ W modelu instruction-stepped wystarczy wywołać `Reset()`. W modelu cycle-stepp
 
 ## Definition of Done
 
-- [ ] Reset() ustawia wszystkie rejestry wg specyfikacji
-- [ ] PC pobierany z $FFFC/$FFFD
-- [ ] SP = $FD, I = 1, D = 0
-- [ ] Po resecie procesor gotowy do Tick()
-- [ ] 5 testów jednostkowych zielonych
+- [x] Reset() ustawia wszystkie rejestry wg specyfikacji
+- [x] PC pobierany z $FFFC/$FFFD
+- [x] SP = $FD, I = 1, D = 0
+- [x] Po resecie procesor gotowy do Tick()
+- [x] 7 testów jednostkowych zielonych
 
 ---
 
 ## Pliki
 
 | Plik | Akcja |
+
+## Pliki implementacyjne
+
+- `Cpu6502.PublicMethods.cs`: Zmodyfikowana metoda Reset()
+- `ResetTests.cs`: 7 testów jednostkowych
+- `SkeletonTests.cs`: Zaktualizowane testy szkieletowe
+
+## Wyniki
+
+- Build: ✅ 0 błędów, 7 ostrzeżeń (nullable references)
+- Testy: ✅ 193/193 (100%)
+- Testy regresyjne: ✅ Wszystkie poprzednie instrukcje nadal działają
+- Nowe testy: ✅ 7/7 testów RESET passing
+
+## Tabela testów RESET
+
+| Test | Opis | Wynik |
+|------|------|-------|
+| Reset_LoadsPCFromResetVector | PC z $FFFC/$FFFD | ✅ |
+| Reset_SPEqualsFd | SP = $FD po resecie | ✅ |
+| Reset_IFlagSet | I = 1 (interrupt disable) | ✅ |
+| Reset_DFlagClear | D = 0 (decimal mode off) | ✅ |
+| Reset_RegistersZeroed | A=0, X=0, Y=0 | ✅ |
+| Reset_FirstInstructionExecution | Pierwsza instrukcja po resecie | ✅ |
+| Reset_MultipleResetsConsistent | Wielokrotne resety spójne | ✅ |
 |------|-------|
-| `src/Cpu6502/Cpu6502.cs` | Modyfikuj — dokończ Reset() |
+| `src/Cpu6502/Cpu6502.PublicMethods.cs` | Modyfikuj — dokończ Reset() |
 | `tests/Cpu6502.Tests/ResetTests.cs` | Utwórz |
+| `tests/Cpu6502.Tests/SkeletonTests.cs` | Zaktualizuj — popraw flagi RESET |

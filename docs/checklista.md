@@ -27,7 +27,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](faza-11-brk-rti.md) | [x] | 3% | 37% |
 | 12 | Pełne tryby adresowania + page crossing | [faza-12-addressing.md](faza-12-addressing.md) | [x] | 5% | 42% |
 | 13 | Tryb BCD — ADC/SBC decimal mode | [faza-13-bcd.md](faza-13-bcd.md) | [x] | 3% | 46% |
-| 14 | Sekwencja RESET | [faza-14-reset.md](faza-14-reset.md) | [ ] | 3% | 50% |
+| 14 | Sekwencja RESET | [faza-14-reset.md](faza-14-reset.md) | [x] | 3% | 50% |
 | 15 | Przerwania sprzętowe — IRQ, NMI (podstawowa obsługa) | [faza-15-irq-nmi.md](faza-15-irq-nmi.md) | [ ] | 5% | 56% |
 | 16 | Architektura cycle-stepped — Tick() per cykl | [faza-16-cycle-stepped.md](faza-16-cycle-stepped.md) | [ ] | 6% | 63% |
 | 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [ ] | 4% | 68% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     10 / 24 faz (42%)
+Całkowity postęp:     11 / 24 faz (46%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 11,12,13,14,15,16,17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 15,16,17,18,19,20,21,22,23
 ```
 
 ---
