@@ -67,3 +67,4 @@ allowlist = [
 allowlist = [
     "/home/prachwal/.vibe/*",
 ]
+permission = "always"
