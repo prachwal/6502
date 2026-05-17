@@ -30,7 +30,7 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 14 | Sekwencja RESET | [faza-14-reset.md](faza-14-reset.md) | [x] | 3% | 50% |
 | 15 | Przerwania sprzętowe — IRQ, NMI (podstawowa obsługa) | [faza-15-irq-nmi.md](faza-15-irq-nmi.md) | [x] | 5% | 56% |
 | 16 | Architektura cycle-stepped — Tick() per cykl | [faza-16-cycle-stepped.md](faza-16-cycle-stepped.md) | [x] | 6% | 63% |
-| 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [ ] | 4% | 68% |
+| 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [x] | 4% | 68% |
 | 18 | Nieudokumentowane opkody — stabilne | [faza-18-illegal-stable.md](faza-18-illegal-stable.md) | [ ] | 8% | 76% |
 | 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [ ] | 6% | 83% |
 | 20 | Test zgodności — nestest | [faza-20-nestest.md](faza-20-nestest.md) | [ ] | 4% | 88% |
@@ -43,11 +43,11 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 ## Postęp faz
 
 ```
-Całkowity postęp:     13 / 24 faz (54%)
+Całkowity postęp:     14 / 24 faz (58%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 Fazy w trakcie     [~]: 
-Fazy nie rozpoczęte [ ]: 17,18,19,20,21,22,23
+Fazy nie rozpoczęte [ ]: 18,19,20,21,22,23
 ```
 
 ---
