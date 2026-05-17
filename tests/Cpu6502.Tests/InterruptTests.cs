@@ -141,8 +141,8 @@ public class InterruptTests
         
         ExecuteOne(); // Execute RTI
         
-        // P should be restored with B=0
-        Assert.That(cpu.P, Is.EqualTo(0x04));
+        // P should be restored with B=0; bit 5 (U) is kept set in the visible status byte.
+        Assert.That(cpu.P, Is.EqualTo(0x24));
     }
 
     [Test]

@@ -196,13 +196,12 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// SAX (Zero Page,X) - Cykl 0: Fetch adresu i zapis
+    /// SAX (Indirect,X) - Cykl 0: wylicz adres i zapisz A & X
     /// </summary>
-    private void SaxZpX_Cycle0()
+    private void SaxIndX_Cycle0()
     {
-        _tempAddr = AddrZpX();
+        _tempAddr = AddrIndX();
         _memory.Write(_tempAddr, (byte)(_a & _x));
-        _sync = true;
     }
 
     #endregion

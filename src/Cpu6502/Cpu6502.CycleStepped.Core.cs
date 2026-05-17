@@ -47,6 +47,7 @@ public partial class Cpu6502
             _currentOpcode = opcode;
             _ir = (byte)(opcode << 3);
             _cycleCount = 0;
+            _pageCrossed = false;
             _sync = false;
             _pc++;
         }
@@ -101,13 +102,15 @@ public partial class Cpu6502
             0x0B => 2, 0x2B => 2, 0x4B => 2, 0x6B => 2, 0xCB => 2, 0xBB => 4,
             // Faza 19 - Niestabilne opkody
             0x8B => 2, 0xAB => 2, 0xEB => 2,  // ANE, LXA, USBC - Immediate
+            0x83 => 6,  // SAX (ind,X)
             0x9F => 5, 0x93 => 6,  // SHA - abs,Y, ind,Y
             0x9E => 5,  // SHX - abs,Y
             0x9C => 5,  // SHY - abs,X
             0x9B => 5,  // TAS - abs,Y
             // Faza 19 - NOP-y
             0x04 => 3, 0x44 => 3, 0x64 => 3,  // NOP zp
-            0x14 => 4, 0x34 => 4, 0x54 => 4, 0x74 => 4, 0x0C => 4,  // NOP zp,X
+            0x14 => 4, 0x34 => 4, 0x54 => 4, 0x74 => 4, 0xD4 => 4, 0xF4 => 4,  // NOP zp,X
+            0x0C => 4,  // NOP abs
             0x1C => 4, 0x3C => 4, 0x5C => 4, 0x7C => 4, 0xDC => 4, 0xFC => 4,  // NOP abs,X
             0x80 => 2, 0x82 => 2, 0x89 => 2, 0xC2 => 2, 0xE2 => 2,  // NOP imm
             0x1A => 2, 0x3A => 2, 0x5A => 2, 0x7A => 2, 0xDA => 2, 0xFA => 2,  // NOP impl
@@ -118,6 +121,29 @@ public partial class Cpu6502
         };
     }
 
+    private byte GetEffectiveInstructionCycles(byte opcode)
+    {
+        byte cycles = GetInstructionCycles(opcode);
+        if (_pageCrossed && HasReadPageCrossPenalty(opcode))
+        {
+            cycles++;
+        }
+
+        return cycles;
+    }
+
+    private static bool HasReadPageCrossPenalty(byte opcode)
+    {
+        return opcode is
+            0xBD or 0xB9 or 0xB1 or 0xBE or 0xBC or
+            0x7D or 0x79 or 0x71 or
+            0xFD or 0xF9 or 0xF1 or
+            0xDD or 0xD9 or 0xD1 or
+            0x3D or 0x39 or 0x31 or
+            0x1D or 0x19 or 0x11 or
+            0x5D or 0x59 or 0x51;
+    }
+
     /// <summary>
     /// Wykonuje pojedynczy cykl instrukcji na podstawie złożonego klucza opcode/cycle.
     /// </summary>
@@ -125,13 +151,11 @@ public partial class Cpu6502
     {
         if (ExecuteCycleLoadStoreTransferFlags((byte)(key >> 3), (byte)(key & 0x07), key))
         {
-            _sync = true;
             return;
         }
 
         if (ExecuteCycleArithmeticCompareLogic(key))
         {
-            _sync = true;
             return;
         }
 
@@ -289,10 +313,18 @@ public partial class Cpu6502
             case 0x74 << 3 | 1: NopZpX_74_Cycle1(); break;
             case 0x74 << 3 | 2: NopZpX_74_Cycle2(); break;
             case 0x74 << 3 | 3: NopZpX_74_Cycle3(); return true;
-            case 0x0C << 3 | 0: NopZpX_0C_Cycle0(); break;
-            case 0x0C << 3 | 1: NopZpX_0C_Cycle1(); break;
-            case 0x0C << 3 | 2: NopZpX_0C_Cycle2(); break;
-            case 0x0C << 3 | 3: NopZpX_0C_Cycle3(); return true;
+            case 0xD4 << 3 | 0: NopZpX_54_Cycle0(); break;
+            case 0xD4 << 3 | 1: NopZpX_54_Cycle1(); break;
+            case 0xD4 << 3 | 2: NopZpX_54_Cycle2(); break;
+            case 0xD4 << 3 | 3: NopZpX_54_Cycle3(); return true;
+            case 0xF4 << 3 | 0: NopZpX_74_Cycle0(); break;
+            case 0xF4 << 3 | 1: NopZpX_74_Cycle1(); break;
+            case 0xF4 << 3 | 2: NopZpX_74_Cycle2(); break;
+            case 0xF4 << 3 | 3: NopZpX_74_Cycle3(); return true;
+            case 0x0C << 3 | 0: NopAbs_0C_Cycle0(); break;
+            case 0x0C << 3 | 1: NopAbs_0C_Cycle1(); break;
+            case 0x0C << 3 | 2: NopAbs_0C_Cycle2(); break;
+            case 0x0C << 3 | 3: NopAbs_0C_Cycle3(); return true;
             // NOP - Absolute,X ($1C, $3C, $5C, $7C, $DC, $FC)
             case 0x1C << 3 | 0: NopAbsX_1C_Cycle0(); break;
             case 0x1C << 3 | 1: NopAbsX_1C_Cycle1(); break;
@@ -346,7 +378,7 @@ public partial class Cpu6502
             case 0xF2 << 3 | 0: Kil_F2(); return true;
             default: return false;
         }
-        return false;
+        return true;
     }
 
     /// <summary>

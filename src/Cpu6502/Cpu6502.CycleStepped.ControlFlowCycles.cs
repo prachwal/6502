@@ -106,7 +106,7 @@ public partial class Cpu6502
     /// </summary>
     private void JsrAbs_Cycle1()
     {
-        Push((byte)(_pc >> 8));
+        // Internal cycle. The return address is not complete until the high operand byte is fetched.
     }
 
     /// <summary>
@@ -122,15 +122,17 @@ public partial class Cpu6502
     /// </summary>
     private void JsrAbs_Cycle3()
     {
-        Push((byte)(_pc & 0xFF));
+        ushort returnAddress = (ushort)(_pc - 1);
+        Push((byte)(returnAddress >> 8));
     }
 
     /// <summary>
-    /// JSR Absolute - Cykl 4: Fetch high byte i przygotuj PC
+    /// JSR Absolute - Cykl 4: Push PCL i przygotuj PC
     /// </summary>
     private void JsrAbs_Cycle4()
     {
-        // PC już ma high byte, teraz ustaw na adres docelowy
+        ushort returnAddress = (ushort)(_pc - 1);
+        Push((byte)(returnAddress & 0xFF));
         _pc = _tempAddr;
     }
 
@@ -179,15 +181,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// RTS - Cykl 4: Sync
+    /// RTS - Cykl 4: ostatni wewnętrzny cykl przed synchronizacją
     /// </summary>
     private void Rts_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// RTS - Cykl 5: (nieużywany)
+    /// RTS - Cykl 5: Sync
     /// </summary>
     private void Rts_Cycle5()
     {

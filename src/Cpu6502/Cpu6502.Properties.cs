@@ -22,6 +22,12 @@ public partial class Cpu6502
     }
 
     /// <summary>
+    /// Controls whether ADC/SBC honor decimal mode when D=1. MOS 6502 enables it;
+    /// NES 2A03 leaves the D flag visible but performs binary arithmetic.
+    /// </summary>
+    public bool DecimalModeEnabled { get; set; } = true;
+
+    /// <summary>
     /// Accumulator - główny rejestr arytmetyczny.
     /// </summary>
     public byte A 

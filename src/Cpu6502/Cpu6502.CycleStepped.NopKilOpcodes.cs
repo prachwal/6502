@@ -66,7 +66,7 @@ public partial class Cpu6502
 
     #endregion
 
-    #region NOP - Zero Page,X - $14, $34, $54, $74, $0C - 4 cykle
+    #region NOP - Zero Page,X - $14, $34, $54, $74 - 4 cykle
 
     /// <summary>
     /// NOP Zero Page,X - reads from zp,X, ignores value
@@ -176,29 +176,32 @@ public partial class Cpu6502
         _sync = true;
     }
 
+    #endregion
+
+    #region NOP - Absolute - $0C - 4 cykle
+
     /// <summary>
-    /// NOP Zero Page,X - reads from zp,X, ignores value
+    /// NOP Absolute - reads from abs, ignores value.
     /// Opcode: $0C - 4 cycles
     /// </summary>
-    private void NopZpX_0C_Cycle0()
+    private void NopAbs_0C_Cycle0()
     {
-        byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        byte low = _memory.Read(_pc++);
+        _tempAddr = low;
     }
 
-    private void NopZpX_0C_Cycle1()
+    private void NopAbs_0C_Cycle1()
     {
-        _memory.Read(_tempAddr); // Read and ignore
+        byte high = _memory.Read(_pc++);
+        _tempAddr |= (ushort)(high << 8);
     }
 
-    private void NopZpX_0C_Cycle2()
+    private void NopAbs_0C_Cycle2()
     {
-        // Wraparound read for page crossing emulation
-        _tempAddr = (ushort)((_tempAddr & 0xFF) + (_x << 8));
         _memory.Read(_tempAddr);
     }
 
-    private void NopZpX_0C_Cycle3()
+    private void NopAbs_0C_Cycle3()
     {
         _sync = true;
     }

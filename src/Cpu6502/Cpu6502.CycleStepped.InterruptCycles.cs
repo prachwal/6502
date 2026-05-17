@@ -77,7 +77,7 @@ public partial class Cpu6502
     /// </summary>
     private void Rti_Cycle0()
     {
-        _p = Pop();
+        _p = (byte)((Pop() & ~FlagB) | FlagU);
     }
 
     /// <summary>

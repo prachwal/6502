@@ -12,10 +12,10 @@ public partial class Cpu6502
     private void LdaZp() { _a = _memory.Read(AddrZp()); SetNZ(_a); }
     private void LdaZpX() { _a = _memory.Read(AddrZpX()); SetNZ(_a); }
     private void LdaAbs() { _a = _memory.Read(AddrAbs()); SetNZ(_a); }
-    private void LdaAbsX() { bool pageCrossed; _a = _memory.Read(AddrAbsX(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
-    private void LdaAbsY() { bool pageCrossed; _a = _memory.Read(AddrAbsY(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
+    private void LdaAbsX() { _a = _memory.Read(AddrAbsX(out _pageCrossed)); SetNZ(_a); }
+    private void LdaAbsY() { _a = _memory.Read(AddrAbsY(out _pageCrossed)); SetNZ(_a); }
     private void LdaIndX() { _a = _memory.Read(AddrIndX()); SetNZ(_a); }
-    private void LdaIndY() { bool pageCrossed; _a = _memory.Read(AddrIndY(out pageCrossed)); SetNZ(_a); /* if (pageCrossed) cycles++; */ }
+    private void LdaIndY() { _a = _memory.Read(AddrIndY(out _pageCrossed)); SetNZ(_a); }
 
     // LDX - Load X Register
     private void LdxImm() { var (_, val, _) = Imm(); _x = val; SetNZ(_x); }

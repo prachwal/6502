@@ -184,7 +184,7 @@ public partial class Cpu6502
     private void ExecuteAdc(byte operand)
     {
         // Check BCD mode
-        if ((_p & FlagD) != 0)
+        if (DecimalModeEnabled && (_p & FlagD) != 0)
         {
             ExecuteAdcBcd(operand);
             return;
@@ -215,7 +215,7 @@ public partial class Cpu6502
     private void ExecuteSbc(byte operand)
     {
         // Check BCD mode
-        if ((_p & FlagD) != 0)
+        if (DecimalModeEnabled && (_p & FlagD) != 0)
         {
             ExecuteSbcBcd(operand);
             return;

@@ -44,7 +44,7 @@ public partial class Cpu6502
     /// </summary>
     private void Plp()
     {
-        _p = Pop();
+        _p = (byte)((Pop() & ~FlagB) | FlagU);
     }
 
     #endregion

@@ -65,7 +65,8 @@ public partial class Cpu6502
             case 0xDE << 3 | 6: DecAbsX_Cycle6(); break;
             
             // ASL - Arithmetic Shift Left (R-M-W)
-            case 0x0A << 3 | 0: AslAcc(); _sync = true; break;
+            case 0x0A << 3 | 0: AslAcc(); break;
+            case 0x0A << 3 | 1: _sync = true; break;
             case 0x06 << 3 | 0: AslZp_Cycle0(); break;
             case 0x06 << 3 | 1: AslZp_Cycle1(); break;
             case 0x06 << 3 | 2: AslZp_Cycle2(); break;
@@ -95,7 +96,8 @@ public partial class Cpu6502
             case 0x1E << 3 | 6: AslAbsX_Cycle6(); break;
             
             // LSR - Logical Shift Right (R-M-W)
-            case 0x4A << 3 | 0: LsrAcc(); _sync = true; break;
+            case 0x4A << 3 | 0: LsrAcc(); break;
+            case 0x4A << 3 | 1: _sync = true; break;
             case 0x46 << 3 | 0: LsrZp_Cycle0(); break;
             case 0x46 << 3 | 1: LsrZp_Cycle1(); break;
             case 0x46 << 3 | 2: LsrZp_Cycle2(); break;
@@ -125,7 +127,8 @@ public partial class Cpu6502
             case 0x5E << 3 | 6: LsrAbsX_Cycle6(); break;
             
             // ROL - Rotate Left (R-M-W)
-            case 0x2A << 3 | 0: RolAcc(); _sync = true; break;
+            case 0x2A << 3 | 0: RolAcc(); break;
+            case 0x2A << 3 | 1: _sync = true; break;
             case 0x26 << 3 | 0: RolZp_Cycle0(); break;
             case 0x26 << 3 | 1: RolZp_Cycle1(); break;
             case 0x26 << 3 | 2: RolZp_Cycle2(); break;
@@ -155,7 +158,8 @@ public partial class Cpu6502
             case 0x3E << 3 | 6: RolAbsX_Cycle6(); break;
             
             // ROR - Rotate Right (R-M-W)
-            case 0x6A << 3 | 0: RorAcc(); _sync = true; break;
+            case 0x6A << 3 | 0: RorAcc(); break;
+            case 0x6A << 3 | 1: _sync = true; break;
             case 0x66 << 3 | 0: RorZp_Cycle0(); break;
             case 0x66 << 3 | 1: RorZp_Cycle1(); break;
             case 0x66 << 3 | 2: RorZp_Cycle2(); break;
@@ -184,17 +188,31 @@ public partial class Cpu6502
             case 0x7E << 3 | 5: RorAbsX_Cycle5(); break;
             case 0x7E << 3 | 6: RorAbsX_Cycle6(); break;
             
-            // Stack operations (single cycle)
+            // Stack operations with functional execution on cycle 0 and timing padding.
             case 0x48 << 3 | 0: Pha(); break;
+            case 0x48 << 3 | 1: break;
+            case 0x48 << 3 | 2: _sync = true; break;
             case 0x08 << 3 | 0: Php(); break;
+            case 0x08 << 3 | 1: break;
+            case 0x08 << 3 | 2: _sync = true; break;
             case 0x68 << 3 | 0: Pla(); break;
+            case 0x68 << 3 | 1: break;
+            case 0x68 << 3 | 2: break;
+            case 0x68 << 3 | 3: _sync = true; break;
             case 0x28 << 3 | 0: Plp(); break;
+            case 0x28 << 3 | 1: break;
+            case 0x28 << 3 | 2: break;
+            case 0x28 << 3 | 3: _sync = true; break;
             
             // Register increment/decrement (single cycle)
-            case 0xE8 << 3 | 0: Inx(); _sync = true; break;
-            case 0xC8 << 3 | 0: Iny(); _sync = true; break;
-            case 0xCA << 3 | 0: Dex(); _sync = true; break;
-            case 0x88 << 3 | 0: Dey(); _sync = true; break;
+            case 0xE8 << 3 | 0: Inx(); break;
+            case 0xE8 << 3 | 1: _sync = true; break;
+            case 0xC8 << 3 | 0: Iny(); break;
+            case 0xC8 << 3 | 1: _sync = true; break;
+            case 0xCA << 3 | 0: Dex(); break;
+            case 0xCA << 3 | 1: _sync = true; break;
+            case 0x88 << 3 | 0: Dey(); break;
+            case 0x88 << 3 | 1: _sync = true; break;
             
             default: return false;
         }

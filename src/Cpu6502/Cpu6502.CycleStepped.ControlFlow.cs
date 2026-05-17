@@ -49,6 +49,7 @@ public partial class Cpu6502
             case 0x60 << 3 | 2: Rts_Cycle2(); return true;
             case 0x60 << 3 | 3: Rts_Cycle3(); return true;
             case 0x60 << 3 | 4: Rts_Cycle4(); return true;
+            case 0x60 << 3 | 5: Rts_Cycle5(); return true;
             
             // BIT Zero Page (3 cykle)
             case 0x24 << 3 | 0: BitZp_Cycle0(); return true;

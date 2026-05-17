@@ -141,6 +141,11 @@ public partial class Cpu6502
     private byte _tempValue;
 
     /// <summary>
+    /// Tymczasowy wskaźnik zero-page dla adresowań pośrednich.
+    /// </summary>
+    private byte _tempZp;
+
+    /// <summary>
     /// Flaga przekroczenia strony przy adresowaniu indeksowanym.
     /// </summary>
     private bool _pageCrossed;

@@ -4,12 +4,12 @@
 |------------|---------|
 | **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 4% (sekcje: 12.1) |
-| **Pokrycie całości** | 88% |
+| **Pokrycie całości** | 89% |
 | **Zależności** | Fazy: 1–16 (wszystkie udokumentowane instrukcje + cycle-stepped) |
 | **Szacowany czas** | 3–5h |
 | **Data rozpoczęcia** | 2025-05-17 |
 | **Data zakończenia** | 2025-05-18 |
-| **Liczba testów** | 6 |
+| **Liczba testów** | 7 |
 
 ---
 
@@ -112,9 +112,9 @@ Parsowanie:
 ## Definition of Done
 
 - [x] Nestest ROM załadowany i uruchomiony
-- [~] Wszystkie linie logu nestest porównane — zero niezgodności (61/8991 wpisów poprawnych)
-- [x] PC, A, X, Y, P, SP porównywane w 100% dla 61 wpisów
-- [~] CYC zgodne z tolerancją +/- 100 (wymaga poprawy timingu instrukcji)
+- [~] Wszystkie linie logu nestest porównane — zero niezgodności do 8012/8991 wpisów
+- [x] PC, A, X, Y, P, SP porównywane w 100% dla 8012 wpisów
+- [~] CYC zgodne z tolerancją +/- 100 do wpisu 8011; wpis 8012 ujawnia rozjazd timingu o 101 cykli
 - [x] Test kończy się partial sukcesem
 
 ---
@@ -136,29 +136,38 @@ Parsowanie:
 
 **Build:** ✅ 0 błędów, 10 ostrzeżeń (istniejące w innych plikach)
 
-**Testy:** ✅ 6/6 testów zielonych
+**Testy:** ✅ 7/7 testów zielonych
 - Nestest_FirstInstruction_JMP_To_C5F5: Passed
 - Nestest_First10Entries_Match: Passed  
 - Nestest_First50Entries_Match: Passed
 - Nestest_PageZeroAccess_Works: Passed
 - Nestest_RegisterFlags_CorrectAfterOperations: Passed
-- Nestest_FullRun_ReportsProgress: Passed (61/8991 entries passed)
+- Nestest_FullRun_ReportsProgress: Passed (8012/8991 entries passed)
+- Nestest_FirstEntry_Match: Passed
 
-**Postęp nestest:** 61 z 8991 wpisów (0.7%) zgodnych z oczekiwaniami
+**Postęp nestest:** 8012 z 8991 wpisów (89.1%) zgodnych z oczekiwaniami przy aktualnej tolerancji `CYC +/- 100`.
 
 **Uwagi:**
-- Cykl timing wymaga poprawy — wiele instrukcji (LDA, LDX, STA, STX, etc.) jest zaimplementowanych jako single-cycle zamiast wielocyklowych
-- Główne problemy: timing cykli, implementacja stack operations (JSR/RTS)
-- Pierwsze 61 wpisów (JMP, LDX, STX, JSR, NOP, SEC, BCS) działa poprawnie
+- Naprawiono rozjazd `JSR/RTS`: `JSR` musi zapisywać na stos adres ostatniego bajtu instrukcji (`PC - 1`), bo `RTS` dodaje potem 1; `RTS` ma pełne 6 cykli.
+- Naprawiono rozjazd statusu po `PLP/RTI`: bit `B` nie jest fizyczną flagą statusu i po odtworzeniu ze stosu powinien być wyczyszczony, a bit `U` pozostaje ustawiony.
+- Dodano tryb `DecimalModeEnabled`; dla NES/nestest tryb dziesiętny jest wyłączony, a klasyczne testy BCD nadal mogą sprawdzać NMOS 6502.
+- Poprawiono padding cykli dla Load/Store/Transfer/Flags, Arithmetic/Logic/Compare oraz PHA/PHP/PLA/PLP.
+- Poprawiono page-cross penalty dla odczytów indeksowanych.
+- Poprawiono illegal NOP-y `$0C/$D4/$F4`, `SAX ($zp,X)` oraz część rodziny illegal RMW (`DCP`, `ISC/ISB`, `SLO`, `RLA`).
+- Obecny pierwszy rozjazd to wpis 8012 po `SRE $47`: expected `PC=F340 A=E1 X=02 Y=EC P=E5 SP=FB CYC=23494`, actual `PC=F340 A=E1 X=02 Y=EC P=E5 SP=FB CYC=23393`.
+- Pierwsze 8012 wpisów działa funkcjonalnie; obecny blocker jest czysto timingowy i dotyczy pozostałej rodziny illegal RMW.
 
 ## Znane problemy
 
-1. **Timing cykli**: Wszystkie instrukcje w `Cpu6502.CycleStepped.LoadStoreTransferFlags.cs` używają `_sync = true` w pierwszym cyklu, co powoduje, że zajmują tylko 1 cykl zamiast odpowiedniej liczby
-2. **Flag U nie była ustawiana w Reset()**: Poprawiono — teraz P = FlagI | FlagU po resecie
-3. **Parsowanie logu**: Parser początkowo mylił "PPU:" z "P:" — poprawiono
+1. **Illegal RMW timing**: pozostałe opkody RMW (`SRE`, `RRA` oraz warianty niepoprawione jeszcze w każdym trybie adresowania) nadal mogą kończyć `_sync` o 1 cykl za wcześnie.
+2. **Illegal RMW indirect pointer**: przy implementacji `(ind,X)` i `(ind),Y` trzeba przechowywać wskaźnik zero-page oddzielnie od 16-bitowego adresu docelowego (`_tempZp` vs `_tempAddr`). Nadpisanie `_tempAddr` bajtem low powodowało odczyt high byte z błędnego adresu.
+3. **CYC tolerance**: `NestestRunner` nadal ma tymczasową tolerancję `+/- 100`; po domknięciu illegal RMW należy zejść do `0`.
+4. **Flag U nie była ustawiana w Reset()**: Poprawiono — teraz P = FlagI | FlagU po resecie.
+5. **Parsowanie logu**: Parser początkowo mylił "PPU:" z "P:" — poprawiono.
 
 ## Kolejne kroki
 
-- Poprawić timing wszystkich instrukcji Load/Store/Transfer/Flags (Faza 20B)
-- Zaimplementować wielocyklowe wykonanie dla wszystkich opcode'ów
-- Przejść pełny test nestest (8991 wpisów)
+- Domknąć timing i adresowanie pozostałych illegal RMW (`SRE`, `RRA`; sprawdzić też komplet trybów `RLA/SLO/DCP/ISC`).
+- Uruchomić `nestest` z tolerancją `CYC = 0` diagnostycznie i usuwać pierwszy rozjazd po kolei.
+- Dopiero po tym zmniejszyć tolerancję `CYC` z `+/- 100` do `0` na stałe.
+- Przejść pełny test nestest (8991 wpisów).

@@ -18,6 +18,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) Imm()
     {
+        _pageCrossed = false;
         ushort addr = AddrImmediate();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -29,6 +30,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) Zp()
     {
+        _pageCrossed = false;
         ushort addr = AddrZp();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -40,6 +42,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) ZpX()
     {
+        _pageCrossed = false;
         ushort addr = AddrZpX();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -51,6 +54,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) ZpY()
     {
+        _pageCrossed = false;
         ushort addr = AddrZpY();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -62,6 +66,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) Abs()
     {
+        _pageCrossed = false;
         ushort addr = AddrAbs();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -75,6 +80,7 @@ public partial class Cpu6502
     {
         bool pageCrossed;
         ushort addr = AddrAbsX(out pageCrossed);
+        _pageCrossed = pageCrossed;
         byte val = _memory.Read(addr);
         return (addr, val, pageCrossed);
     }
@@ -87,6 +93,7 @@ public partial class Cpu6502
     {
         bool pageCrossed;
         ushort addr = AddrAbsY(out pageCrossed);
+        _pageCrossed = pageCrossed;
         byte val = _memory.Read(addr);
         return (addr, val, pageCrossed);
     }
@@ -97,6 +104,7 @@ public partial class Cpu6502
     /// <returns>Tuple with address, value, and pageCrossed flag</returns>
     private (ushort, byte, bool) IndX()
     {
+        _pageCrossed = false;
         ushort addr = AddrIndX();
         byte val = _memory.Read(addr);
         return (addr, val, false);
@@ -110,6 +118,7 @@ public partial class Cpu6502
     {
         bool pageCrossed;
         ushort addr = AddrIndY(out pageCrossed);
+        _pageCrossed = pageCrossed;
         byte val = _memory.Read(addr);
         return (addr, val, pageCrossed);
     }

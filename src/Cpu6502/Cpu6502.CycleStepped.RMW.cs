@@ -55,7 +55,7 @@ public partial class Cpu6502
     private void IncZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -85,19 +85,18 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// INC Zero Page,X - Cykl 4: Sync
+    /// INC Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void IncZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// INC Zero Page,X - Cykl 5: (nieużywany, ale zarezerwowany)
+    /// INC Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void IncZpX_Cycle5()
     {
-         
+        _sync = true;
     }
 
     /// <summary>
@@ -273,7 +272,7 @@ public partial class Cpu6502
     private void DecZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -303,15 +302,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// DEC Zero Page,X - Cykl 4: Sync
+    /// DEC Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void DecZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// DEC Zero Page,X - Cykl 5: (nieużywany)
+    /// DEC Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void DecZpX_Cycle5()
     {
@@ -490,7 +488,7 @@ public partial class Cpu6502
     private void AslZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -519,15 +517,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// ASL Zero Page,X - Cykl 4: Sync
+    /// ASL Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void AslZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// ASL Zero Page,X - Cykl 5: (nieużywany)
+    /// ASL Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void AslZpX_Cycle5()
     {
@@ -704,7 +701,7 @@ public partial class Cpu6502
     private void LsrZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -733,15 +730,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// LSR Zero Page,X - Cykl 4: Sync
+    /// LSR Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void LsrZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// LSR Zero Page,X - Cykl 5: (nieużywany)
+    /// LSR Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void LsrZpX_Cycle5()
     {
@@ -918,7 +914,7 @@ public partial class Cpu6502
     private void RolZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -947,15 +943,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// ROL Zero Page,X - Cykl 4: Sync
+    /// ROL Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void RolZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// ROL Zero Page,X - Cykl 5: (nieużywany)
+    /// ROL Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void RolZpX_Cycle5()
     {
@@ -1132,7 +1127,7 @@ public partial class Cpu6502
     private void RorZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     /// <summary>
@@ -1161,15 +1156,14 @@ public partial class Cpu6502
     }
 
     /// <summary>
-    /// ROR Zero Page,X - Cykl 4: Sync
+    /// ROR Zero Page,X - Cykl 4: Dummy indexing cycle
     /// </summary>
     private void RorZpX_Cycle4()
     {
-        _sync = true;
     }
 
     /// <summary>
-    /// ROR Zero Page,X - Cykl 5: (nieużywany)
+    /// ROR Zero Page,X - Cykl 5: Sync
     /// </summary>
     private void RorZpX_Cycle5()
     {

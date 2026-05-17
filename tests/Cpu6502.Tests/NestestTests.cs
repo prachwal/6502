@@ -33,6 +33,7 @@ public class NestestTests
     {
         _memory = new FlatMemory();
         _cpu = new Cpu6502(_memory);
+        _cpu.DecimalModeEnabled = false; // nestest targets the NES 2A03 CPU, which ignores BCD arithmetic.
         
         // Załaduj ROM nestest do pamięci
         LoadNestestRom();

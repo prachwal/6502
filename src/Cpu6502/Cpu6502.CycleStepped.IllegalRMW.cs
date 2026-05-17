@@ -31,7 +31,6 @@ public partial class Cpu6502
     private void DcpZp_Cycle3()
     {
         ExecuteCmp(_a, _tempValue);
-        _sync = true;
     }
 
     private void DcpZp_Cycle4()
@@ -43,7 +42,7 @@ public partial class Cpu6502
     private void DcpZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     private void DcpZpX_Cycle1()
@@ -67,6 +66,10 @@ public partial class Cpu6502
     private void DcpZpX_Cycle4()
     {
         ExecuteCmp(_a, _tempValue);
+    }
+
+    private void DcpZpX_Cycle5()
+    {
         _sync = true;
     }
 
@@ -142,20 +145,11 @@ public partial class Cpu6502
 
     private void DcpAbsX_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteCmp(_a, _tempValue);
-            _sync = true;
-        }
+        ExecuteCmp(_a, _tempValue);
     }
 
     private void DcpAbsX_Cycle6()
     {
-        ExecuteCmp(_a, _tempValue);
         _sync = true;
     }
 
@@ -194,39 +188,29 @@ public partial class Cpu6502
 
     private void DcpAbsY_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteCmp(_a, _tempValue);
-            _sync = true;
-        }
+        ExecuteCmp(_a, _tempValue);
     }
 
     private void DcpAbsY_Cycle6()
     {
-        ExecuteCmp(_a, _tempValue);
         _sync = true;
     }
 
     // DCP (Indirect,X) - 8 cykli
     private void DcpIndX_Cycle0()
     {
-        byte zp = (byte)(_memory.Read(_pc++) + _x);
-        _tempAddr = zp;
+        _tempZp = (byte)(_memory.Read(_pc++) + _x);
     }
 
     private void DcpIndX_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void DcpIndX_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -251,25 +235,28 @@ public partial class Cpu6502
     private void DcpIndX_Cycle6()
     {
         ExecuteCmp(_a, _tempValue);
+    }
+
+    private void DcpIndX_Cycle7()
+    {
         _sync = true;
     }
 
     // DCP (Indirect),Y - 8 cykli
     private void DcpIndY_Cycle0()
     {
-        byte zp = _memory.Read(_pc++);
-        _tempAddr = zp;
+        _tempZp = _memory.Read(_pc++);
     }
 
     private void DcpIndY_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void DcpIndY_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -295,20 +282,11 @@ public partial class Cpu6502
 
     private void DcpIndY_Cycle6()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteCmp(_a, _tempValue);
-            _sync = true;
-        }
+        ExecuteCmp(_a, _tempValue);
     }
 
     private void DcpIndY_Cycle7()
     {
-        ExecuteCmp(_a, _tempValue);
         _sync = true;
     }
 
@@ -351,7 +329,7 @@ public partial class Cpu6502
     private void IscZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     private void IscZpX_Cycle1()
@@ -375,6 +353,10 @@ public partial class Cpu6502
     private void IscZpX_Cycle4()
     {
         ExecuteSbc(_tempValue);
+    }
+
+    private void IscZpX_Cycle5()
+    {
         _sync = true;
     }
 
@@ -450,20 +432,11 @@ public partial class Cpu6502
 
     private void IscAbsX_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteSbc(_tempValue);
-            _sync = true;
-        }
+        ExecuteSbc(_tempValue);
     }
 
     private void IscAbsX_Cycle6()
     {
-        ExecuteSbc(_tempValue);
         _sync = true;
     }
 
@@ -502,39 +475,29 @@ public partial class Cpu6502
 
     private void IscAbsY_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteSbc(_tempValue);
-            _sync = true;
-        }
+        ExecuteSbc(_tempValue);
     }
 
     private void IscAbsY_Cycle6()
     {
-        ExecuteSbc(_tempValue);
         _sync = true;
     }
 
     // ISC (Indirect,X) - 8 cykli
     private void IscIndX_Cycle0()
     {
-        byte zp = (byte)(_memory.Read(_pc++) + _x);
-        _tempAddr = zp;
+        _tempZp = (byte)(_memory.Read(_pc++) + _x);
     }
 
     private void IscIndX_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void IscIndX_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -559,25 +522,28 @@ public partial class Cpu6502
     private void IscIndX_Cycle6()
     {
         ExecuteSbc(_tempValue);
+    }
+
+    private void IscIndX_Cycle7()
+    {
         _sync = true;
     }
 
     // ISC (Indirect),Y - 8 cykli
     private void IscIndY_Cycle0()
     {
-        byte zp = _memory.Read(_pc++);
-        _tempAddr = zp;
+        _tempZp = _memory.Read(_pc++);
     }
 
     private void IscIndY_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void IscIndY_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -603,20 +569,11 @@ public partial class Cpu6502
 
     private void IscIndY_Cycle6()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            ExecuteSbc(_tempValue);
-            _sync = true;
-        }
+        ExecuteSbc(_tempValue);
     }
 
     private void IscIndY_Cycle7()
     {
-        ExecuteSbc(_tempValue);
         _sync = true;
     }
 
@@ -648,6 +605,10 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a &= result;
         SetNZ(_a);
+    }
+
+    private void RlaZp_Cycle4()
+    {
         _sync = true;
     }
 
@@ -655,7 +616,7 @@ public partial class Cpu6502
     private void RlaZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     private void RlaZpX_Cycle1()
@@ -675,6 +636,14 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a &= result;
         SetNZ(_a);
+    }
+
+    private void RlaZpX_Cycle4()
+    {
+    }
+
+    private void RlaZpX_Cycle5()
+    {
         _sync = true;
     }
 
@@ -708,6 +677,10 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a &= result;
         SetNZ(_a);
+    }
+
+    private void RlaAbs_Cycle5()
+    {
         _sync = true;
     }
 
@@ -747,14 +720,6 @@ public partial class Cpu6502
 
     private void RlaAbsX_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void RlaAbsX_Cycle6()
@@ -798,14 +763,6 @@ public partial class Cpu6502
 
     private void RlaAbsY_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void RlaAbsY_Cycle6()
@@ -816,19 +773,18 @@ public partial class Cpu6502
     // RLA (Indirect,X) - 8 cykli
     private void RlaIndX_Cycle0()
     {
-        byte zp = (byte)(_memory.Read(_pc++) + _x);
-        _tempAddr = zp;
+        _tempZp = (byte)(_memory.Read(_pc++) + _x);
     }
 
     private void RlaIndX_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void RlaIndX_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -849,25 +805,32 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a &= result;
         SetNZ(_a);
+    }
+
+    private void RlaIndX_Cycle6()
+    {
+    }
+
+    private void RlaIndX_Cycle7()
+    {
         _sync = true;
     }
 
     // RLA (Indirect),Y - 8 cykli
     private void RlaIndY_Cycle0()
     {
-        byte zp = _memory.Read(_pc++);
-        _tempAddr = zp;
+        _tempZp = _memory.Read(_pc++);
     }
 
     private void RlaIndY_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void RlaIndY_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -894,14 +857,6 @@ public partial class Cpu6502
 
     private void RlaIndY_Cycle6()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void RlaIndY_Cycle7()
@@ -1219,6 +1174,10 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a |= result;
         SetNZ(_a);
+    }
+
+    private void SloZp_Cycle4()
+    {
         _sync = true;
     }
 
@@ -1226,7 +1185,7 @@ public partial class Cpu6502
     private void SloZpX_Cycle0()
     {
         byte zp = _memory.Read(_pc++);
-        _tempAddr = (ushort)(zp + _x);
+        _tempAddr = (ushort)((zp + _x) & 0xFF);
     }
 
     private void SloZpX_Cycle1()
@@ -1246,6 +1205,14 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a |= result;
         SetNZ(_a);
+    }
+
+    private void SloZpX_Cycle4()
+    {
+    }
+
+    private void SloZpX_Cycle5()
+    {
         _sync = true;
     }
 
@@ -1279,6 +1246,10 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a |= result;
         SetNZ(_a);
+    }
+
+    private void SloAbs_Cycle5()
+    {
         _sync = true;
     }
 
@@ -1318,14 +1289,6 @@ public partial class Cpu6502
 
     private void SloAbsX_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void SloAbsX_Cycle6()
@@ -1369,14 +1332,6 @@ public partial class Cpu6502
 
     private void SloAbsY_Cycle5()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void SloAbsY_Cycle6()
@@ -1387,19 +1342,18 @@ public partial class Cpu6502
     // SLO (Indirect,X) - 8 cykli
     private void SloIndX_Cycle0()
     {
-        byte zp = (byte)(_memory.Read(_pc++) + _x);
-        _tempAddr = zp;
+        _tempZp = (byte)(_memory.Read(_pc++) + _x);
     }
 
     private void SloIndX_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void SloIndX_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -1420,25 +1374,32 @@ public partial class Cpu6502
         _memory.Write(_tempAddr, result);
         _a |= result;
         SetNZ(_a);
+    }
+
+    private void SloIndX_Cycle6()
+    {
+    }
+
+    private void SloIndX_Cycle7()
+    {
         _sync = true;
     }
 
     // SLO (Indirect),Y - 8 cykli
     private void SloIndY_Cycle0()
     {
-        byte zp = _memory.Read(_pc++);
-        _tempAddr = zp;
+        _tempZp = _memory.Read(_pc++);
     }
 
     private void SloIndY_Cycle1()
     {
-        byte lo = _memory.Read(_tempAddr);
+        byte lo = _memory.Read(_tempZp);
         _tempAddr = lo;
     }
 
     private void SloIndY_Cycle2()
     {
-        byte hi = _memory.Read((byte)(_tempAddr + 1));
+        byte hi = _memory.Read((byte)(_tempZp + 1));
         _tempAddr |= (ushort)(hi << 8);
     }
 
@@ -1465,14 +1426,6 @@ public partial class Cpu6502
 
     private void SloIndY_Cycle6()
     {
-        if (_pageCrossed)
-        {
-            // Dodatkowy cykl za page crossing
-        }
-        else
-        {
-            _sync = true;
-        }
     }
 
     private void SloIndY_Cycle7()

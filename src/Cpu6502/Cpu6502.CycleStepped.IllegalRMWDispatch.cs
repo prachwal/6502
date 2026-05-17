@@ -26,6 +26,7 @@ public partial class Cpu6502
             case 0xD7 << 3 | 2: DcpZpX_Cycle2(); break;
             case 0xD7 << 3 | 3: DcpZpX_Cycle3(); break;
             case 0xD7 << 3 | 4: DcpZpX_Cycle4(); break;
+            case 0xD7 << 3 | 5: DcpZpX_Cycle5(); break;
 
             // DCP Absolute ($CF)
             case 0xCF << 3 | 0: DcpAbs_Cycle0(); break;
@@ -61,6 +62,7 @@ public partial class Cpu6502
             case 0xC3 << 3 | 4: DcpIndX_Cycle4(); break;
             case 0xC3 << 3 | 5: DcpIndX_Cycle5(); break;
             case 0xC3 << 3 | 6: DcpIndX_Cycle6(); break;
+            case 0xC3 << 3 | 7: DcpIndX_Cycle7(); break;
 
             // DCP (Indirect),Y ($D3)
             case 0xD3 << 3 | 0: DcpIndY_Cycle0(); break;
@@ -86,6 +88,7 @@ public partial class Cpu6502
             case 0xF7 << 3 | 2: IscZpX_Cycle2(); break;
             case 0xF7 << 3 | 3: IscZpX_Cycle3(); break;
             case 0xF7 << 3 | 4: IscZpX_Cycle4(); break;
+            case 0xF7 << 3 | 5: IscZpX_Cycle5(); break;
 
             // ISC Absolute ($EF)
             case 0xEF << 3 | 0: IscAbs_Cycle0(); break;
@@ -121,6 +124,7 @@ public partial class Cpu6502
             case 0xE3 << 3 | 4: IscIndX_Cycle4(); break;
             case 0xE3 << 3 | 5: IscIndX_Cycle5(); break;
             case 0xE3 << 3 | 6: IscIndX_Cycle6(); break;
+            case 0xE3 << 3 | 7: IscIndX_Cycle7(); break;
 
             // ISC (Indirect),Y ($F3)
             case 0xF3 << 3 | 0: IscIndY_Cycle0(); break;
@@ -138,12 +142,15 @@ public partial class Cpu6502
             case 0x27 << 3 | 1: RlaZp_Cycle1(); break;
             case 0x27 << 3 | 2: RlaZp_Cycle2(); break;
             case 0x27 << 3 | 3: RlaZp_Cycle3(); break;
+            case 0x27 << 3 | 4: RlaZp_Cycle4(); break;
 
             // RLA Zero Page,X ($37)
             case 0x37 << 3 | 0: RlaZpX_Cycle0(); break;
             case 0x37 << 3 | 1: RlaZpX_Cycle1(); break;
             case 0x37 << 3 | 2: RlaZpX_Cycle2(); break;
             case 0x37 << 3 | 3: RlaZpX_Cycle3(); break;
+            case 0x37 << 3 | 4: RlaZpX_Cycle4(); break;
+            case 0x37 << 3 | 5: RlaZpX_Cycle5(); break;
 
             // RLA Absolute ($2F)
             case 0x2F << 3 | 0: RlaAbs_Cycle0(); break;
@@ -151,6 +158,7 @@ public partial class Cpu6502
             case 0x2F << 3 | 2: RlaAbs_Cycle2(); break;
             case 0x2F << 3 | 3: RlaAbs_Cycle3(); break;
             case 0x2F << 3 | 4: RlaAbs_Cycle4(); break;
+            case 0x2F << 3 | 5: RlaAbs_Cycle5(); break;
 
             // RLA Absolute,X ($3F)
             case 0x3F << 3 | 0: RlaAbsX_Cycle0(); break;
@@ -177,6 +185,8 @@ public partial class Cpu6502
             case 0x23 << 3 | 3: RlaIndX_Cycle3(); break;
             case 0x23 << 3 | 4: RlaIndX_Cycle4(); break;
             case 0x23 << 3 | 5: RlaIndX_Cycle5(); break;
+            case 0x23 << 3 | 6: RlaIndX_Cycle6(); break;
+            case 0x23 << 3 | 7: RlaIndX_Cycle7(); break;
 
             // RLA (Indirect),Y ($33)
             case 0x33 << 3 | 0: RlaIndY_Cycle0(); break;
@@ -250,12 +260,15 @@ public partial class Cpu6502
             case 0x07 << 3 | 1: SloZp_Cycle1(); break;
             case 0x07 << 3 | 2: SloZp_Cycle2(); break;
             case 0x07 << 3 | 3: SloZp_Cycle3(); break;
+            case 0x07 << 3 | 4: SloZp_Cycle4(); break;
 
             // SLO Zero Page,X ($17)
             case 0x17 << 3 | 0: SloZpX_Cycle0(); break;
             case 0x17 << 3 | 1: SloZpX_Cycle1(); break;
             case 0x17 << 3 | 2: SloZpX_Cycle2(); break;
             case 0x17 << 3 | 3: SloZpX_Cycle3(); break;
+            case 0x17 << 3 | 4: SloZpX_Cycle4(); break;
+            case 0x17 << 3 | 5: SloZpX_Cycle5(); break;
 
             // SLO Absolute ($0F)
             case 0x0F << 3 | 0: SloAbs_Cycle0(); break;
@@ -263,6 +276,7 @@ public partial class Cpu6502
             case 0x0F << 3 | 2: SloAbs_Cycle2(); break;
             case 0x0F << 3 | 3: SloAbs_Cycle3(); break;
             case 0x0F << 3 | 4: SloAbs_Cycle4(); break;
+            case 0x0F << 3 | 5: SloAbs_Cycle5(); break;
 
             // SLO Absolute,X ($1F)
             case 0x1F << 3 | 0: SloAbsX_Cycle0(); break;
@@ -289,6 +303,8 @@ public partial class Cpu6502
             case 0x03 << 3 | 3: SloIndX_Cycle3(); break;
             case 0x03 << 3 | 4: SloIndX_Cycle4(); break;
             case 0x03 << 3 | 5: SloIndX_Cycle5(); break;
+            case 0x03 << 3 | 6: SloIndX_Cycle6(); break;
+            case 0x03 << 3 | 7: SloIndX_Cycle7(); break;
 
             // SLO (Indirect),Y ($13)
             case 0x13 << 3 | 0: SloIndY_Cycle0(); break;
