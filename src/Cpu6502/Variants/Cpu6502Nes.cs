@@ -2,7 +2,7 @@ namespace Cpu6502.Variants;
 
 /// <summary>
 /// Procesor Ricoh 2A03 używany w NES (Nintendo Entertainment System).
-/// Jest wariantem MOS 6502 z wyłączonym trybem BCD (Decimal Mode).
+/// Jest wariantem MOS 6502 z wyłączonym trybem BCD (Decimal Mode) i poprawionym bugiem JMP indirect.
 /// Flaga D (0x08) jest widoczna, ale arytmetyka ADC/SBC zawsze działa w trybie binarnym.
 /// </summary>
 public sealed class Cpu6502Nes : Cpu6502
@@ -15,5 +15,8 @@ public sealed class Cpu6502Nes : Cpu6502
     {
         // Wyłącz obsługę trybu BCD (2A03 nie obsługuje arytmetyki BCD)
         DecimalModeEnabled = false;
+        
+        // Wyłącz bug JMP ($xxFF) — 2A03 czyta z $(xx+1)00, nie $xx00
+        HasJmpIndirectBug = false;
     }
 }

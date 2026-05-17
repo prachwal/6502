@@ -123,6 +123,7 @@ public partial class Cpu6502
     /// <summary>
     /// Indirect Absolute addressing mode for JMP (6C).
     /// NMOS 6502 bug: when indirect address ends with $xxFF, high byte is read from $xx00 instead of $(xx+1)00.
+    /// Ricoh 2A03 (NES) does NOT have this bug.
     /// </summary>
     /// <returns>Indirect absolute address</returns>
     private ushort AddrIndirectAbs()
@@ -134,11 +135,10 @@ public partial class Cpu6502
         byte addrLo = _memory.Read(ptrAddr);
 
         // NMOS bug: if ptrAddr ends with $xxFF, high byte is read from $xx00 instead of $(xx+1)00
-        ushort ptrAddrHi;
-        if ((ptrAddr & 0xFF) == 0xFF)
-            ptrAddrHi = (ushort)(ptrAddr & 0xFF00);  // same page
-        else
-            ptrAddrHi = (ushort)(ptrAddr + 1);
+        // Ricoh 2A03 (NES) reads from the correct address (ptrAddr + 1)
+        ushort ptrAddrHi = HasJmpIndirectBug && (ptrAddr & 0xFF) == 0xFF
+            ? (ushort)(ptrAddr & 0xFF00)  // same page (bug)
+            : (ushort)(ptrAddr + 1);     // next address (correct)
 
         byte addrHi = _memory.Read(ptrAddrHi);
 

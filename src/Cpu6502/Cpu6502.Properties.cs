@@ -28,6 +28,13 @@ public partial class Cpu6502
     public bool DecimalModeEnabled { get; set; } = true;
 
     /// <summary>
+    /// Controls whether the JMP indirect bug is present.
+    /// NMOS 6502 has the bug: JMP ($xxFF) reads high byte from $xx00 instead of $(xx+1)00.
+    /// Ricoh 2A03 (NES) does NOT have this bug.
+    /// </summary>
+    public bool HasJmpIndirectBug { get; set; } = true;
+
+    /// <summary>
     /// Accumulator - główny rejestr arytmetyczny.
     /// </summary>
     public byte A 
