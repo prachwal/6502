@@ -22,6 +22,15 @@ public class BcdTests
         cpu.SetState(state);
     }
 
+    private void ExecuteOne()
+    {
+        do
+        {
+            cpu!.Tick();
+        }
+        while (!cpu!.GetState().Sync);
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -40,7 +49,7 @@ public class BcdTests
         cpu!.A = 0x09;
         cpu.P = Cpu6502.FlagD; // Set decimal mode
         
-        cpu.Tick(); // Execute ADC
+        ExecuteOne(); // Execute ADC
         
         // Should result in $10, no carry
         Assert.That(cpu.A, Is.EqualTo(0x10));
@@ -57,7 +66,7 @@ public class BcdTests
         cpu!.A = 0x99;
         cpu.P = Cpu6502.FlagD; // Set decimal mode
         
-        cpu.Tick(); // Execute ADC
+        ExecuteOne(); // Execute ADC
         
         // Should result in $00 with carry
         Assert.That(cpu.A, Is.EqualTo(0x00));
@@ -74,7 +83,7 @@ public class BcdTests
         cpu!.A = 0x50;
         cpu.P = Cpu6502.FlagD; // Set decimal mode
         
-        cpu.Tick(); // Execute ADC
+        ExecuteOne(); // Execute ADC
         
         // Should result in $00 with carry and overflow
         Assert.That(cpu.A, Is.EqualTo(0x00));
@@ -91,7 +100,7 @@ public class BcdTests
         cpu!.A = 0x10;
         cpu.P = Cpu6502.FlagD | Cpu6502.FlagC; // Set decimal mode and carry (no borrow)
         
-        cpu.Tick(); // Execute SBC
+        ExecuteOne(); // Execute SBC
         
         // Should result in $09, carry remains set
         Assert.That(cpu.A, Is.EqualTo(0x09));
@@ -108,7 +117,7 @@ public class BcdTests
         cpu!.A = 0x00;
         cpu.P = Cpu6502.FlagD | Cpu6502.FlagC; // Set decimal mode and carry (no borrow initially)
         
-        cpu.Tick(); // Execute SBC
+        ExecuteOne(); // Execute SBC
         
         // Should result in $99, carry cleared (borrow)
         Assert.That(cpu.A, Is.EqualTo(0x99));
@@ -125,7 +134,7 @@ public class BcdTests
         cpu!.A = 0x10;
         cpu.P = 0x00; // Clear all flags (binary mode)
         
-        cpu.Tick(); // Execute ADC
+        ExecuteOne(); // Execute ADC
         
         // Should result in $52 in binary
         Assert.That(cpu.A, Is.EqualTo(0x52));
@@ -142,7 +151,7 @@ public class BcdTests
         cpu!.A = 0x30;
         cpu.P = Cpu6502.FlagC; // Set carry (binary mode, no decimal flag)
         
-        cpu.Tick(); // Execute SBC
+        ExecuteOne(); // Execute SBC
         
         // Should result in $20 in binary
         Assert.That(cpu.A, Is.EqualTo(0x20));
@@ -158,7 +167,7 @@ public class BcdTests
         LoadProgram(0xD8); // CLD
         cpu!.P = 0xFF; // Set all flags
         
-        cpu.Tick(); // Execute CLD
+        ExecuteOne(); // Execute CLD
         
         // Decimal flag should be cleared
         Assert.That(cpu.GetFlag(Cpu6502.FlagD), Is.False);
@@ -171,7 +180,7 @@ public class BcdTests
         LoadProgram(0xF8); // SED
         cpu!.P = 0x00; // Clear all flags
         
-        cpu.Tick(); // Execute SED
+        ExecuteOne(); // Execute SED
         
         // Decimal flag should be set
         Assert.That(cpu.GetFlag(Cpu6502.FlagD), Is.True);

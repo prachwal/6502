@@ -5,51 +5,7 @@ namespace Cpu6502;
 /// </summary>
 public partial class Cpu6502
 {
-    #region Metody publiczne - Tick i Reset
-
-    /// <summary>
-    /// Wykonuje jeden cykl zegara procesora.
-    /// Pobiera opcode, inkrementuje PC i wykonuje odpowiednią instrukcję.
-    /// </summary>
-    public void Tick()
-    {
-        byte opcode;
-        if (_sync)
-        {
-            // Sprawdź przerwania PRZED pobraniem nowego opcode
-            // (z opóźnieniem 1 instrukcji po CLI/SEI/PLP/RTI)
-            if (!_interruptDelay)
-            {
-                if (_nmiLatched)
-                {
-                    _nmiLatched = false;
-                    InjectInterrupt(InterruptType.NMI);
-                    return;
-                }
-                else if (_irqPending && !GetFlag(FlagI))
-                {
-                    InjectInterrupt(InterruptType.IRQ);
-                    return;
-                }
-            }
-            _interruptDelay = false;
-
-            // Pobierz nowy opcode z pamięci
-            opcode = _memory.Read(_pc);
-            _ir = opcode;  // przechowuj opcode bezpośrednio
-            _pc++;
-            _sync = false;
-        }
-        else
-        {
-            // Użyj poprzednio zapisanego opcode
-            opcode = _ir;
-        }
-        _opcodeTable[opcode]();
-
-        // Po wykonaniu instrukcji, ustaw sync na następny fetch
-        _sync = true;
-    }
+    #region Metody publiczne - Reset
 
     /// <summary>
     /// Inicjalizuje procesor do stanu po zasilaniu (RESET).
@@ -73,6 +29,8 @@ public partial class Cpu6502
         // Ustaw sygnalizację pobrania nowego opcode
         _sync = true;
         _cycle = 0;
+        _cycleCount = 0;
+        _currentOpcode = 0;
     }
 
     #endregion

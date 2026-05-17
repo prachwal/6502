@@ -32,6 +32,15 @@ public class InterruptTests
         cpu.SetState(state);
     }
 
+    private void ExecuteOne()
+    {
+        do
+        {
+            cpu!.Tick();
+        }
+        while (!cpu!.GetState().Sync);
+    }
+
     [Test]
     public void Brk_PushesPCPlus2()
     {
@@ -42,7 +51,7 @@ public class InterruptTests
         memory!.Write(0xFFFE, 0x12);
         memory.Write(0xFFFF, 0x34);
         
-        cpu.Tick(); // Execute BRK
+        ExecuteOne(); // Execute BRK
         
         // After BRK: PC should be at $FFFE/$FFFF vector
         Assert.That(cpu.PC, Is.EqualTo(0x3412));
@@ -65,7 +74,7 @@ public class InterruptTests
         cpu!.SP = 0xFF;
         cpu.P = 0x00; // Clear all flags
         
-        cpu.Tick(); // Execute BRK
+        ExecuteOne(); // Execute BRK
         
         // Pushed P should have B=1 (bit 4) and bit5=1
         byte pushedP = memory!.Read((ushort)(0x0100 + cpu.SP + 1));
@@ -78,7 +87,7 @@ public class InterruptTests
         LoadProgram(0x00); // BRK
         cpu!.P = 0x00; // Clear all flags
         
-        cpu.Tick(); // Execute BRK
+        ExecuteOne(); // Execute BRK
         
         // I flag should be set after BRK
         Assert.That((cpu.P & 0x04), Is.EqualTo(0x04)); // I=1
@@ -93,7 +102,7 @@ public class InterruptTests
         memory!.Write(0xFFFE, 0x00);
         memory.Write(0xFFFF, 0x40);
         
-        cpu.Tick(); // Execute BRK
+        ExecuteOne(); // Execute BRK
         
         // PC should be at $4000
         Assert.That(cpu.PC, Is.EqualTo(0x4000));
@@ -110,7 +119,7 @@ public class InterruptTests
         memory.Write(0x01FE, 0x34); // PCL
         memory.Write(0x01FF, 0x12); // PCH
         
-        cpu.Tick(); // Execute RTI
+        ExecuteOne(); // Execute RTI
         
         // PC should be restored to $1234
         Assert.That(cpu.PC, Is.EqualTo(0x1234));
@@ -130,7 +139,7 @@ public class InterruptTests
         memory.Write(0x01FE, 0x34); // PCL
         memory.Write(0x01FF, 0x12); // PCH
         
-        cpu.Tick(); // Execute RTI
+        ExecuteOne(); // Execute RTI
         
         // P should be restored with B=0
         Assert.That(cpu.P, Is.EqualTo(0x04));
@@ -150,7 +159,7 @@ public class InterruptTests
         cpu.SetIRQ(true);
         
         // Execute NOP (should trigger IRQ at end)
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should jump to IRQ vector
         Assert.That(cpu.PC, Is.EqualTo(0x5000));
@@ -169,7 +178,7 @@ public class InterruptTests
         cpu.SetIRQ(true);
         
         // Execute NOP (should NOT trigger IRQ)
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should be at next instruction (NOP + 1)
         Assert.That(cpu.PC, Is.EqualTo(0x0101));
@@ -190,7 +199,7 @@ public class InterruptTests
         cpu.SetIRQ(true);
         
         // Execute NOP (should trigger IRQ)
-        cpu.Tick();
+        ExecuteOne();
         
         // Stack should have: PCH, PCL, P (with B=0)
         byte pushedP = memory!.Read((ushort)(0x0100 + cpu.SP + 1));
@@ -212,7 +221,7 @@ public class InterruptTests
         cpu.SetNMI(false); // falling edge - should latch
         
         // Execute NOP (should trigger NMI)
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should jump to NMI vector
         Assert.That(cpu.PC, Is.EqualTo(0x7000));
@@ -233,7 +242,7 @@ public class InterruptTests
         cpu.SetNMI(false);
         
         // Execute NOP (should trigger NMI despite I=1)
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should jump to NMI vector
         Assert.That(cpu.PC, Is.EqualTo(0x8000));
@@ -255,7 +264,7 @@ public class InterruptTests
         cpu.SetNMI(false);
         
         // Execute NOP (should trigger NMI)
-        cpu.Tick();
+        ExecuteOne();
         
         // Stack should have: PCH, PCL, P (with B=0)
         byte pushedP = memory!.Read((ushort)(0x0100 + cpu.SP + 1));
@@ -277,7 +286,7 @@ public class InterruptTests
         cpu.SetIRQ(true);
         
         // Execute CLI (should clear I flag)
-        cpu.Tick();
+        ExecuteOne();
         
         // I flag should be clear now
         Assert.That((cpu.P & 0x04), Is.EqualTo(0x00));
@@ -286,13 +295,13 @@ public class InterruptTests
         Assert.That(cpu.PC, Is.EqualTo(0x0101));
         
         // Execute NOP (next instruction completes because of CLI delay)
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should be past NOP (NOP is 1 byte)
         Assert.That(cpu.PC, Is.EqualTo(0x0102));
         
         // Next Tick: IRQ should fire before the next instruction
-        cpu.Tick();
+        ExecuteOne();
         
         // PC should jump to IRQ vector
         Assert.That(cpu.PC, Is.EqualTo(0xA000));

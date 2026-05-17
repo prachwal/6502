@@ -86,7 +86,11 @@ public class ResetTests
         Assert.That(cpu.PC, Is.EqualTo(0x0100));
         
         // Execute first instruction (NOP)
-        cpu.Tick();
+        do
+        {
+            cpu.Tick();
+        }
+        while (!cpu.GetState().Sync);
         
         // PC should advance to $0101
         Assert.That(cpu.PC, Is.EqualTo(0x0101));

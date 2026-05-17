@@ -22,6 +22,15 @@ public class AddressingTests
         cpu.SetState(state);
     }
 
+    private void ExecuteOne()
+    {
+        do
+        {
+            cpu!.Tick();
+        }
+        while (!cpu!.GetState().Sync);
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -41,7 +50,7 @@ public class AddressingTests
         // Load program that uses LDA zp
         LoadProgram(0xA5, 0x42); // LDA $42
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should load value from zero page
         Assert.That(cpu.A, Is.EqualTo(0xAA));
@@ -57,7 +66,7 @@ public class AddressingTests
         LoadProgram(0xB5, 0x80); // LDA $80,X
         cpu.X = 0xFF; // X = 0xFF, so 0x80 + 0xFF = 0x7F (wraps)
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should wrap: 0x80 + 0xFF = 0x7F and load value 0xBB
         Assert.That(cpu.A, Is.EqualTo(0xBB));
@@ -74,7 +83,7 @@ public class AddressingTests
         LoadProgram(0xBD, 0xFF, 0x01); // LDA $01FF,X
         cpu.X = 0x02; // X = 0x02, so 0x01FF + 0x02 = 0x0201 (page cross)
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should load from 0x0201 and take extra cycle for page crossing
         Assert.That(cpu.A, Is.EqualTo(0xDD));
@@ -90,7 +99,7 @@ public class AddressingTests
         LoadProgram(0xBD, 0x80, 0x01); // LDA $0180,X
         cpu.X = 0x7F; // X = 0x7F, so 0x0180 + 0x7F = 0x01FF (no page cross)
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should load from 0x01FF
         Assert.That(cpu.A, Is.EqualTo(0xEE));
@@ -108,7 +117,7 @@ public class AddressingTests
         LoadProgram(0xA1, 0x0F); // LDA ($0F,X)
         cpu.X = 0x01; // X = 0x01, so 0x0F + 0x01 = 0x10
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should load from indirect address 0x0320
         Assert.That(cpu.A, Is.EqualTo(0xFF));
@@ -126,7 +135,7 @@ public class AddressingTests
         LoadProgram(0xB1, 0x40); // LDA ($40),Y
         cpu.Y = 0x02; // Y = 0x02, so 0x01FF + 0x02 = 0x0201 (page cross)
         
-        cpu.Tick();
+        ExecuteOne();
         
         // Should load from 0x0201 and take extra cycle
         Assert.That(cpu.A, Is.EqualTo(0x11));
@@ -139,20 +148,20 @@ public class AddressingTests
         
         // Test LDA immediate
         LoadProgram(0xA9, 0x42); // LDA #$42
-        cpu!.Tick();
+        ExecuteOne();
         Assert.That(cpu.A, Is.EqualTo(0x42));
         
         // Test ADC zero page
         memory!.Write(0x50, 0x10);
         LoadProgram(0x65, 0x50); // ADC $50
         cpu.A = 0x20;
-        cpu.Tick();
+        ExecuteOne();
         Assert.That(cpu.A, Is.EqualTo(0x30));
         
         // Test STA absolute
         LoadProgram(0x8D, 0x00, 0x04); // STA $0400
         cpu.A = 0x77;
-        cpu.Tick();
+        ExecuteOne();
         Assert.That(memory.Read(0x0400), Is.EqualTo(0x77));
     }
 }

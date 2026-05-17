@@ -34,7 +34,11 @@ public class LoadStoreTests
 
     private void ExecuteOne()
     {
-        cpu!.Tick();
+        do
+        {
+            cpu!.Tick();
+        }
+        while (!cpu!.GetState().Sync);
     }
 
     private void SetZp(byte addr, byte value) => memory!.Write(addr, value);

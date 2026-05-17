@@ -34,7 +34,11 @@ public class TransferTests
 
     private void ExecuteOne()
     {
-        cpu!.Tick();
+        do
+        {
+            cpu!.Tick();
+        }
+        while (!cpu!.GetState().Sync);
     }
 
     [Test]

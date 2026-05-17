@@ -39,10 +39,11 @@ public partial class Cpu6502
 
     #endregion
 
-    #region Stan wewnętrzny
+    #region Stan wewnętrzny - cykle instrukcji
 
     /// <summary>
-    /// Instruction Register - przechowuje bieżący opcode.
+    /// Instruction Register - przechowuje (opcode << 3) | cycleCounter.
+    /// Dolne 3 bity = numer cyklu (0-7), górne bity = opcode.
     /// </summary>
     private byte _ir;
 
@@ -56,6 +57,16 @@ public partial class Cpu6502
     /// </summary>
     private ulong _cycle;
 
+    /// <summary>
+    /// Bieżący numer cyklu instrukcji (0-7).
+    /// </summary>
+    private byte _cycleCount;
+
+    /// <summary>
+    /// Bieżący opcode (bez cyklu).
+    /// </summary>
+    private byte _currentOpcode;
+
     #endregion
 
     #region Zależności
@@ -64,15 +75,6 @@ public partial class Cpu6502
     /// Interfejs magistrali pamięci do odczytu/zapisu.
     /// </summary>
     private readonly IMemoryBus _memory;
-
-    #endregion
-
-    #region Tabela opcode'ów
-
-    /// <summary>
-    /// Tablica delegatów dla wszystkich 256 możliwych opcode'ów.
-    /// </summary>
-    private Action[] _opcodeTable = null!;
 
     #endregion
 
@@ -100,5 +102,23 @@ public partial class Cpu6502
     private bool _interruptDelay;
 
     #endregion
-}
 
+    #region Zmienne tymczasowe dla wielocyklowych instrukcji
+
+    /// <summary>
+    /// Tymczasowy adres operacji (do użycia przez instrukcje wielocyklowe).
+    /// </summary>
+    private ushort _tempAddr;
+
+    /// <summary>
+    /// Tymczasowa wartość bajtu (do użycia przez instrukcje wielocyklowe).
+    /// </summary>
+    private byte _tempValue;
+
+    /// <summary>
+    /// Flaga przekroczenia strony przy adresowaniu indeksowanym.
+    /// </summary>
+    private bool _pageCrossed;
+
+    #endregion
+}
