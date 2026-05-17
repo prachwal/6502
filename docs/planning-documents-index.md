@@ -26,6 +26,7 @@ Dokumenty w `docs/` nie są konfiguracją uruchomieniową emulatora. Konfiguracj
 |---|---|
 | `docs/modular-computer-composition-architecture.md` | nadrzędna architektura składania komputerów z CPU, busa, pamięci i urządzeń |
 | `docs/universal-emulation-elements-roadmap.md` | brakujące elementy uniwersalne dla wielu CPU: address spaces, CPU features, trace, sygnały, DMA, bankowanie |
+| `docs/video-audio-emulation-roadmap.md` | architektura grafiki, dźwięku, terminala tekstowego, buforów i adapterów PC |
 | `docs/computer-profiles-and-uart-roadmap.md` | koncepcja profili komputerów, UART i lista kandydatów maszyn |
 | `docs/io-chip-implementation-roadmap.md` | roadmapa układów wejścia/wyjścia |
 
@@ -115,6 +116,7 @@ Dokumenty opisujące decyzje systemowe:
 ```text
 docs/architecture/modular-computer-composition-architecture.md
 docs/architecture/universal-emulation-elements-roadmap.md
+docs/architecture/video-audio-emulation-roadmap.md
 ```
 
 ### 6.2. Roadmaps
@@ -157,6 +159,9 @@ docs/modular-computer-composition-architecture.md
 docs/universal-emulation-elements-roadmap.md
   -> docs/architecture/universal-emulation-elements-roadmap.md
 
+docs/video-audio-emulation-roadmap.md
+  -> docs/architecture/video-audio-emulation-roadmap.md
+
 docs/computer-profiles-and-uart-roadmap.md
   -> docs/roadmaps/computer-profiles-and-uart-roadmap.md
 
@@ -184,12 +189,13 @@ Dla nowej osoby w projekcie:
 
 1. `docs/modular-computer-composition-architecture.md`
 2. `docs/universal-emulation-elements-roadmap.md`
-3. `docs/io-chip-implementation-roadmap.md`
-4. `docs/computer-profiles-and-uart-roadmap.md`
-5. `docs/apple-1-pia-terminal-plan.md`
-6. `docs/pet-chip-implementation-plans.md`
-7. `docs/tty-mainframe-link-plan.md`
-8. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
+3. `docs/video-audio-emulation-roadmap.md`
+4. `docs/io-chip-implementation-roadmap.md`
+5. `docs/computer-profiles-and-uart-roadmap.md`
+6. `docs/apple-1-pia-terminal-plan.md`
+7. `docs/pet-chip-implementation-plans.md`
+8. `docs/tty-mainframe-link-plan.md`
+9. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
 
 ---
 
@@ -225,6 +231,19 @@ CpuFeatureDescriptor
 ComputerProfile
 ComputerBuilder
 UartSimpleDevice
+ITextDisplayDevice
+TextScreenSnapshot
+```
+
+Po tym warto dodać:
+
+```text
+IVideoDevice
+VideoFrame
+IAudioDevice
+AudioRingBuffer
+SimpleFramebufferDevice
+BeeperDevice
 ```
 
 Dopiero po tym warto implementować kolejne układy i profile komputerów.
