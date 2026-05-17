@@ -13,6 +13,15 @@ Ten dokument uzupełnia `docs/modular-computer-composition-architecture.md` o br
 
 Projekt powinien umożliwiać dodawanie kolejnych rdzeni CPU bez przebudowy profili, frontendów i urządzeń wspólnych.
 
+Drugi cel to rozdzielenie dwóch warstw:
+
+```text
+warstwa kompozycji: czytelna, modularna, oparta o profile i fabryki
+warstwa runtime: szybka, skompilowana, bez kosztownych wyszukiwań w hot path
+```
+
+Dlaczego: profile, fabryki i interfejsy są dobre do składania maszyny, ale nie powinny być jedyną strukturą używaną przy każdym odczycie pamięci, zapisie portu albo ticku CPU. Dla prostego Apple-1 to nie będzie problemem, ale dla C64, Atari, NES, ZX Spectrum albo MSX koszt hot path szybko zacznie dominować.
+
 ---
 
 ## 2. Procesory objęte zakresem
@@ -68,13 +77,137 @@ Projekt powinien umożliwiać dodawanie kolejnych rdzeni CPU bez przebudowy prof
 
 ---
 
-## 5. `AddressSpaceDescriptor`
+## 5. Elementy wymagane dla rozsądnej prędkości
 
-### 5.1. Cel
+| Element | Priorytet | Cel |
+|---|---:|---|
+| `CompiledMemoryMap` | P0 | szybki routing pamięci bez iterowania po urządzeniach |
+| `CompiledPortMap` | P0 | szybki routing portów Z80/8080 |
+| `IMemoryPageHandler` | P0 | handler strony pamięci, np. 256 bajtów |
+| `IPortHandler` | P0 | handler portu albo zakresu portów |
+| `FastRamRegion` | P0 | bezpośredni dostęp do tablicy RAM |
+| `FastRomRegion` | P0 | szybki odczyt ROM, ignorowanie albo błąd przy zapisie |
+| `DevicePageHandler` | P0 | adapter urządzenia memory-mapped do szybkiej mapy |
+| `NullPageHandler` | P0 | obsługa niezmapowanej pamięci |
+| `TraceSink` | P1 | trace z zerowym albo minimalnym kosztem przy wyłączeniu |
+| `RuntimeBus` | P1 | szybka implementacja `ISystemBus` oparta o skompilowane mapy |
+| `FrameScheduler` | P1 | emulacja wideo/audio na ramki, bez pełnego cycle-accurate od początku |
+| `BankSwitchingMap` | P2 | szybka zmiana widocznych banków pamięci |
+| `DmaArbiter` | P2 | arbitraż DMA i zatrzymywanie CPU |
+| `ContentionModel` | P3 | ZX Spectrum, dokładny timing dostępu do RAM/video |
+
+### 5.1. Dlaczego to jest potrzebne
+
+Nie należy wykonywać takiego kodu przy każdym odczycie pamięci:
+
+```csharp
+foreach (var device in devices)
+{
+    if (device.HandlesMemory(address))
+        return device.ReadMemory(address);
+}
+```
+
+To jest akceptowalne w prototypie i w testach, ale nie w szybkim runtime. CPU wykonuje miliony odczytów i zapisów na sekundę. Iterowanie po liście urządzeń, wywołania przez wiele interfejsów, alokacje i trace w hot path będą ograniczać prędkość emulatora.
+
+Docelowo `ComputerBuilder` powinien zbudować czytelną maszynę z profilu, a potem skompilować ją do szybkich struktur runtime.
+
+### 5.2. Model warstw
+
+```text
+Profile layer:
+  ComputerProfile, CpuProfile, DeviceProfile
+
+Composition layer:
+  ComputerBuilder, CpuFactory, DeviceFactory, validation
+
+Runtime layer:
+  EmulatedComputer, RuntimeBus, CompiledMemoryMap, CompiledPortMap, ClockScheduler
+
+Debug layer:
+  TraceSink, CpuSnapshot, BusTransaction, ExecutionTrace
+```
+
+### 5.3. Minimalny szybki memory map dla 8-bitów
+
+```csharp
+public interface IMemoryPageHandler
+{
+    byte Read(ushort address);
+    void Write(ushort address, byte value);
+}
+
+public sealed class CompiledMemoryMap
+{
+    private readonly IMemoryPageHandler[] _readPages = new IMemoryPageHandler[256];
+    private readonly IMemoryPageHandler[] _writePages = new IMemoryPageHandler[256];
+
+    public byte Read(ushort address)
+        => _readPages[address >> 8].Read(address);
+
+    public void Write(ushort address, byte value)
+        => _writePages[address >> 8].Write(address, value);
+}
+```
+
+Dla 64 KB mapowanie po stronach 256 bajtów daje 256 wpisów. To wystarczy dla 6502, 6510, 65C02, 8080, Z80, 6800 i 6809 w pierwszym etapie.
+
+### 5.4. Minimalny szybki port map
+
+```csharp
+public interface IPortHandler
+{
+    byte Read(uint port);
+    void Write(uint port, byte value);
+}
+
+public sealed class CompiledPortMap
+{
+    private readonly IPortHandler[] _readPorts = new IPortHandler[256];
+    private readonly IPortHandler[] _writePorts = new IPortHandler[256];
+
+    public byte Read(byte port)
+        => _readPorts[port].Read(port);
+
+    public void Write(byte port, byte value)
+        => _writePorts[port].Write(port, value);
+}
+```
+
+Dla pełnego Z80 można później rozszerzyć port map do 16 bitów albo użyć maskowania adresu portu zgodnego z profilem maszyny.
+
+### 5.5. Trace bez kosztu przy wyłączeniu
+
+Trace nie może alokować obiektów przy każdym cyklu, jeśli jest wyłączony.
+
+```csharp
+public interface ITraceSink
+{
+    bool IsEnabled { get; }
+    void Write(in BusTransaction transaction);
+}
+```
+
+Hot path powinien mieć prosty warunek:
+
+```csharp
+if (_trace.IsEnabled)
+{
+    _trace.Write(transaction);
+}
+```
+
+Dla trybu release/performance można użyć `NullTraceSink`.
+
+---
+
+## 6. `AddressSpaceDescriptor`
+
+### 6.1. Cel
 
 Różne CPU mają różne przestrzenie adresowe. Nie należy zakładać stałego `ushort` w warstwie systemowej.
 
-### 5.2. Proponowany model
+### 6.2. Proponowany model
 
 ```csharp
 public sealed record AddressSpaceDescriptor(
@@ -85,7 +218,7 @@ public sealed record AddressSpaceDescriptor(
     int DataBusBits);
 ```
 
-### 5.3. Przykłady
+### 6.3. Przykłady
 
 | CPU | Memory bits | Port bits | Separate port space | Data bus |
 |---|---:|---:|---:|---:|
@@ -99,13 +232,13 @@ public sealed record AddressSpaceDescriptor(
 
 ---
 
-## 6. `CpuFeatureDescriptor`
+## 7. `CpuFeatureDescriptor`
 
-### 6.1. Cel
+### 7.1. Cel
 
 Profil CPU powinien jawnie opisywać cechy rdzenia, zamiast ukrywać je w implementacji.
 
-### 6.2. Proponowany model
+### 7.2. Proponowany model
 
 ```csharp
 public sealed record CpuFeatureDescriptor(
@@ -122,7 +255,7 @@ public sealed record CpuFeatureDescriptor(
     bool IsLittleEndian);
 ```
 
-### 6.3. Przykłady decyzji
+### 7.3. Przykłady decyzji
 
 | CPU | Decyzja |
 |---|---|
@@ -133,13 +266,13 @@ public sealed record CpuFeatureDescriptor(
 
 ---
 
-## 7. `CpuSnapshot`
+## 8. `CpuSnapshot`
 
-### 7.1. Cel
+### 8.1. Cel
 
 UI, testy i trace muszą mieć wspólny sposób pobierania stanu CPU, ale rejestry są różne dla każdej rodziny.
 
-### 7.2. Proponowany model elastyczny
+### 8.2. Proponowany model elastyczny
 
 ```csharp
 public sealed record CpuSnapshot(
@@ -152,7 +285,7 @@ public sealed record CpuSnapshot(
     long InstructionCount);
 ```
 
-### 7.3. Przykłady rejestrów
+### 8.3. Przykłady rejestrów
 
 | CPU | Rejestry w `Registers` |
 |---|---|
@@ -164,9 +297,9 @@ public sealed record CpuSnapshot(
 
 ---
 
-## 8. Trace i diagnostyka
+## 9. Trace i diagnostyka
 
-### 8.1. `ExecutionTraceEntry`
+### 9.1. `ExecutionTraceEntry`
 
 ```csharp
 public sealed record ExecutionTraceEntry(
@@ -181,7 +314,7 @@ public sealed record ExecutionTraceEntry(
     CpuSnapshot After);
 ```
 
-### 8.2. `BusTransaction`
+### 9.2. `BusTransaction`
 
 ```csharp
 public sealed record BusTransaction(
@@ -194,7 +327,7 @@ public sealed record BusTransaction(
     string? DeviceId);
 ```
 
-### 8.3. Enums
+### 9.3. Enums
 
 ```csharp
 public enum BusTransactionKind
@@ -216,9 +349,9 @@ public enum AddressSpaceKind
 
 ---
 
-## 9. Przerwania i linie CPU
+## 10. Przerwania i linie CPU
 
-### 9.1. Problem
+### 10.1. Problem
 
 Różne CPU mają różne linie i tryby przerwań:
 
@@ -230,7 +363,7 @@ Różne CPU mają różne linie i tryby przerwań:
 | 6809 | IRQ, FIRQ, NMI, RESET, HALT |
 | 68000 | IPL0-IPL2, RESET, HALT, exceptions |
 
-### 9.2. Minimalny model MVP
+### 10.2. Minimalny model MVP
 
 ```csharp
 public interface ICpuSignalSink
@@ -251,7 +384,7 @@ public enum CpuSignal
 }
 ```
 
-### 9.3. Agregator
+### 10.3. Agregator
 
 ```csharp
 public sealed class CpuSignalController
@@ -265,9 +398,9 @@ Dla MVP można nadal mieć `IIrqSource` i `INmiSource`, ale docelowo `CpuSignalC
 
 ---
 
-## 10. Port-mapped I/O
+## 11. Port-mapped I/O
 
-### 10.1. Wymagane dla
+### 11.1. Wymagane dla
 
 - Intel 8080,
 - Intel 8085,
@@ -275,7 +408,7 @@ Dla MVP można nadal mieć `IIrqSource` i `INmiSource`, ale docelowo `CpuSignalC
 - Z180,
 - wielu systemów CP/M.
 
-### 10.2. Kontrakt
+### 11.2. Kontrakt
 
 ```csharp
 public interface IPortMappedDevice : IDevice
@@ -286,19 +419,19 @@ public interface IPortMappedDevice : IDevice
 }
 ```
 
-### 10.3. Trace portów
+### 11.3. Trace portów
 
 Każdy odczyt/zapis portu powinien generować `BusTransaction` z `AddressSpaceKind.Port`.
 
 ---
 
-## 11. Szersze magistrale i dostęp wielobajtowy
+## 12. Szersze magistrale i dostęp wielobajtowy
 
-### 11.1. Problem
+### 12.1. Problem
 
 68000 ma 16-bitową magistralę danych i operacje byte/word/long. 6502 i Z80 są 8-bitowe.
 
-### 11.2. MVP
+### 12.2. MVP
 
 Na początku `ISystemBus` może zostać bajtowy:
 
@@ -307,7 +440,7 @@ byte ReadMemory(uint address);
 void WriteMemory(uint address, byte value);
 ```
 
-### 11.3. Rozszerzenie późniejsze
+### 12.3. Rozszerzenie późniejsze
 
 ```csharp
 uint ReadMemory(uint address, int widthBits);
@@ -318,9 +451,9 @@ Nie wdrażać tego przed 68000/16-bit bus.
 
 ---
 
-## 12. DMA i zatrzymywanie CPU
+## 13. DMA i zatrzymywanie CPU
 
-### 12.1. Wymagane dla
+### 13.1. Wymagane dla
 
 | System | Powód |
 |---|---|
@@ -330,7 +463,7 @@ Nie wdrażać tego przed 68000/16-bit bus.
 | Z80 systems | BUSRQ/BUSACK |
 | 68000 systems | DMA kontrolerów zewnętrznych |
 
-### 12.2. Kontrakt późniejszy
+### 13.2. Kontrakt późniejszy
 
 ```csharp
 public interface IDmaDevice : IDevice
@@ -340,7 +473,7 @@ public interface IDmaDevice : IDevice
 }
 ```
 
-### 12.3. Linia zatrzymania CPU
+### 13.3. Linia zatrzymania CPU
 
 ```csharp
 public interface ICpuStallController
@@ -351,9 +484,9 @@ public interface ICpuStallController
 
 ---
 
-## 13. Bankowanie pamięci i MMU
+## 14. Bankowanie pamięci i MMU
 
-### 13.1. Wymagane dla
+### 14.1. Wymagane dla
 
 | System | Mechanizm |
 |---|---|
@@ -364,7 +497,7 @@ public interface ICpuStallController
 | Z180 | MMU |
 | 68000 systems | późniejsze MMU opcjonalnie |
 
-### 13.2. Proponowany model
+### 14.2. Proponowany model
 
 ```csharp
 public interface IAddressTranslator : IDevice
@@ -377,13 +510,13 @@ Dla prostych maszyn nie używać translatora.
 
 ---
 
-## 14. Profile CPU
+## 15. Profile CPU
 
-### 14.1. Cel
+### 15.1. Cel
 
 CPU powinno mieć własny profil, który można referencjonować z profilu komputera.
 
-### 14.2. Przykład
+### 15.2. Przykład
 
 ```json
 {
@@ -408,7 +541,7 @@ CPU powinno mieć własny profil, który można referencjonować z profilu kompu
 
 ---
 
-## 15. Aktualizacja kolejności implementacji
+## 16. Aktualizacja kolejności implementacji
 
 ### Etap 1 — minimalny multi-CPU foundation
 
@@ -423,15 +556,29 @@ CPU powinno mieć własny profil, który można referencjonować z profilu kompu
 - [ ] `AddressSpaceDescriptor`
 - [ ] `CpuFeatureDescriptor`
 
-### Etap 2 — bus i trace
+### Etap 2 — szybki runtime bus
 
 - [ ] `SystemBus`
+- [ ] `RuntimeBus`
+- [ ] `CompiledMemoryMap`
+- [ ] `CompiledPortMap`
+- [ ] `IMemoryPageHandler`
+- [ ] `IPortHandler`
+- [ ] `FastRamRegion`
+- [ ] `FastRomRegion`
+- [ ] `NullPageHandler`
+- [ ] walidacja konfliktów mapowania
+
+### Etap 3 — trace i diagnostyka
+
 - [ ] `BusTransaction`
 - [ ] `MemoryAccessTrace`
 - [ ] `PortAccessTrace`
-- [ ] walidacja konfliktów mapowania
+- [ ] `ExecutionTrace`
+- [ ] `TraceSink`
+- [ ] `NullTraceSink`
 
-### Etap 3 — profile i builder
+### Etap 4 — profile i builder
 
 - [ ] `ComputerProfile`
 - [ ] `CpuProfile`
@@ -439,32 +586,37 @@ CPU powinno mieć własny profil, który można referencjonować z profilu kompu
 - [ ] `ComputerBuilder`
 - [ ] `CpuFactoryRegistry`
 - [ ] `DeviceFactoryRegistry`
+- [ ] kompilacja profilu do runtime map
 
-### Etap 4 — 6502 jako pierwszy adapter
+### Etap 5 — 6502 jako pierwszy adapter
 
 - [ ] `Cpu6502Core : ICpuCore`
 - [ ] adapter obecnego busa do `ISystemBus`
 - [ ] profil `minimal-sbc-6502`
 - [ ] `UartSimpleDevice`
 
-### Etap 5 — Z80 proof of architecture
+### Etap 6 — Z80 proof of architecture
 
 - [ ] stub `CpuZ80Core`
 - [ ] port-mapped UART
 - [ ] profil `custom-z80-sbc`
 - [ ] test, że Z80 używa portów bez zmian w 6502
 
-### Etap 6 — rozszerzenia późniejsze
+### Etap 7 — rozszerzenia późniejsze
 
 - [ ] `CpuSignalController`
 - [ ] `ClockScheduler`
+- [ ] `FrameScheduler`
 - [ ] `IAddressTranslator`
 - [ ] `IDmaDevice`
+- [ ] `DmaArbiter`
+- [ ] `BankSwitchingMap`
+- [ ] `ContentionModel`
 - [ ] szerokości busa większe niż 8 bitów
 
 ---
 
-## 16. Decyzje
+## 17. Decyzje
 
 1. W warstwie systemowej używać `uint` dla adresów, nie `ushort`.
 2. W MVP bus może być bajtowy.
@@ -473,15 +625,20 @@ CPU powinno mieć własny profil, który można referencjonować z profilu kompu
 5. `IIrqSource`/`INmiSource` są wystarczające dla 6502, ale docelowo potrzebny będzie `CpuSignalController`.
 6. DMA, bankowanie i 16-bit bus nie są MVP, ale kontrakty powinny być przewidziane.
 7. Z80 powinien być pierwszym testem, że architektura nie jest przywiązana do 6502.
+8. Profile i fabryki służą do składania maszyny, ale runtime musi używać skompilowanych map pamięci i portów.
+9. Nie iterować po wszystkich urządzeniach w hot path odczytu/zapisu.
+10. Trace musi być możliwy do całkowitego wyłączenia bez alokacji w hot path.
 
 ---
 
-## 17. Definition of Done
+## 18. Definition of Done
 
 Ten obszar można uznać za ujęty w dokumentacji, gdy:
 
 - [ ] `modular-computer-composition-architecture.md` odwołuje się do tego dokumentu,
 - [ ] `planning-documents-index.md` zawiera ten dokument,
 - [ ] roadmapa implementacji zawiera `AddressSpaceDescriptor`, `CpuFeatureDescriptor`, `CpuSnapshot`, trace i sygnały CPU,
+- [ ] roadmapa implementacji zawiera `CompiledMemoryMap` i `CompiledPortMap`,
 - [ ] najbliższy krok implementacyjny obejmuje port-mapped I/O od początku,
-- [ ] dokumentacja jasno wskazuje, że 6502 jest pierwszym rdzeniem, ale nie jedynym docelowym CPU.
+- [ ] dokumentacja jasno wskazuje, że 6502 jest pierwszym rdzeniem, ale nie jedynym docelowym CPU,
+- [ ] dokumentacja jasno wskazuje, że modularność profili nie może zastąpić szybkiego runtime.
