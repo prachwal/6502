@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Cpu6502;
+using Cpu6502.Variants;
 using Cpu6502.Tests.TestHelpers;
 using NUnit.Framework;
 
@@ -32,8 +33,8 @@ public class NestestTests
     public void Setup()
     {
         _memory = new FlatMemory();
-        _cpu = new Cpu6502(_memory);
-        _cpu.DecimalModeEnabled = false; // nestest targets the NES 2A03 CPU, which ignores BCD arithmetic.
+        // Używamy Cpu6502Nes - wariant Ricoh 2A03 z wyłączonym BCD i JMP indirect bug
+        _cpu = new Cpu6502Nes(_memory);
         
         // Załaduj ROM nestest do pamięci
         LoadNestestRom();
