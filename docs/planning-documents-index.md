@@ -25,6 +25,7 @@ Dokumenty w `docs/` nie są konfiguracją uruchomieniową emulatora. Konfiguracj
 | Dokument | Rola |
 |---|---|
 | `docs/modular-computer-composition-architecture.md` | nadrzędna architektura składania komputerów z CPU, busa, pamięci i urządzeń |
+| `docs/universal-emulation-elements-roadmap.md` | brakujące elementy uniwersalne dla wielu CPU: address spaces, CPU features, trace, sygnały, DMA, bankowanie |
 | `docs/computer-profiles-and-uart-roadmap.md` | koncepcja profili komputerów, UART i lista kandydatów maszyn |
 | `docs/io-chip-implementation-roadmap.md` | roadmapa układów wejścia/wyjścia |
 
@@ -113,6 +114,7 @@ Dokumenty opisujące decyzje systemowe:
 
 ```text
 docs/architecture/modular-computer-composition-architecture.md
+docs/architecture/universal-emulation-elements-roadmap.md
 ```
 
 ### 6.2. Roadmaps
@@ -152,6 +154,9 @@ Na razie można zostawić pliki w `docs/`, żeby nie robić dużej reorganizacji
 docs/modular-computer-composition-architecture.md
   -> docs/architecture/modular-computer-composition-architecture.md
 
+docs/universal-emulation-elements-roadmap.md
+  -> docs/architecture/universal-emulation-elements-roadmap.md
+
 docs/computer-profiles-and-uart-roadmap.md
   -> docs/roadmaps/computer-profiles-and-uart-roadmap.md
 
@@ -178,12 +183,13 @@ docs/zbiorcza-lista-poprawek-2026-05-17.md
 Dla nowej osoby w projekcie:
 
 1. `docs/modular-computer-composition-architecture.md`
-2. `docs/io-chip-implementation-roadmap.md`
-3. `docs/computer-profiles-and-uart-roadmap.md`
-4. `docs/apple-1-pia-terminal-plan.md`
-5. `docs/pet-chip-implementation-plans.md`
-6. `docs/tty-mainframe-link-plan.md`
-7. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
+2. `docs/universal-emulation-elements-roadmap.md`
+3. `docs/io-chip-implementation-roadmap.md`
+4. `docs/computer-profiles-and-uart-roadmap.md`
+5. `docs/apple-1-pia-terminal-plan.md`
+6. `docs/pet-chip-implementation-plans.md`
+7. `docs/tty-mainframe-link-plan.md`
+8. `docs/zbiorcza-lista-poprawek-2026-05-17.md`
 
 ---
 
@@ -211,6 +217,11 @@ ISystemBus
 IDevice
 IMemoryMappedDevice
 IPortMappedDevice
+ICycleDevice
+IResettableDevice
+CpuSnapshot
+AddressSpaceDescriptor
+CpuFeatureDescriptor
 ComputerProfile
 ComputerBuilder
 UartSimpleDevice
