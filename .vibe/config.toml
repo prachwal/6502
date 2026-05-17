@@ -27,6 +27,7 @@ session_prefix = "session"
 allowlist = [
     "/home/prachwal/.config/vibe/*",
     "/home/prachwal/.vibe/*",
+    "/tmp/*",
     "awk",
     "cargo",
     "cat",
@@ -52,6 +53,7 @@ allowlist = [
     "ls",
     "make",
     "mkdir",
+    "mv",
     "npm",
     "pip3",
     "python",
@@ -60,9 +62,12 @@ allowlist = [
     "sed",
     "sort",
     "tail",
+    "timeout",
     "vibe",
     "wc",
+    "wget",
     "which",
+    "xxd",
 ]
 default_agent = "plan"
 enable_experimental_hooks = false
@@ -82,4 +87,7 @@ allowlist = [
 allowlist = [
     "/home/prachwal/.vibe/*",
 ]
+permission = "always"
+
+[tools.web_search]
 permission = "always"

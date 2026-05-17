@@ -27,6 +27,7 @@
   <ItemGroup>
     <None Update="Data\nestest.nes" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Data\nestest.log" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Data\6502_functional_test.bin" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
