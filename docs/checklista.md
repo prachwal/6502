@@ -101,7 +101,7 @@ Implementacja 5 instrukcji stosowych i NOP:
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.StackNop.cs` - Implementacja 5 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `tests/Cpu6502.Tests/StackNopTests.cs` - 8 testów jednostkowych
 
 **Wyniki:**
@@ -147,8 +147,7 @@ Implementacja architektury cycle-stepped (Tick() per cykl).
 **Zrobione:**
 - ✅ Przebudowa `Fields.cs` - dodano `_ir`, `_cycleCount`, `_currentOpcode`, `_tempAddr`, `_tempValue`, `_pageCrossed`
 - ✅ Nowy plik `Cpu6502.CycleStepped.Core.cs` - implementacja `Tick()` i `ExecuteCycle()`
-- ✅ Konstruktor w `CycleStepped.cs`
-- ✅ Usunięcie `Cpu6502.Constructor.cs` (niepotrzebny w cycle-stepped)
+- ✅ Inicjalizacja opcode'ów zintegrowana z warstwą cycle-stepped
 - ✅ Aktualizacja `PublicMethods.cs` - usunięcie starego `Tick()`, aktualizacja `Reset()`
 - ✅ Pełna tabela cykli w `GetInstructionCycles()` dla wszystkich 151 opcode'ów
 - ✅ Zaimplementowano wszystkie instrukcje w `ExecuteCycle()`:
@@ -205,7 +204,7 @@ Implementacja 11 instrukcji skoków i rozgałęzień:
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.BranchJump.cs` - Implementacja 11 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `src/Cpu6502/Cpu6502.PublicMethods.cs` - Metody Push/Pop dla stosu
 - `tests/Cpu6502.Tests/BranchJumpTests.cs` - 11 testów jednostkowych
 
@@ -246,7 +245,7 @@ Implementacja 20 instrukcji przesunięć i rotacji (ASL, LSR, ROL, ROR):
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.ShiftRotate.cs` - Implementacja 20 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `tests/Cpu6502.Tests/ShiftRotateTests.cs` - 14 testów jednostkowych
 
 **Wyniki:**
@@ -290,7 +289,7 @@ Implementacja 24 instrukcji operacji logicznych (AND, ORA, EOR):
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.Logic.cs` - Implementacja 24 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `tests/Cpu6502.Tests/LogicTests.cs` - 14 testów jednostkowych
 
 **Wyniki:**
@@ -326,7 +325,7 @@ Implementacja 13 instrukcji CMP/CPX/CPY/BIT:
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.CompareBit.cs` - Implementacja 13 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `tests/Cpu6502.Tests/CompareBitTests.cs` - 16 testów jednostkowych
 
 **Wyniki:**
@@ -358,7 +357,7 @@ Implementacja 10 instrukcji INC/DEC (Read-Modify-Write):
 
 **Pliki:**
 - `src/Cpu6502/Cpu6502.IncDec.cs` - Implementacja 10 instrukcji
-- `src/Cpu6502/Cpu6502.Constructor.cs` - Zainicjalizowanie opcode'ów
+- `src/Cpu6502/Cpu6502.CycleStepped.Core.cs` - Inicjalizacja opcode'ów / dispatch cykli
 - `tests/Cpu6502.Tests/IncDecTests.cs` - 15 testów jednostkowych
 
 **Wyniki:**

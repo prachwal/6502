@@ -1,6 +1,6 @@
 # AGENTS.md - Konfiguracja agentów dla projektu 6502 Emulator
 
-## Opis projektu
+## 📌 Opis projektu
 
 To jest **symulator procesora MOS 6502** napisany w C# z wykorzystaniem platformy .NET. Celem projektu jest stworzenie **cycle-accurate** (dokładnego co do cykli) symulatora, który:
 
@@ -9,7 +9,9 @@ To jest **symulator procesora MOS 6502** napisany w C# z wykorzystaniem platform
 - Poprawnie obsługuje przerwania (IRQ, NMI, RESET, BRK) z uwzględnieniem dokładnego timingu
 - Zaliczy testy zgodności binarnych: nestest, Klaus Dormann Functional Test Suite, Wolfgang Lorenz Test Suite, perfect6502
 
-## Struktura projektu
+---
+
+## 🗂️ Struktura projektu
 
 ```
 6502Emulator/
@@ -18,7 +20,7 @@ To jest **symulator procesora MOS 6502** napisany w C# z wykorzystaniem platform
 │       ├── Cpu6502.*.cs   # Pliki partial class (modularna struktura)
 │       │   ├── Constants.cs    # Stałe flag (C, Z, I, D, B, U, V, N)
 │       │   ├── Fields.cs       # Pola rejestrowe i zależności
-│       │   ├── Constructor.cs  # Konstruktor i tabela opcode
+│       │   ├── CycleStepped.Core.cs  # Inicjalizacja opcode'ów i dispatch cykli
 │       │   ├── Properties.cs   # Właściwości publiczne
 │       │   ├── AddressingModes.cs  # Tryby adresowania
 │       │   ├── Flags.cs        # Metody pracy z flagami
@@ -30,12 +32,44 @@ To jest **symulator procesora MOS 6502** napisany w C# z wykorzystaniem platform
 ├── tests/
 │   └── Cpu6502.Tests/     # Testy jednostkowe
 ├── docs/                   # Dokumentacja faz implementacji
+│   ├── checklista.md      # Lista faz i ich statusów
+│   └── faza-XX-*.md       # Specyfikacje poszczególnych faz
 └── .kilo/                  # Konfiguracja Kilo
+    ├── kilo.json          # Główna konfiguracja agentów
+    ├── agents/            # Konfiguracje subagentów
+    │   ├── cpu-implementer.md
+    │   ├── test-writer.md
+    │   ├── opcode-researcher.md
+    │   ├── code-reviewer.md
+    │   ├── debugger.md
+    │   ├── documentation-writer.md
+    │   └── performance-analyzer.md
+    ├── rules/              # Reguły i wytyczne
+    │   ├── coding-standards.md
+    │   ├── testing-guidelines.md
+    │   ├── opcode-implementation.md
+    │   └── documentation-rules.md
+    └── templates/          # Szablony dla subagentów
+        ├── cpu-implementer-template.md
+        └── test-writer-template.md
 ```
 
-## Workflow implementacji faz
+---
 
-Każda faza implementacji powinna być realizowana zgodnie ze specyfikacją w `docs/faza-XX-*.md`.
+## 📋 Referencje do dokumentacji
+
+- **Lista faz i statusów:** [`docs/checklista.md`](docs/checklista.md)
+- **Specyfikacje faz:** [`docs/faza-XX-*.md`](docs/)
+- **Zasady pisania kodu:** [`.kilo/rules/coding-standards.md`](.kilo/rules/coding-standards.md)
+- **Wytyczne testowania:** [`.kilo/rules/testing-guidelines.md`](.kilo/rules/testing-guidelines.md)
+- **Implementacja opcode'ów:** [`.kilo/rules/opcode-implementation.md`](.kilo/rules/opcode-implementation.md)
+- **Zasady dokumentacji:** [`.kilo/rules/documentation-rules.md`](.kilo/rules/documentation-rules.md)
+
+---
+
+## 🚀 Workflow implementacji faz
+
+Każda faza implementacji **MUSI** być realizowana zgodnie ze specyfikacją w `docs/faza-XX-*.md`.
 
 ### Standardowy flow (krok po kroku):
 
@@ -44,12 +78,12 @@ Każda faza implementacji powinna być realizowana zgodnie ze specyfikacją w `d
 3. **Implementacja** - Dodaj nowe pliki/kod
 4. **Testowanie** - `dotnet build && dotnet test`
 5. **Commit** - `git add . && git commit -m "feat: implementacja fazy XX"`
-6. **Aktualizacja dokumentacji** - Zaktualizuj status w `checklista.md` oraz plik `faza-XX-*.md`:
+6. **Aktualizacja dokumentacji** - Zaktualizuj status w `docs/checklista.md` oraz plik `docs/faza-XX-*.md`:
    - Zmień status z `[ ] Nie rozpoczęte` na `[x] Zakończone`
-   - Dodaj `Data zakończenia` (2026-05-16)
-   - Dodaj `Liczba testów` (np. 15)
-   - Dodaj sekcję "Pliki implementacyjne" z listą plików
-   - Dodaj sekcję "Wyniki" z Build/Test
+   - Dodaj `Data zakończenia` (YYYY-MM-DD)
+   - Dodaj `Liczba testów`
+   - Dodaj sekcję **"Pliki implementacyjne"** z listą plików
+   - Dodaj sekcję **"Wyniki"** z Build/Test
    - Dodaj tabelę opcode'ów (jeśli dotyczy)
 
 ### Kryteria przyjęcia (Definition of Done):
@@ -61,111 +95,83 @@ Każda faza implementacji powinna być realizowana zgodnie ze specyfikacją w `d
 
 ---
 
-## Style codebase
+## 📜 Style codebase
 
 ### Pliki partial class
 
-Kod źródłowy jest podzielony na wiele plików partial class w celu lepszej organizacji:
+Kod źródłowy jest podzielony na wiele plików **partial class** w celu lepszej organizacji:
 
 | Plik | Zawartość |
 |------|-----------|
-| `Cpu6502.Constants.cs` | Stałe flag procesora |
-| `Cpu6502.Fields.cs` | Pola rejestrowe i zależności |
-| `Cpu6502.Constructor.cs` | Konstruktor i inicjalizacja |
+| `Cpu6502.Constants.cs` | Stałe flag procesora (C, Z, I, D, B, U, V, N) |
+| `Cpu6502.Fields.cs` | Pola rejestrowe (A, X, Y, SP, PC, P) i zależności |
+| `Cpu6502.CycleStepped.Core.cs` | Inicjalizacja opcode'ów i dispatch cykli |
 | `Cpu6502.Properties.cs` | Właściwości publiczne |
-| `Cpu6502.AddressingModes.cs` | Tryby adresowania |
-| `Cpu6502.Flags.cs` | Metody pracy z flagami |
-| `Cpu6502.LoadStore.cs` | Instrukcje load/store |
+| `Cpu6502.AddressingModes.cs` | Tryby adresowania (Immediate, Zero Page, Absolute, etc.) |
+| `Cpu6502.Flags.cs` | Metody pracy z flagami (SetNZ, SetFlag, GetFlag) |
+| `Cpu6502.LoadStore.cs` | Instrukcje load/store (LDA, LDX, LDY, STA, STX, STY) |
+| `Cpu6502.Transfer.cs` | Instrukcje transferu (TAX, TAY, TSX, TXA, TXS, TYA) |
+| `Cpu6502.FlagsSetClear.cs` | Flagi Set/Clear (CLC, SEC, CLD, SED, CLI, SEI, CLV) |
+| `Cpu6502.Arithmetic.cs` | Arytmetyka (ADC, SBC) |
+| `Cpu6502.Logic.cs` | Operacje logiczne (AND, OR, EOR) |
+| `Cpu6502.CompareBit.cs` | Porównania i test bitu (CMP, CPX, CPY, BIT) |
+| `Cpu6502.IncDec.cs` | Inkrementacja/Dekrementacja (INC, DEC, INX, DEX, INY, DEY) |
+| `Cpu6502.ShiftRotate.cs` | Shift/Rotate (ASL, LSR, ROL, ROR) |
+| `Cpu6502.BranchJump.cs` | Skoki (JMP, JSR, RTS, RTI, BCC, BCS, etc.) |
+| `Cpu6502.StackNop.cs` | Stos i NOP (PHA, PHP, PLA, PLP, NOP) |
+| `Cpu6502.InterruptsSw.cs` | Przerwania programowe (BRK, RTI) |
+| `Cpu6502.Reset.cs` | RESET |
+| `Cpu6502.IrqNmi.cs` | IRQ/NMI |
 | `Cpu6502.PublicMethods.cs` | Metody publiczne (Tick, Reset, GetState, SetState) |
-| `Cpu6502.Placeholders.cs` | Niezaimplementowane opcode'y |
+| `Cpu6502.Placeholders.cs` | Placeholder dla niezaimplementowanych opcode |
 
-### Zasady pisania kodu
+**Szczegółowe wytyczne:** [`.kilo/rules/coding-standards.md`](.kilo/rules/coding-standards.md)
 
-- **Krótkie metody** - metody powinny mieć max 10-15 linii kodu
-- **Dobre nazwy** - nazwy metod i zmiennych opisujące ich działanie
-- **Komentarze XML** - każdy publiczny typ i metoda powinien mieć komentarz XML
-- **Jedna odpowiedzialność** - każdy plik powinien mieć jasno określony zakres
-- **Testy jednostkowe** - każda nowa funkcjonalność powinna mieć odpowiadające jej testy
+---
 
-## Narzędzia
+## 🛠️ Narzędzia
 
 - **Język:** C# 12
 - **Framework:** .NET 10.0
 - **Testy:** NUnit 4.3.2
 - **Build:** .NET CLI
 
-## Fazy implementacji
+---
 
-| # | Faza | Status |
-|---|------|--------|
-| 0 | Szkielet | ✅ Zakończone |
-| 1 | Load/Store | ✅ Zakończone |
-| 2 | Transfer | ⏳ Do zrobienia |
-| 3 | Flagi | ⏳ Do zrobienia |
-| 4 | Arytmetyka | ⏳ Do zrobienia |
-| 5 | Inc/Dec | ⏳ Do zrobienia |
-| 6 | Porównania | ⏳ Do zrobienia |
-| 7 | Logiczne | ⏳ Do zrobienia |
-| 8 | Shift/Rotate | ⏳ Do zrobienia |
-| 9 | Skoki | ⏳ Do zrobienia |
-| 10 | Stos/NOP | ⏳ Do zrobienia |
-| 11 | Przerwania SW | ⏳ Do zrobienia |
-| 12 | Adresowanie | ⏳ Do zrobienia |
-| 13 | BCD | ⏳ Do zrobienia |
-| 14 | RESET | ⏳ Do zrobienia |
-| 15 | IRQ/NMI | ⏳ Do zrobienia |
-| 16 | Cycle-stepped | ⏳ Do zrobienia |
-| 17 | R-M-W | ⏳ Do zrobienia |
-| 18 | Illegal stable | ⏳ Do zrobienia |
-| 19 | Illegal unstable | ⏳ Do zrobienia |
-| 20 | Nestest | ⏳ Do zrobienia |
-| 21 | Klaus | ⏳ Do zrobienia |
-| 22 | Wolfgang | ⏳ Do zrobienia |
-| 23 | Perfect6502 | ⏳ Do zrobienia |
+## 🤖 Subagenci i ich role
+
+Projekt korzysta z **subagentów** do specjalistycznych zadań. Każdy subagent ma ściśle zdefiniowaną rolę i **MUSI** przestrzegać reguł opisanych w `.kilo/agents/` i `.kilo/rules/`.
+
+### Dostępni subagenci
+
+| Subagent | Opis | Plik konfiguracyjny | Model |
+|---------|------|---------------------|-------|
+| **cpu-implementer** | Implementuje fazy symulatora 6502 | `.kilo/agents/cpu-implementer.md` | `mistral-medium-2604` |
+| **test-writer** | Tworzy testy jednostkowe | `.kilo/agents/test-writer.md` | `mistral-medium-2604` |
+| **opcode-researcher** | Bada opcode'y i ich zachowanie | `.kilo/agents/opcode-researcher.md` | `mistral-small-2603` |
+| **code-reviewer** | Recenzuje kod | `.kilo/agents/code-reviewer.md` | `mistral-medium-2604` |
+| **debugger** | Debuguje problemy | `.kilo/agents/debugger.md` | `mistral-medium-2604` |
+| **documentation-writer** | Tworzy dokumentację | `.kilo/agents/documentation-writer.md` | `mistral-small-2603` |
+| **performance-analyzer** | Analizuje wydajność | `.kilo/agents/performance-analyzer.md` | `mistral-small-2603` |
+
+**Konfiguracja głównych agentów:** [`.kilo/kilo.json`](.kilo/kilo.json)
 
 ---
 
-## Podział zadań dla subagenta
+## 🎯 Zasady delegacji zadań do subagentów
 
-### Faza 2 - Transfer (TAX, TAY, TSX, TXA, TXS, TYA)
+1. **Jedna faza na raz** - Zlecaj implementację **tylko jednej fazy** na raz.
+2. **Partial classes** - Nowe instrukcje **MUSZĄ** być dodawane jako **nowe pliki partial class** (`Cpu6502.*.cs`).
+3. **Testy jednostkowe** - Każda nowa funkcjonalność **MUSI** mieć testy.
+4. **Weryfikacja** - Po implementacji **ZAWSZE** uruchom `dotnet build && dotnet test`.
+5. **Commit** - Po zakończeniu fazy **ZAWSZE** zrób commit z opisem `feat: implementacja fazy XX`.
+6. **Dokumentacja** - Zaktualizuj **ZAWSZE** dokumentację fazy i `docs/checklista.md`.
 
-**Podzadania:**
-1. Dodać plik `Cpu6502.Transfer.cs` z metodami:
-   - `Tax()` - Transfer A do X
-   - `Tay()` - Transfer A do Y
-   - `Tsx()` - Transfer SP do X
-   - `Txa()` - Transfer X do A
-   - `Txs()` - Transfer X do SP
-   - `Tya()` - Transfer Y do A (nieudokumentowana)
-2. Zainicjalizować opcode'y w konstruktorze
-3. Dodać testy w `TransferTests.cs`
+**Szablony dla subagentów:** [`.kilo/templates/`](.kilo/templates/)
 
-### Faza 3 - Flagi Set/Clear (CLC, SEC, CLD, SED, CLI, SEI, CLV)
+---
 
-**Podzadania:**
-1. Dodać plik `Cpu6502.FlagsSetClear.cs` z metodami:
-   - `Clc()` - Clear Carry
-   - `Sec()` - Set Carry
-   - `Cld()` - Clear Decimal
-   - `Sed()` - Set Decimal
-   - `Cli()` - Clear Interrupt
-   - `Sei()` - Set Interrupt
-   - `Clv()` - Clear Overflow
-2. Zainicjalizować opcode'y w konstruktorze
-3. Dodać testy w `FlagsSetClearTests.cs`
-
-### Faza 4 - Arytmetyka (ADC, SBC bez BCD)
-
-**Podzadania:**
-1. Dodać plik `Cpu6502.Arithmetic.cs` z metodami:
-   - `AdcImm()`, `AdcZp()`, `AdcZpX()`, `AdcAbs()`, `AdcAbsX()`, `AdcAbsY()`, `AdcIndX()`, `AdcIndY()`
-   - `SbcImm()`, `SbcZp()`, `SbcZpX()`, `SbcAbs()`, `SbcAbsX()`, `SbcAbsY()`, `SbcIndX()`, `SbcIndY()`
-2. Zaimplementować ADC/SBC z prawidłowym obliczaniem Carry i Overflow
-3. Dodać testy w `ArithmeticTests.cs`
-
-**Wskazówka:** Użyj subagenta do implementacji poszczególnych grup instrukcji (load/store, transfer, flags, arithmetic).
-
-## Przykładowe polecenia
+## 📌 Przykładowe polecenia CLI
 
 ```bash
 # Budowanie
@@ -183,17 +189,16 @@ dotnet restore
 
 ---
 
-## Task delegation guide (dla subagenta)
+## 📌 Podsumowanie
 
-### Przykład delegacji
-
-**Prompt dla subagenta:**
-> "Implementuj Phase 2 - Transfer instructions (TAX, TAY, TSX, TXA, TXS, TYA) zgodnie z `docs/faza-02-transfer.md`. Stwórz plik `Cpu6502.Transfer.cs` z metodami dla każdej instrukcji, zainicjalizuj opcode'y w konstruktorze, dodaj testy w `TransferTests.cs`. Zadbaj o komentarze XML i testy jednostkowe."
-
-### Zasady delegacji
-
-1. **Jedna faza na raz** - zlecaj implementację jednej fazy zgodnie z `docs/faza-XX-*.md`
-2. **Partial classes** - nowe instrukcje dodawaj jako nowe pliki partial class (`Cpu6502.*.cs`)
-3. **Testy jednostkowe** - każda nowa funkcjonalność musi mieć testy
-4. **Build i test** - po implementacji uruchom `dotnet build && dotnet test`
-5. **Commit** - po zakończeniu fazy zrób commit z opisem `feat: implementacja fazy XX`
+| Element | Wymaganie |
+|---------|------------|
+| **Język** | C# 12 |
+| **Framework** | .NET 10.0 |
+| **Testy** | NUnit 4.3.2 |
+| **Struktura** | Partial classes |
+| **Komentarze** | XML dla publicznych metod |
+| **Testy** | Wymagane dla każdej funkcjonalności |
+| **Dokumentacja** | Wymagana dla każdej fazy |
+| **Subagenci** | 7 dostępnych (cpu-implementer, test-writer, etc.) |
+| **Reguły** | `.kilo/rules/` |
