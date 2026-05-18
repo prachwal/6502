@@ -1,0 +1,25 @@
+{
+  "schema": "computer-profile/v1",
+  "id": "minimal-6502-sbc",
+  "name": "Minimal 6502 SBC",
+  "status": "active",
+  "cpu": {
+    "type": "mos6502-nmos",
+    "clockHz": 1023000
+  },
+  "addressSpace": {
+    "memoryAddressBits": 16,
+    "portAddressBits": 0,
+    "hasSeparatePortSpace": false,
+    "dataBusBits": 8
+  },
+  "memory": {
+    "ram": [
+      { "id": "ram0", "start": "0x0000", "size": "0x8000" }
+    ],
+    "rom": [
+      { "id": "basic-rom", "start": "0xE000", "size": "0x1000" }
+    ]
+  },
+  "devices": []
+}

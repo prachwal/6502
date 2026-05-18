@@ -2,7 +2,7 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zaimplementowana |
 | **Zakres** | Konfiguracja maszyn jako dane |
 | **Zaleznosci** | Fazy 24-25 |
 | **Cel projektowy** | Budowac komputery z profili, nie z klas `Apple1Emulator` |
