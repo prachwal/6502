@@ -2,9 +2,10 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | ✅ Zaimplementowana |
+| **Data implementacji** | 2025-01-19 |
 | **Zakres** | Generyczny rownolegly uklad I/O |
-| **Zaleznosci** | Fazy 24-27 |
+| **Zaleznosci** | Fazy 24-27 ✅ |
 | **Cel projektowy** | Jeden PIA dla Apple-1, PET-like profili i SBC |
 
 ---

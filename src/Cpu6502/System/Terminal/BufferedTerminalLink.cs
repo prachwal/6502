@@ -18,6 +18,23 @@ public sealed class BufferedTerminalLink : ITerminalLink
     public bool HasInput => _inputBuffer.Count > 0;
 
     /// <summary>
+    /// Attempts to read a single byte from the input buffer without removing it.
+    /// </summary>
+    /// <param name="value">On success, contains the byte at the front of the buffer.</param>
+    /// <returns>True if a byte is available; otherwise, false.</returns>
+    public bool TryPeekByte(out byte value)
+    {
+        if (_inputBuffer.Count > 0)
+        {
+            value = _inputBuffer.Peek();
+            return true;
+        }
+
+        value = 0;
+        return false;
+    }
+
+    /// <summary>
     /// Attempts to read a single byte from the input buffer.
     /// </summary>
     /// <param name="value">On success, contains the byte read.</param>
