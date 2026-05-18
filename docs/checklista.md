@@ -13,31 +13,31 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 
 | # | Faza | Plik | Status | % pokrycia dok. | % pokrycia całości |
 |---|------|------|--------|----------------:|-------------------:|
-| 0 | Szkielet projektu i struktura .NET | [faza-00-szkielet.md](faza-00-szkielet.md) | [x] | 100% | 1% |
-| 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](faza-01-load-store.md) | [x] | 100% | 3% |
-| 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](faza-02-transfer.md) | [x] | 3% | 5% |
-| 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](faza-03-flags.md) | [x] | 3% | 7% |
-| 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](faza-04-arithmetic.md) | [x] | 5% | 10% |
-| 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](faza-05-inc-dec.md) | [x] | 3% | 13% |
-| 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](faza-06-compare-bit.md) | [x] | 3% | 16% |
-| 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](faza-07-logic.md) | [x] | 3% | 19% |
-| 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](faza-08-shift-rotate.md) | [x] | 4% | 23% |
-| 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](faza-09-branch-jump.md) | [x] | 6% | 30% |
-| 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](faza-10-stack-nop.md) | [x] | 3% | 33% |
-| 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](faza-11-brk-rti.md) | [x] | 3% | 37% |
-| 12 | Pełne tryby adresowania + page crossing | [faza-12-addressing.md](faza-12-addressing.md) | [x] | 5% | 42% |
-| 13 | Tryb BCD — ADC/SBC decimal mode | [faza-13-bcd.md](faza-13-bcd.md) | [x] | 3% | 46% |
-| 14 | Sekwencja RESET | [faza-14-reset.md](faza-14-reset.md) | [x] | 3% | 50% |
-| 15 | Przerwania sprzętowe — IRQ, NMI (podstawowa obsługa) | [faza-15-irq-nmi.md](faza-15-irq-nmi.md) | [x] | 5% | 56% |
-| 16 | Architektura cycle-stepped — Tick() per cykl | [faza-16-cycle-stepped.md](faza-16-cycle-stepped.md) | [x] | 6% | 63% |
-| 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](faza-17-rmw-quirks.md) | [x] | 4% | 68% |
-| 18 | Nieudokumentowane opkody — stabilne | [faza-18-illegal-stable.md](faza-18-illegal-stable.md) | [x] | 8% | 76% |
-| 18C | Nieudokumentowane opkody stabilne - ANC, ALR, ARR, SBX, LAS | [faza-18C-nieudokumentowane-opkody-stabilne.md](faza-18C-nieudokumentowane-opkody-stabilne.md) | [x] | 2% | 78% |
-| 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [x] | 6% | 84% |
-| 20 | Test zgodności — nestest | [faza-20-nestest.md](faza-20-nestest.md) | [x] | 4% | 88% |
-| 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](faza-21-klaus.md) | [x] | 4% | 93% |
+| 0 | Szkielet projektu i struktura .NET | [faza-00-szkielet.md](completed/faza-00-szkielet.md) | [x] | 100% | 1% |
+| 1 | Load / Store — LDA, LDX, LDY, STA, STX, STY | [faza-01-load-store.md](completed/faza-01-load-store.md) | [x] | 100% | 3% |
+| 2 | Transfer między rejestrami — TAX, TAY, TSX, TXA, TXS, TYA | [faza-02-transfer.md](completed/faza-02-transfer.md) | [x] | 3% | 5% |
+| 3 | Flagi Set/Clear — CLC, SEC, CLD, SED, CLI, SEI, CLV | [faza-03-flags.md](completed/faza-03-flags.md) | [x] | 3% | 7% |
+| 4 | Arytmetyka binarna — ADC, SBC (bez BCD) | [faza-04-arithmetic.md](completed/faza-04-arithmetic.md) | [x] | 5% | 10% |
+| 5 | Inkrementacja / Dekrementacja — INC, DEC, INX, INY, DEX, DEY | [faza-05-inc-dec.md](completed/faza-05-inc-dec.md) | [x] | 3% | 13% |
+| 6 | Porównania i BIT — CMP, CPX, CPY, BIT | [faza-06-compare-bit.md](completed/faza-06-compare-bit.md) | [x] | 3% | 16% |
+| 7 | Operacje logiczne — AND, ORA, EOR | [faza-07-logic.md](completed/faza-07-logic.md) | [x] | 3% | 19% |
+| 8 | Przesunięcia i rotacje — ASL, LSR, ROL, ROR | [faza-08-shift-rotate.md](completed/faza-08-shift-rotate.md) | [x] | 4% | 23% |
+| 9 | Skoki i rozgałęzienia — JMP, JSR, RTS, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS | [faza-09-branch-jump.md](completed/faza-09-branch-jump.md) | [x] | 6% | 30% |
+| 10 | Stos i NOP — PHA, PHP, PLA, PLP, NOP | [faza-10-stack-nop.md](completed/faza-10-stack-nop.md) | [x] | 3% | 33% |
+| 11 | Przerwania software — BRK, RTI | [faza-11-brk-rti.md](completed/faza-11-brk-rti.md) | [x] | 3% | 37% |
+| 12 | Pełne tryby adresowania + page crossing | [faza-12-addressing.md](completed/faza-12-addressing.md) | [x] | 5% | 42% |
+| 13 | Tryb BCD — ADC/SBC decimal mode | [faza-13-bcd.md](completed/faza-13-bcd.md) | [x] | 3% | 46% |
+| 14 | Sekwencja RESET | [faza-14-reset.md](completed/faza-14-reset.md) | [x] | 3% | 50% |
+| 15 | Przerwania sprzętowe — IRQ, NMI (podstawowa obsługa) | [faza-15-irq-nmi.md](completed/faza-15-irq-nmi.md) | [x] | 5% | 56% |
+| 16 | Architektura cycle-stepped — Tick() per cykl | [faza-16-cycle-stepped.md](completed/faza-16-cycle-stepped.md) | [x] | 6% | 63% |
+| 17 | R-M-W double write + quirk JMP indirect | [faza-17-rmw-quirks.md](completed/faza-17-rmw-quirks.md) | [x] | 4% | 68% |
+| 18 | Nieudokumentowane opkody — stabilne | [faza-18-illegal-stable.md](completed/faza-18-illegal-stable.md) | [x] | 8% | 76% |
+| 18C | Nieudokumentowane opkody stabilne - ANC, ALR, ARR, SBX, LAS | [faza-18C-nieudokumentowane-opkody-stabilne.md](completed/faza-18C-nieudokumentowane-opkody-stabilne.md) | [x] | 2% | 78% |
+| 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](completed/faza-19-illegal-unstable.md) | [x] | 6% | 84% |
+| 20 | Test zgodności — nestest | [faza-20-nestest.md](completed/faza-20-nestest.md) | [x] | 4% | 88% |
+| 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](completed/faza-21-klaus.md) | [x] | 4% | 93% |
 | 22 | Test zgodności — Wolfgang Lorenz (pomijana, wymaga logiki C64) | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [ ] | 5% | 97% |
-| 23 | Test zgodności — perfect6502 (opcjonalnie) | [faza-23-perfect6502.md](faza-23-perfect6502.md) | [x] | 3% | 100% |
+| 23 | Test zgodności — perfect6502 (opcjonalnie) | [faza-23-perfect6502.md](completed/faza-23-perfect6502.md) | [x] | 3% | 100% |
 
 ---
 
