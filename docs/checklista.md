@@ -1,6 +1,6 @@
 # Checklista faz implementacji symulatora 6502
 
-Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończone
+Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończone | `[s]` = pominięte
 
 ## Legenda wskaźników
 
@@ -8,6 +8,8 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 |----------|------|
 | **Pokrycie dokumentacji** | % dokumentacji głównej, który dana faza implementuje |
 | **Pokrycie całości** | Skumulowany % pełnej specyfikacji 6502 (instrukcje + timing + przerwania + quirk) |
+
+Od fazy 24 pokrycie CPU pozostaje na 100%. Kolejne fazy dotyczą budowy kompletnych komputerów, API runtime, profili i urządzeń I/O.
 
 ---
 
@@ -36,19 +38,29 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](completed/faza-19-illegal-unstable.md) | [x] | 6% | 84% |
 | 20 | Test zgodności — nestest | [faza-20-nestest.md](completed/faza-20-nestest.md) | [x] | 4% | 88% |
 | 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](completed/faza-21-klaus.md) | [x] | 4% | 93% |
-| 22 | Test zgodności — Wolfgang Lorenz (pomijana, wymaga logiki C64) | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [ ] | 5% | 97% |
+| 22 | Test zgodności — Wolfgang Lorenz (pomijana, wymaga logiki C64) | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [s] | 5% | 97% |
 | 23 | Test zgodności — perfect6502 (opcjonalnie) | [faza-23-perfect6502.md](completed/faza-23-perfect6502.md) | [x] | 3% | 100% |
+| 24 | Abstrakcje runtime i API komputera | [faza-24-runtime-abstractions.md](faza-24-runtime-abstractions.md) | [ ] | 0% | 100% |
+| 25 | SystemBus i mapa pamięci | [faza-25-system-bus-memory-map.md](faza-25-system-bus-memory-map.md) | [ ] | 0% | 100% |
+| 26 | Profile komputerów i builder runtime | [faza-26-computer-profiles.md](faza-26-computer-profiles.md) | [ ] | 0% | 100% |
+| 27 | Abstrakcje terminala tekstowego | [faza-27-terminal-abstractions.md](faza-27-terminal-abstractions.md) | [ ] | 0% | 100% |
+| 28 | MOS 6820/6821 PIA medium implementation | [faza-28-mos682x-pia-medium.md](faza-28-mos682x-pia-medium.md) | [ ] | 0% | 100% |
+| 29 | Apple-1 jako profil na generycznej PIA | [faza-29-apple1-profile-wozmon.md](faza-29-apple1-profile-wozmon.md) | [ ] | 0% | 100% |
+| 30 | PET-ready PIA bindings i drugi profil walidacyjny | [faza-30-pet-ready-pia-bindings.md](faza-30-pet-ready-pia-bindings.md) | [ ] | 0% | 100% |
+| 31 | API uruchamiania Apple-1 i test end-to-end | [faza-31-apple1-runtime-api.md](faza-31-apple1-runtime-api.md) | [ ] | 0% | 100% |
+| 32 | Profile smoke dla wielu architektur | [faza-32-cross-architecture-smoke-profiles.md](faza-32-cross-architecture-smoke-profiles.md) | [ ] | 0% | 100% |
 
 ---
 
 ## Postęp faz
 
 ```
-Całkowity postęp:     21 / 25 faz (84%)
+Całkowity postęp:     24 / 34 faz (71%)
 
-Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18C, 19, 20, 21
+Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18C, 19, 20, 21, 23
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 22
+Fazy pominięte    [s]: 22
+Fazy nie rozpoczęte [ ]: 24, 25, 26, 27, 28, 29, 30, 31, 32
 ```
 
 ---

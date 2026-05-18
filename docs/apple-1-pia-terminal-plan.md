@@ -1,141 +1,166 @@
-# Apple-1 PIA Terminal Device — plan implementacji
+# Apple-1 PIA Terminal Device - plan implementacji
 
 ## Status
 
-Na ten moment repozytorium nie zawiera kompletnej implementacji PIA dla Apple-1. Wymagany jest co najmniej uproszczony adapter terminala Apple-1 mapowany na zakres `$D010-$D013`, a docelowo generyczna implementacja MOS 6820/6821 PIA.
+Repozytorium nie zawiera jeszcze kompletnej implementacji PIA dla Apple-1. Aktualny kierunek nie zaklada jednorazowego adaptera Apple-1 jako glownego urzadzenia. Wlasciwa implementacja powinna zaczac sie od srednio-dokladnego, parametryzowanego `Mos682xPiaDevice`, ktory Apple-1 wykorzysta przez preset/binding terminalowy mapowany na `$D010-$D013`.
 
 ## Cel
 
-Celem jest uruchomienie Apple-1 WOZ Monitor z poprawną obsługą klawiatury i wyjścia znakowego. Minimalna implementacja nie musi od razu emulować pełnej semantyki układu MOS 6820/6821, ale musi zachować kompatybilność adresową i zachowanie oczekiwane przez monitor Apple-1.
+Celem jest uruchomienie Apple-1 WOZ Monitor z poprawna obsluga klawiatury i wyjscia znakowego, ale bez zamykania architektury na Apple-1. Ten sam rdzen PIA powinien byc mozliwy do uzycia w profilach PET-like, SBC i innych komputerach z inna adresacja oraz innymi bindingami portow.
 
-## Zakres adresów Apple-1
+## Zakres adresow Apple-1
 
 | Adres | Nazwa | Kierunek | Znaczenie |
 |---|---:|---|---|
 | `$D010` | `KBD` | read | Dane klawiatury. Znak z ustawionym bitem 7, gdy znak jest gotowy. |
-| `$D011` | `KBDCR` | read/write | Rejestr kontrolny klawiatury. W uproszczeniu może zwracać stan gotowości. |
-| `$D012` | `DSP` | write | Dane wyświetlacza. Zapisany znak trafia do terminala. |
-| `$D013` | `DSPCR` | read/write | Rejestr kontrolny wyświetlacza. W uproszczeniu może zwracać gotowość wyświetlacza. |
+| `$D011` | `KBDCR` | read/write | Rejestr kontrolny klawiatury/status gotowosci. |
+| `$D012` | `DSP` | write | Dane wyswietlacza. Zapisany znak trafia do terminala. |
+| `$D013` | `DSPCR` | read/write | Rejestr kontrolny wyswietlacza/status gotowosci. |
 
-## Wariant minimalny
+## Wariant medium reusable
 
-Dodać urządzenie specyficzne dla Apple-1:
+Dodać generyczne urządzenie PIA:
 
 ```csharp
-public sealed class Apple1PiaTerminalDevice : IMemoryMappedDevice
+public sealed class Mos682xPiaDevice : IMemoryMappedDevice, IResettableDevice, ICpuSignalSource
 {
-    public ushort StartAddress => 0xD010;
-    public ushort EndAddress => 0xD013;
+    public uint StartAddress { get; }
+    public uint Size => 4;
 
-    public byte Read(ushort address);
-    public void Write(ushort address, byte value);
+    public byte ReadMemory(uint address);
+    public void WriteMemory(uint address, byte value);
+    public void Reset();
 }
 ```
 
-Minimalna logika:
+Logika wymagana w wersji medium:
 
-- `Read(0xD010)` zwraca kolejny znak z bufora klawiatury z ustawionym bitem 7.
-- `Read(0xD011)` zwraca status klawiatury, np. bit gotowości, jeżeli bufor nie jest pusty.
-- `Write(0xD012, value)` przekazuje znak do terminala po wyczyszczeniu bitu 7, jeżeli jest ustawiony.
-- `Read(0xD013)` zwraca gotowość wyświetlacza.
-- `Write(0xD011, value)` i `Write(0xD013, value)` mogą na początku zapamiętywać wartość, bez pełnej emulacji linii kontrolnych.
+- `ORA/ORB` i `DDRA/DDRB`,
+- `CRA/CRB` w zakresie wyboru DDR/data register przez bit 2,
+- mieszanie odczytu portu: `(outputLatch & ddr) | (externalInput & ~ddr)`,
+- callbacki/bindingi pinow zewnetrznych przez `IPiaPortBinding`,
+- konfigurowalny layout rejestrow i adres bazowy,
+- minimalne IRQ jako `ICpuSignalSource`,
+- preset `apple-1-terminal`,
+- drugi binding PET-like z inna adresacja, aby potwierdzic reuse.
 
-## Interfejs terminala
+Nie wymagamy w tej fazie pelnego handshake CA2/CB2 ani dokladnosci tranzystorowej.
 
-Aby nie wiązać PIA z konkretnym frontendem, dodać mały port terminalowy:
+## Terminal/link bajtowy
+
+Aby nie wiazac PIA z konkretnym frontendem, terminal powinien byc neutralnym linkiem bajtowym:
 
 ```csharp
-public interface IApple1Terminal
+public interface ITerminalLink
 {
     bool HasInput { get; }
-    byte ReadInput();
-    void WriteOutput(byte value);
+    bool TryReadByte(out byte value);
+    void WriteByte(byte value);
 }
 ```
 
-Implementacje frontendu mogą mapować ten interfejs na:
+Implementacje frontendu moga mapowac ten interfejs na:
 
 - TUI / terminal konsolowy,
 - WPF,
 - Avalonia,
 - Blazor,
-- testowy bufor wejścia/wyjścia.
+- testowy bufor wejscia/wyjscia.
 
 ## Testy jednostkowe
 
-Dodać testy MSTest + FluentAssertions.
+Przypadki wymagane dla PIA i presetow:
 
-Przypadki minimalne:
+1. `WriteDdra_WhenCraSelectsDdr_StoresDirection`
+2. `WritePortA_WhenCraSelectsData_UpdatesOutputLatch`
+3. `ReadPortA_MergesOutputAndExternalInput`
+4. `Device_WithBaseD010_MapsApple1Offsets`
+5. `Device_WithDifferentBase_MapsSameRegisters`
+6. `Apple1Preset_ReadKbd_WhenInputAvailable_ReturnsCharacterWithHighBitSet`
+7. `Apple1Preset_ReadKbdCr_WhenInputAvailable_ReturnsReadyStatus`
+8. `Apple1Preset_WriteDsp_StripsHighBitBeforeOutput`
+9. `PetLikeBinding_UsesSamePiaWithDifferentAddress`
 
-1. `Read_Kbd_WhenInputAvailable_ReturnsCharacterWithHighBitSet`
-2. `Read_KbdCr_WhenInputAvailable_ReturnsReadyStatus`
-3. `Read_KbdCr_WhenNoInput_ReturnsNotReadyStatus`
-4. `Write_Dsp_WritesCharacterToTerminal`
-5. `Write_Dsp_StripsHighBitBeforeOutput`
-6. `Device_AddressRange_IsD010ToD013`
-
-Przykładowy kierunek testu:
+Przykladowy kierunek testu:
 
 ```csharp
-[TestMethod]
-public void Read_Kbd_WhenInputAvailable_ReturnsCharacterWithHighBitSet()
+[Test]
+public void Apple1Preset_ReadKbd_WhenInputAvailable_ReturnsCharacterWithHighBitSet()
 {
-    var terminal = new FakeApple1Terminal("A");
-    var device = new Apple1PiaTerminalDevice(terminal);
+    var terminal = new BufferedTerminalLink();
+    terminal.EnqueueText("A", TerminalTextEncoding.Apple1);
+    var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
 
-    var value = device.Read(0xD010);
+    var value = device.ReadMemory(0xD010);
 
-    value.Should().Be(0xC1);
+    Assert.That(value, Is.EqualTo(0xC1));
 }
 ```
 
 ## Integracja z profilem Apple-1
 
-Profil Apple-1 powinien zawierać urządzenie mapowane na `$D010-$D013`.
+Profil Apple-1 powinien zawierac generyczna PIA mapowana na `$D010-$D013`.
 
-Przykładowy wpis koncepcyjny:
+Przykladowy wpis koncepcyjny:
 
 ```json
 {
-  "type": "apple1-pia-terminal",
-  "start": "0xD010",
-  "size": "0x0004"
+  "id": "pia0",
+  "type": "mos6821-pia",
+  "mapping": {
+    "kind": "memory",
+    "baseAddress": "0xD010",
+    "size": "0x0004"
+  },
+  "preset": "apple-1-terminal"
 }
 ```
 
-Loader profilu powinien umieć utworzyć `Apple1PiaTerminalDevice` na podstawie tego wpisu i podłączyć go do magistrali pamięci.
+Loader profilu powinien utworzyc `Mos682xPiaDevice` na podstawie tego wpisu i podlaczyc go do magistrali pamieci. Preset `apple-1-terminal` konfiguruje bindingi, ale nie zmienia rdzenia PIA w urzadzenie jednorazowe.
 
-## Etap docelowy: MOS 6821 PIA
+## Reuse poza Apple-1
 
-Po uruchomieniu Apple-1 warto wydzielić pełniejszy układ:
+PIA musi przejsc test drugiego profilu walidacyjnego:
 
-```csharp
-public sealed class Mos6821PiaDevice : IMemoryMappedDevice, IIrqSource
-{
-    // Port A/B
-    // DDR A/B
-    // CRA/CRB
-    // CA1/CA2/CB1/CB2
-}
-```
+- inny adres bazowy niz `$D010`,
+- inny binding portow,
+- brak zaleznosci od WOZ Monitor,
+- brak klas lub warunkow `if Apple1` w rdzeniu PIA.
 
-Apple-1 może wtedy używać konfiguracji PIA zamiast dedykowanego uproszczenia. Nie należy jednak blokować uruchomienia WOZ Monitor do czasu pełnej emulacji MOS 6821.
+Najblizszy drugi scenariusz to PET-like keyboard matrix, opisany w fazie 30.
 
-## Kolejność prac
+## Kolejnosc prac
 
-1. Dodać `IApple1Terminal`.
-2. Dodać `Apple1PiaTerminalDevice`.
-3. Dodać testowy terminal buforowy do testów.
-4. Dodać testy MSTest/Moq/FluentAssertions.
-5. Podłączyć urządzenie do loadera profilu.
-6. Uzupełnić `profiles/apple-1.json` o urządzenie `apple1-pia-terminal`.
-7. Uruchomić Apple-1 z WOZ Monitor i zweryfikować prompt oraz echo znaków.
-8. Dopiero potem rozważyć pełny `Mos6821PiaDevice`.
+1. Dodać uniwersalne abstrakcje runtime i bus.
+2. Dodać `ITerminalLink` oraz buforowany terminal testowy.
+3. Dodać `Mos682xPiaDevice` medium implementation.
+4. Dodać preset `apple-1-terminal`.
+5. Dodać drugi binding PET-like, aby potwierdzic reuse.
+6. Podlaczyc PIA do loadera profilu.
+7. Uzupelnic `profiles/computers/apple-1.json` o urzadzenie `mos6821-pia` z presetem `apple-1-terminal`.
+8. Uruchomic Apple-1 z WOZ Monitor i zweryfikowac prompt oraz echo znakow.
+
+## Fazy implementacyjne
+
+Pelna implementacja Apple-1 wymaga najpierw warstwy skladania komputerow i reusable PIA. Szczegolowe fazy sa opisane w osobnych plikach:
+
+| Faza | Dokument | Zakres |
+|---:|---|---|
+| 24 | [`faza-24-runtime-abstractions.md`](faza-24-runtime-abstractions.md) | Uniwersalne abstrakcje runtime dla wielu CPU |
+| 25 | [`faza-25-system-bus-memory-map.md`](faza-25-system-bus-memory-map.md) | `RuntimeBus`, memory map, port map, szybki routing |
+| 26 | [`faza-26-computer-profiles.md`](faza-26-computer-profiles.md) | Profile JSON, loader, `ComputerBuilder`, rejestr fabryk |
+| 27 | [`faza-27-terminal-abstractions.md`](faza-27-terminal-abstractions.md) | Terminal/link bajtowy niezalezny od frontendu |
+| 28 | [`faza-28-mos682x-pia-medium.md`](faza-28-mos682x-pia-medium.md) | Generyczny MOS 6820/6821 PIA reusable dla Apple-1/PET/SBC |
+| 29 | [`faza-29-apple1-profile-wozmon.md`](faza-29-apple1-profile-wozmon.md) | Apple-1 jako profil na generycznej PIA |
+| 30 | [`faza-30-pet-ready-pia-bindings.md`](faza-30-pet-ready-pia-bindings.md) | PET-ready bindingi PIA i drugi profil walidacyjny |
+| 31 | [`faza-31-apple1-runtime-api.md`](faza-31-apple1-runtime-api.md) | Publiczne API uruchamiania Apple-1 i test end-to-end |
+| 32 | [`faza-32-cross-architecture-smoke-profiles.md`](faza-32-cross-architecture-smoke-profiles.md) | Profile smoke dla wielu architektur, port-mapped I/O |
 
 ## Kryteria akceptacji
 
-- Apple-1 startuje bez błędu mapowania urządzeń.
-- WOZ Monitor może odczytać znak z klawiatury przez `$D010/$D011`.
-- WOZ Monitor może wypisać znak przez `$D012/$D013`.
-- Testy jednostkowe pokrywają minimalną semantykę urządzenia.
-- Implementacja nie zależy bezpośrednio od konkretnego frontendu.
+- Apple-1 startuje bez bledu mapowania urzadzen.
+- WOZ Monitor moze odczytac znak z klawiatury przez `$D010/$D011`.
+- WOZ Monitor moze wypisac znak przez `$D012/$D013`.
+- Testy jednostkowe pokrywaja srednia semantyke PIA oraz preset Apple-1.
+- Ten sam rdzen PIA jest uzyty w drugim profilu walidacyjnym z inna adresacja.
+- Implementacja nie zalezy bezposrednio od konkretnego frontendu.
