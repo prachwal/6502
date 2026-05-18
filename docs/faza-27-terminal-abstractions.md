@@ -2,10 +2,12 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | ✅ Zaimplementowana |
+| **Data implementacji** | 2025-05-18 |
 | **Zakres** | Frontend tekstowy i link bajtowy |
-| **Zaleznosci** | Fazy 24-26 |
+| **Zaleznosci** | Żadne (niezależna) |
 | **Cel projektowy** | Jeden terminal dla Apple-1, UART/ACIA, SBC i testow |
+| **Liczba testów** | 31 |
 
 ---
 

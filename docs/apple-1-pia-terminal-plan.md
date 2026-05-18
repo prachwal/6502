@@ -144,15 +144,15 @@ Najblizszy drugi scenariusz to PET-like keyboard matrix, opisany w fazie 30.
 
 Pelna implementacja Apple-1 wymaga najpierw warstwy skladania komputerow i reusable PIA. Szczegolowe fazy sa opisane w osobnych plikach:
 
-| Faza | Dokument | Zakres |
-|---:|---|---|
-| 24 | [`faza-24-runtime-abstractions.md`](faza-24-runtime-abstractions.md) | Uniwersalne abstrakcje runtime dla wielu CPU |
-| 25 | [`faza-25-system-bus-memory-map.md`](faza-25-system-bus-memory-map.md) | `RuntimeBus`, memory map, port map, szybki routing |
-| 26 | [`faza-26-computer-profiles.md`](faza-26-computer-profiles.md) | Profile JSON, loader, `ComputerBuilder`, rejestr fabryk |
-| 27 | [`faza-27-terminal-abstractions.md`](faza-27-terminal-abstractions.md) | Terminal/link bajtowy niezalezny od frontendu |
-| 28 | [`faza-28-mos682x-pia-medium.md`](faza-28-mos682x-pia-medium.md) | Generyczny MOS 6820/6821 PIA reusable dla Apple-1/PET/SBC |
-| 29 | [`faza-29-apple1-profile-wozmon.md`](faza-29-apple1-profile-wozmon.md) | Apple-1 jako profil na generycznej PIA |
-| 30 | [`faza-30-pet-ready-pia-bindings.md`](faza-30-pet-ready-pia-bindings.md) | PET-ready bindingi PIA i drugi profil walidacyjny |
+| Faza | Dokument | Zakres | Status |
+|---:|---|---|---|
+| 24 | [`faza-24-runtime-abstractions.md`](faza-24-runtime-abstractions.md) | Uniwersalne abstrakcje runtime dla wielu CPU | ✅ Zaimplementowana |
+| 25 | [`faza-25-system-bus-memory-map.md`](faza-25-system-bus-memory-map.md) | `RuntimeBus`, memory map, port map, szybki routing | ✅ Zaimplementowana |
+| 26 | [`faza-26-computer-profiles.md`](faza-26-computer-profiles.md) | Profile JSON, loader, `ComputerBuilder`, rejestr fabryk | ✅ Zaimplementowana |
+| 27 | [`faza-27-terminal-abstractions.md`](faza-27-terminal-abstractions.md) | Terminal/link bajtowy niezalezny od frontendu | ✅ Zaimplementowana |
+| 28 | [`faza-28-mos682x-pia-medium.md`](faza-28-mos682x-pia-medium.md) | Generyczny MOS 6820/6821 PIA reusable dla Apple-1/PET/SBC | [ ] Nie rozpoczęte |
+| 29 | [`faza-29-apple1-profile-wozmon.md`](faza-29-apple1-profile-wozmon.md) | Apple-1 jako profil na generycznej PIA | [ ] Nie rozpoczęte |
+| 30 | [`faza-30-pet-ready-pia-bindings.md`](faza-30-pet-ready-pia-bindings.md) | PET-ready bindingi PIA i drugi profil walidacyjny | [ ] Nie rozpoczęte |
 | 31 | [`faza-31-apple1-runtime-api.md`](faza-31-apple1-runtime-api.md) | Publiczne API uruchamiania Apple-1 i test end-to-end |
 | 32 | [`faza-32-cross-architecture-smoke-profiles.md`](faza-32-cross-architecture-smoke-profiles.md) | Profile smoke dla wielu architektur, port-mapped I/O |
 
@@ -368,19 +368,19 @@ public sealed class PiaKeyboardMatrixBinding : IPiaPortBinding
 
 | Faza | Plik | Status | Uwagi |
 |---|---|---|---|
-| 24 | `faza-24-runtime-abstractions.md` | [ ] Nie rozpoczęte | `ICpuCore`, `CpuSignal`, `IResettableDevice`, `ICpuSignalSource` |
-| 25 | `faza-25-system-bus-memory-map.md` | [ ] Nie rozpoczęte | `ISystemBus`, `IMemoryMappedDevice`, `CompiledMemoryMap` |
-| 26 | `faza-26-computer-profiles.md` | [ ] Nie rozpoczęte | `ComputerProfile`, `ComputerBuilder`, `DeviceFactoryRegistry` |
-| 27 | `faza-27-terminal-abstractions.md` | [ ] Nie rozpoczęte | `ITerminalLink`, `BufferedTerminalLink`, `TerminalTextEncoding` |
+| 24 | `faza-24-runtime-abstractions.md` | ✅ Zaimplementowana | `ICpuCore`, `CpuSignal`, `IResettableDevice`, `ICpuSignalSource` |
+| 25 | `faza-25-system-bus-memory-map.md` | ✅ Zaimplementowana | `ISystemBus`, `IMemoryMappedDevice`, `CompiledMemoryMap` |
+| 26 | `faza-26-computer-profiles.md` | ✅ Zaimplementowana | `ComputerProfile`, `ComputerBuilder`, `DeviceFactoryRegistry` |
+| 27 | `faza-27-terminal-abstractions.md` | ✅ Zaimplementowana | `ITerminalLink`, `BufferedTerminalLink`, `TerminalTextEncoding` |
 
-**BLoker**: Faza 28 (PIA) **nie może zostać rozpoczęta** przed ukończeniem faz 24-27.
+✅ **Wszystkie zależności spełnione** - Faza 28 (PIA) może zostać rozpoczęta.
 
 #### 5.1 Zależności fazy 28
 
-- **Faza 24**: `ICpuSignalSource` — PIA musi implementować ten interfejs (IRQ)
-- **Faza 25**: `IMemoryMappedDevice` — PIA implementuje ten interfejs
-- **Faza 26**: `DeviceFactoryRegistry` — rejestracja fabryki PIA
-- **Faza 27**: `ITerminalLink` — binding terminalowy używa tego interfejsu
+- **Faza 24**: `ICpuSignalSource` — PIA musi implementować ten interfejs (IRQ) ✅
+- **Faza 25**: `IMemoryMappedDevice` — PIA implementuje ten interfejs ✅
+- **Faza 26**: `DeviceFactoryRegistry` — rejestracja fabryki PIA ✅
+- **Faza 27**: `ITerminalLink` — binding terminalowy używa tego interfejsu ✅
 
 ---
 
