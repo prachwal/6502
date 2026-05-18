@@ -49,4 +49,9 @@ public class CpuState
     /// Sygnalizuje rozpoczęcie nowej instrukcji.
     /// </summary>
     public bool Sync { get; set; }
+
+    /// <summary>
+    /// Wskazuje, czy procesor jest zatrzymany (np. przez KIL/JAM).
+    /// </summary>
+    public bool Halted { get; set; }
 }

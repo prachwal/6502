@@ -18,13 +18,42 @@ public partial class Cpu6502
 
     #endregion
 
-    #region Metoda Tick() - cykle zegara
+    #region Metoda StepInstruction() - pełna instrukcja
+
+    /// <summary>
+    /// Wykonuje **jedną pełną instrukcję** procesora (od pobrania opcodu do zakończenia).
+    /// Jest to zalecane API dla nowego kodu.
+    /// </summary>
+    public void StepInstruction()
+    {
+        StepInstructionCore();
+    }
+
+    #endregion
+
+    #region Metoda Tick() - przestarzałe, kompatybilne wstecz
 
     /// <summary>
     /// Wykonuje jeden cykl zegara procesora.
-    /// W modelu cycle-stepped, każdy Tick() wykonuje dokładnie jeden cykl.
+    /// 
+    /// UWAGA: Obecnie metoda ta wykonuje CAŁĄ instrukcję (nie pojedynczy cykl).
+    /// Jest zachowana dla wstecznej zgodności. Użyj <see cref="StepInstruction()"/> dla nowego kodu.
     /// </summary>
+    [Obsolete("Tick() currently executes a full instruction. Use StepInstruction() for clarity.")]
     public void Tick()
+    {
+        StepInstructionCore();
+    }
+
+    #endregion
+
+    #region Wspólna implementacja StepInstruction/Tick
+
+    /// <summary>
+    /// Wspólna implementacja dla <see cref="StepInstruction"/> i <see cref="Tick"/>.
+    /// Wykonuje pełną instrukcję od pobrania opcodu do stanu sync.
+    /// </summary>
+    private void StepInstructionCore()
     {
         if (_halted)
         {

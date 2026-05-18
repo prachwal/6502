@@ -79,5 +79,10 @@ public partial class Cpu6502
         set => _sp = value; 
     }
 
+    /// <summary>
+    /// Wskazuje, czy procesor jest zatrzymany (np. przez KIL/JAM).
+    /// </summary>
+    public bool Halted => _halted;
+
     #endregion
 }

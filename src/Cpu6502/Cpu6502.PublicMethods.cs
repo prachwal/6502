@@ -56,7 +56,7 @@ public partial class Cpu6502
         return new CpuState
         {
             A = _a, X = _x, Y = _y, PC = _pc, SP = _sp, P = _p,
-            Cycle = _cycle, IR = _ir, Sync = _sync
+            Cycle = _cycle, IR = _ir, Sync = _sync, Halted = _halted
         };
     }
 
@@ -69,7 +69,7 @@ public partial class Cpu6502
     {
         _a = state.A; _x = state.X; _y = state.Y;
         _pc = state.PC; _sp = state.SP; _p = state.P;
-        _cycle = state.Cycle; _ir = state.IR; _sync = state.Sync;
+        _cycle = state.Cycle; _ir = state.IR; _sync = state.Sync; _halted = state.Halted;
     }
 
      #endregion

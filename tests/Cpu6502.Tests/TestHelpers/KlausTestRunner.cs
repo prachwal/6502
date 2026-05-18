@@ -46,27 +46,28 @@ public class KlausTestRunner
     /// <summary>
     /// Uruchamia test Klaus Dormann (wersja bez BCD).
     /// </summary>
-    /// <returns>True jeśli test się powiódł.</returns>
-    public bool RunNonBcdTest()
+    /// <returns>Rezultat testu z pełną diagnostyką.</returns>
+    public KlausTestResult RunNonBcdTest()
     {
-        return RunTest(testBcd: false);
+        return RunTest("Klaus Dormann Non-BCD", testBcd: false);
     }
 
     /// <summary>
     /// Uruchamia test Klaus Dormann (wersja z BCD).
     /// </summary>
-    /// <returns>True jeśli test się powiódł.</returns>
-    public bool RunBcdTest()
+    /// <returns>Rezultat testu z pełną diagnostyką.</returns>
+    public KlausTestResult RunBcdTest()
     {
-        return RunTest(testBcd: true);
+        return RunTest("Klaus Dormann BCD", testBcd: true);
     }
 
     /// <summary>
     /// Uruchamia test Klaus Dormann.
     /// </summary>
-    /// <param name="testBcd">Czy uruchomić test z BCD (true) czy bez BCD (false).</param>
-    /// <returns>True jeśli test się powiódł.</returns>
-    private bool RunTest(bool testBcd)
+    /// <param name="testName">Nazwa testu.</param>
+    /// <param name="testBcd">Czy uruchomić test z BCD.</param>
+    /// <returns>Rezultat testu z pełną diagnostyką.</returns>
+    private KlausTestResult RunTest(string testName, bool testBcd)
     {
         // Załaduj ROM testowy
         LoadTestRom();
@@ -75,13 +76,7 @@ public class KlausTestRunner
         _memory.Write(0xFFFC, 0x00);
         _memory.Write(0xFFFD, 0x04);
         
-        // Konfiguracja testu (wg dokumentacji w listingu):
-        // disable_decimal = 0 (domyślnie testuje BCD, ale my to kontrolujemy przez parametr)
-        // W praktyce test sprawdza flagę D w rejestrze P
-        // Dla testu bez BCD: upewniamy się, że D=0
-        // Dla testu z BCD: upewniamy się, że D=1
-        
-        // Reset CPU - to ustawia P z domyślnymi flagami (D=0)
+        // Reset CPU
         _cpu.Reset();
         
         // Ustaw flagę D (Decimal Mode) zgodnie z wariantem testu
@@ -94,16 +89,20 @@ public class KlausTestRunner
             _cpu.SetFlag(Cpu6502.FlagD, false);  // Wyłącz BCD
         }
         
-        // Uruchom CPU
-        ulong startCycle = _cpu.GetState().Cycle;
+        // Zapisz stan początkowy
+        var state = _cpu.GetState();
+        ulong initialCycles = state.Cycle;
         ushort? currentPc = null;
         int repeatCount = 0;
         
-        while (_cpu.GetState().Cycle - startCycle < MaxCycles)
+        // Uruchom CPU
+        while (state.Cycle - initialCycles < MaxCycles)
         {
-            _cpu.Tick();
+            _cpu.StepInstruction();
+            state = _cpu.GetState();
             
-            ushort pc = _cpu.PC;
+            ushort pc = state.PC;
+            byte opcode = _memory.Read(pc);
             
             // Sprawdź, czy CPU jest w pętli (ten sam PC przez wiele cykli)
             if (currentPc == pc)
@@ -116,12 +115,23 @@ public class KlausTestRunner
                     // Sukces tylko jeśli jesteśmy przy $3469
                     if (pc == SuccessLoopAddress)
                     {
-                        return true;
+                        return KlausTestResult.CreateSuccess(
+                            testName: testName,
+                            finalPc: pc,
+                            finalOpcode: opcode,
+                            cyclesExecuted: state.Cycle - initialCycles,
+                            a: state.A, x: state.X, y: state.Y, p: state.P, sp: state.SP);
                     }
                     else
                     {
                         // Inna pętla = błąd
-                        return false;
+                        return KlausTestResult.CreateFailure(
+                            testName: testName,
+                            reason: KlausFailureReason.ErrorLoop,
+                            finalPc: pc,
+                            finalOpcode: opcode,
+                            cyclesExecuted: state.Cycle - initialCycles,
+                            a: state.A, x: state.X, y: state.Y, p: state.P, sp: state.SP);
                     }
                 }
             }
@@ -131,14 +141,40 @@ public class KlausTestRunner
                 repeatCount = 0;
             }
             
-            // Zabezpieczenie: jeśli PC się nie zmienia przez długi czas
+            // Zabezpieczenie: jeśli PC się nie zmienia przez długi czas (możliwy deadlock)
             if (repeatCount > LoopDetectionThreshold * 2)
             {
-                return false; // Timeout na jednej instrukcji
+                return KlausTestResult.CreateFailure(
+                    testName: testName,
+                    reason: KlausFailureReason.MaxCyclesExceeded,
+                    finalPc: pc,
+                    finalOpcode: opcode,
+                    cyclesExecuted: state.Cycle - initialCycles,
+                    a: state.A, x: state.X, y: state.Y, p: state.P, sp: state.SP);
+            }
+            
+            // Sprawdź, czy CPU został zatrzymany (KIL/JAM)
+            if (state.Halted)
+            {
+                return KlausTestResult.CreateFailure(
+                    testName: testName,
+                    reason: KlausFailureReason.Halted,
+                    finalPc: pc,
+                    finalOpcode: opcode,
+                    cyclesExecuted: state.Cycle - initialCycles,
+                    a: state.A, x: state.X, y: state.Y, p: state.P, sp: state.SP);
             }
         }
         
-        return false; // Timeout - nie osiągnięto żadnej pętli
+        // Timeout - nie osiągnięto żadnej pętli
+        state = _cpu.GetState();
+        return KlausTestResult.CreateFailure(
+            testName: testName,
+            reason: KlausFailureReason.Timeout,
+            finalPc: state.PC,
+            finalOpcode: _memory.Read(state.PC),
+            cyclesExecuted: state.Cycle - initialCycles,
+            a: state.A, x: state.X, y: state.Y, p: state.P, sp: state.SP);
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using Cpu6502;
 using Cpu6502.Tests.TestHelpers;
 using Cpu6502.Variants;
@@ -28,12 +29,16 @@ public class KlausTests
     [Description("Test Klaus Dormann bez trybu BCD (podstawowe instrukcje)")]
     public void Klaus_NonBcdTest_Passes()
     {
-        // Użyj klasycznego 6502 z wyłączonym BCD dla testu non-BCD
-        _cpu.DecimalModeEnabled = false;
+        KlausTestResult result = _runner.RunNonBcdTest();
         
-        bool result = _runner.RunNonBcdTest();
+        if (!result.Success)
+        {
+            Console.WriteLine(result.ToString());
+            Console.WriteLine($"Final state: PC={result.FinalPc:X4}, Opcode=0x{result.FinalOpcode:X2}, " +
+                $"A={result.A:X2}, X={result.X:X2}, Y={result.Y:X2}, P={result.P:X2}, SP={result.SP:X2}");
+        }
         
-        Assert.That(result, Is.True, "Klaus Dormann non-BCD test powinien się powieść");
+        Assert.That(result.Success, Is.True, result.ToString());
     }
 
     [Test]
@@ -41,12 +46,16 @@ public class KlausTests
     [Description("Test Klaus Dormann z trybem BCD")]
     public void Klaus_BcdTest_Passes()
     {
-        // Użyj klasycznego 6502 z włączonym BCD dla testu BCD
-        _cpu.DecimalModeEnabled = true;
+        KlausTestResult result = _runner.RunBcdTest();
         
-        bool result = _runner.RunBcdTest();
+        if (!result.Success)
+        {
+            Console.WriteLine(result.ToString());
+            Console.WriteLine($"Final state: PC={result.FinalPc:X4}, Opcode=0x{result.FinalOpcode:X2}, " +
+                $"A={result.A:X2}, X={result.X:X2}, Y={result.Y:X2}, P={result.P:X2}, SP={result.SP:X2}");
+        }
         
-        Assert.That(result, Is.True, "Klaus Dormann BCD test powinien się powieść");
+        Assert.That(result.Success, Is.True, result.ToString());
     }
 
     [Test]
@@ -54,12 +63,42 @@ public class KlausTests
     [Description("Test Klaus Dormann non-BCD z Cpu6502Nes (Ricoh 2A03)")]
     public void Klaus_NonBcdTest_NesVariant_Passes()
     {
-        // Użyj wariantu NES (2A03) - ma wyłączony BCD i poprawiony JMP bug
-        var nesCpu = new Cpu6502Nes(_memory!);
+        var nesCpu = new Cpu6502Nes(_memory);
         var nesRunner = new KlausTestRunner(nesCpu, _memory);
         
-        bool result = nesRunner.RunNonBcdTest();
+        KlausTestResult result = nesRunner.RunNonBcdTest();
         
-        Assert.That(result, Is.True, "Klaus Dormann non-BCD test powinien się powieść z Cpu6502Nes");
+        if (!result.Success)
+        {
+            Console.WriteLine(result.ToString());
+            Console.WriteLine($"Final state: PC={result.FinalPc:X4}, Opcode=0x{result.FinalOpcode:X2}, " +
+                $"A={result.A:X2}, X={result.X:X2}, Y={result.Y:X2}, P={result.P:X2}, SP={result.SP:X2}");
+        }
+        
+        Assert.That(result.Success, Is.True, result.ToString());
+    }
+
+    [Test]
+    [Category("KlausDormann")]
+    [Description("Diagnostyka: Wyświetla dokładny powód błędu")]
+    public void Klaus_Diagnostics_ShowsFailureReason()
+    {
+        KlausTestResult result = _runner.RunNonBcdTest();
+        
+        // Zawsze wyświetl wynik (dla celów diagnostycznych)
+        Console.WriteLine("=== Klaus Dormann Non-BCD Diagnostic ===");
+        Console.WriteLine(result.ToString());
+        Console.WriteLine($"Failure Reason: {result.FailureReason}");
+        Console.WriteLine($"Cycles executed: {result.CyclesExecuted:N0}");
+        Console.WriteLine($"Final PC: ${result.FinalPc:X4}, Opcode: 0x{result.FinalOpcode:X2}");
+        Console.WriteLine($"Registers: A={result.A:X2}, X={result.X:X2}, Y={result.Y:X2}, P={result.P:X2}, SP={result.SP:X2}");
+        
+        // Jeśli test się nie powiódł, rzuć asercję z szczegółami
+        if (!result.Success)
+        {
+            Assert.Fail(
+                $"Klaus test failed: {result.FailureReason}\n" +
+                $"PC={result.FinalPc:X4}, Opcode=0x{result.FinalOpcode:X2}, Cycles={result.CyclesExecuted:N0}");
+        }
     }
 }
