@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 
 namespace Cpu6502.Apple1.Avalonia.Terminal;

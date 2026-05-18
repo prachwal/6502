@@ -1,0 +1,246 @@
+{
+  "timestamp": "2026-05-18T17:27:12.577000",
+  "api_key_scope": "vibe",
+  "total_models_in_api": 68,
+  "working_models_count": 17,
+  "models": [
+    {
+      "id": "mistral-medium-2508",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium model version 2508.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium-sized general-purpose model. Default for Vibe.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium-sized general-purpose model.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-vibe-cli-with-tools",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Vibe CLI model with tools support.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "devstral-2512",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Dev-focused model specialized for coding tasks.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.25,
+      "output_price_per_1m": 0.7,
+      "pricing": {
+        "prompt": 0.25,
+        "completion": 0.7
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "devstral-medium-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium-sized dev-focused model.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.25,
+      "output_price_per_1m": 0.7,
+      "pricing": {
+        "prompt": 0.25,
+        "completion": 0.7
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "devstral-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Latest dev-focused model.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.25,
+      "output_price_per_1m": 0.7,
+      "pricing": {
+        "prompt": 0.25,
+        "completion": 0.7
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-small-2603",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Small model version 2603.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.3,
+      "pricing": {
+        "prompt": 0.1,
+        "completion": 0.3
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-small-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Small-sized general-purpose model. Cost-effective for simple tasks.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.3,
+      "pricing": {
+        "prompt": 0.1,
+        "completion": 0.3
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-vibe-cli-fast",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Fast Vibe CLI model.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.3,
+      "pricing": {
+        "prompt": 0.1,
+        "completion": 0.3
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "magistral-small-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Small model optimized for structured tasks.",
+      "context_length": 32768,
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.3,
+      "pricing": {
+        "prompt": 0.1,
+        "completion": 0.3
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-3-5",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium 3.5 model variant.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-3.5",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium 3.5 model - combines Medium 3.1, Magistral, and Devstral 2. Default for Vibe CLI.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-3",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium model version 3.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-2604",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium model version 2604.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-medium-c21211-r0-75",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Medium model experimental variant.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    },
+    {
+      "id": "mistral-vibe-cli-latest",
+      "object": "model",
+      "created": 1779118017,
+      "description": "Vibe CLI optimized model. Combines Medium 3.1, Magistral, and Devstral 2.",
+      "context_length": 32768,
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 7.5,
+      "pricing": {
+        "prompt": 1.5,
+        "completion": 7.5
+      },
+      "owned_by": "mistralai"
+    }
+  ]
+}

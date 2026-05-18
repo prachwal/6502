@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -12,10 +13,11 @@ public sealed class MainWindow : Window
 {
     private readonly AvaloniaTerminalLink _terminal = new();
     private readonly TerminalByteScreenSource _screenSource;
-    private readonly Apple1Host _host;
+    private Apple1Host _host;
     private readonly Apple1ScreenPanel _screen = new();
     private readonly DispatcherTimer _timer;
     private readonly TextBlock _status = new();
+    private readonly ComboBox _profileComboBox = new();
     private bool _running = true;
 
     public MainWindow()
@@ -27,7 +29,18 @@ public sealed class MainWindow : Window
         MinHeight = 540;
         Background = new SolidColorBrush(Color.Parse("#020402"));
 
-        _host = new Apple1Host(_terminal);
+        // Setup profile dropdown
+        _profileComboBox.ItemsSource = new[] { "WOZ Monitor", "BASIC" };
+        _profileComboBox.SelectedIndex = 0;
+        _profileComboBox.Width = 120;
+        _profileComboBox.Height = 28;
+        _profileComboBox.Foreground = new SolidColorBrush(Color.Parse("#7cff7a"));
+        _profileComboBox.Background = new SolidColorBrush(Color.Parse("#071007"));
+        _profileComboBox.BorderBrush = new SolidColorBrush(Color.Parse("#193b1f"));
+        ToolTip.SetTip(_profileComboBox, "Select computer profile");
+        _profileComboBox.SelectionChanged += OnProfileChanged;
+
+        _host = CreateHost(Apple1Options.WozMonitor);
         _screenSource = new TerminalByteScreenSource(_terminal);
         _screen.Attach(_terminal, _screenSource);
 
@@ -75,7 +88,7 @@ public sealed class MainWindow : Window
         {
             Orientation = Orientation.Horizontal,
             Spacing = 8,
-            Children = { reset, runPause, step, clear, _status }
+            Children = { _profileComboBox, reset, runPause, step, clear, _status }
         };
         _status.Foreground = new SolidColorBrush(Color.Parse("#7cff7a"));
         _status.VerticalAlignment = VerticalAlignment.Center;
@@ -116,6 +129,49 @@ public sealed class MainWindow : Window
     }
 
     private void RefocusScreen() => Dispatcher.UIThread.Post(() => _screen.Focus());
+
+    private void OnProfileChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        string profileName = _profileComboBox.SelectedIndex == 0 ? "WOZ Monitor" : "BASIC";
+        Debug.WriteLine($"[PROFILE] Switching to {profileName}");
+        
+        // Clear any pending terminal input before switching profiles
+        _terminal.ClearInput();
+        
+        Debug.WriteLine("[PROFILE] Creating new host...");
+        if (_profileComboBox.SelectedIndex == 0)
+        {
+            _host = CreateHost(Apple1Options.WozMonitor);
+        }
+        else
+        {
+            _host = CreateHost(Apple1Options.Basic);
+        }
+        
+        Debug.WriteLine("[PROFILE] Resetting computer...");
+        _host.Reset();
+        _screen.Clear();
+        
+        // For BASIC profile, send the command to start BASIC after reset
+        if (_profileComboBox.SelectedIndex == 1)
+        {
+            Debug.WriteLine("[PROFILE] Enqueuing 'E000R' command for BASIC...");
+            _terminal.EnqueueText("E000R\r");
+            Debug.WriteLine("[PROFILE] Running 5000 instructions to process input...");
+            _host.Run(5_000);
+            Debug.WriteLine("[PROFILE] Done processing input");
+        }
+        
+        _running = true;
+        UpdateStatus();
+        Debug.WriteLine($"[PROFILE] Switched to {profileName}, running={_running}");
+        RefocusScreen();
+    }
+
+    private Apple1Host CreateHost(Apple1Options options)
+    {
+        return new Apple1Host(_terminal, options);
+    }
 
     private static Button CreateToolbarButton(string content)
     {

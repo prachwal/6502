@@ -1,0 +1,372 @@
+{
+  "timestamp": "2026-05-18T17:19:54.316111",
+  "api_key": "oFlpU1h0...pSAK",
+  "total_user_models": 28,
+  "official_models_count": 68,
+  "official_models": [
+    "mistral-medium-2505",
+    "mistral-medium-2508",
+    "mistral-medium-latest",
+    "mistral-medium",
+    "mistral-vibe-cli-with-tools",
+    "open-mistral-nemo",
+    "open-mistral-nemo-2407",
+    "mistral-tiny-2407",
+    "mistral-tiny-latest",
+    "codestral-2508",
+    "codestral-latest",
+    "devstral-2512",
+    "devstral-medium-latest",
+    "devstral-latest",
+    "mistral-small-2603",
+    "mistral-small-latest",
+    "mistral-vibe-cli-fast",
+    "magistral-small-latest",
+    "magistral-medium-2509",
+    "magistral-medium-latest",
+    "voxtral-small-2507",
+    "voxtral-small-latest",
+    "labs-leanstral-2603",
+    "mistral-large-2512",
+    "mistral-large-latest",
+    "mistral-large-2512",
+    "mistral-large-latest",
+    "ministral-3b-2512",
+    "ministral-3b-latest",
+    "ministral-8b-2512",
+    "ministral-8b-latest",
+    "ministral-14b-2512",
+    "ministral-14b-latest",
+    "mistral-medium-3-5",
+    "mistral-medium-3.5",
+    "mistral-medium-3",
+    "mistral-medium-2604",
+    "mistral-medium-c21211-r0-75",
+    "mistral-vibe-cli-latest",
+    "mistral-large-2411",
+    "pixtral-large-2411",
+    "pixtral-large-latest",
+    "mistral-large-pixtral-2411",
+    "devstral-small-2507",
+    "devstral-medium-2507",
+    "voxtral-mini-2507",
+    "voxtral-mini-latest",
+    "magistral-small-2509",
+    "mistral-small-2506",
+    "mistral-embed-2312",
+    "mistral-embed",
+    "codestral-embed",
+    "codestral-embed-2505",
+    "mistral-moderation-2603",
+    "mistral-moderation-2411",
+    "mistral-moderation-latest",
+    "mistral-ocr-2512",
+    "mistral-ocr-latest",
+    "mistral-ocr-2505",
+    "voxtral-mini-2602",
+    "voxtral-mini-latest",
+    "voxtral-mini-transcribe-realtime-2602",
+    "voxtral-mini-realtime-2602",
+    "voxtral-mini-realtime-latest",
+    "voxtral-mini-transcribe-2507",
+    "voxtral-mini-2507",
+    "voxtral-mini-tts-2603",
+    "voxtral-mini-tts-latest"
+  ],
+  "user_models_results": [
+    {
+      "model": "codestral-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model codestral-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "devstral-2512",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "devstral-medium-2507",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model devstral-medium-2507 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "devstral-medium-latest",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "devstral-small-2505",
+      "available": false,
+      "status_code": 400,
+      "error": "{\"object\":\"error\",\"message\":\"Invalid model: devstral-small-2505\",\"type\":\"invalid_model\",\"param\":null,\"code\":\"1500\",\"raw_status_code\":400}"
+    },
+    {
+      "model": "devstral-small-2507",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model devstral-small-2507 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "labs-devstral-small-2512",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "magistral-medium-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model magistral-medium-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403"
+    },
+    {
+      "model": "magistral-small",
+      "available": false,
+      "status_code": 400,
+      "error": "{\"object\":\"error\",\"message\":\"Invalid model: magistral-small\",\"type\":\"invalid_model\",\"param\":null,\"code\":\"1500\",\"raw_status_code\":400}"
+    },
+    {
+      "model": "ministral-3b-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model ministral-3b-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "ministral-8b-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model ministral-8b-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-embed",
+      "available": false,
+      "status_code": 400,
+      "error": "{\"object\":\"error\",\"message\":\"Invalid model: mistral-embed\",\"type\":\"invalid_model\",\"param\":null,\"code\":\"1500\",\"raw_status_code\":400}"
+    },
+    {
+      "model": "mistral-large-2411",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model mistral-large-2411 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-large-2512",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model mistral-large-2512 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-large-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model mistral-large-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-medium-2505",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model mistral-medium-2505 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-medium-2508",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "mistral-medium-2604",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "mistral-medium-latest",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "mistral-nemo",
+      "available": false,
+      "status_code": 400,
+      "error": "{\"object\":\"error\",\"message\":\"Invalid model: mistral-nemo\",\"type\":\"invalid_model\",\"param\":null,\"code\":\"1500\",\"raw_status_code\":400}"
+    },
+    {
+      "model": "mistral-small-2506",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model mistral-small-2506 is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "mistral-small-2603",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "mistral-small-latest",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "open-mistral-7b",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model open-mistral-7b is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "open-mixtral-8x22b",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "open-mixtral-8x7b",
+      "available": true,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "model": "pixtral-12b",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model pixtral-12b is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    },
+    {
+      "model": "pixtral-large-latest",
+      "available": false,
+      "status_code": 403,
+      "error": "{\"object\":\"error\",\"message\":\"Model pixtral-large-latest is not available for API key with scope APIKeyScope.vibe\",\"type\":\"api_key_scope_not_allowed\",\"param\":null,\"code\":\"1912\",\"raw_status_code\":403}"
+    }
+  ],
+  "available_user_models": [
+    "devstral-2512",
+    "devstral-medium-latest",
+    "labs-devstral-small-2512",
+    "mistral-medium-2508",
+    "mistral-medium-2604",
+    "mistral-medium-latest",
+    "mistral-small-2603",
+    "mistral-small-latest",
+    "open-mixtral-8x22b",
+    "open-mixtral-8x7b"
+  ],
+  "unavailable_user_models": [
+    "codestral-latest",
+    "devstral-medium-2507",
+    "devstral-small-2505",
+    "devstral-small-2507",
+    "magistral-medium-latest",
+    "magistral-small",
+    "ministral-3b-latest",
+    "ministral-8b-latest",
+    "mistral-embed",
+    "mistral-large-2411",
+    "mistral-large-2512",
+    "mistral-large-latest",
+    "mistral-medium-2505",
+    "mistral-nemo",
+    "mistral-small-2506",
+    "open-mistral-7b",
+    "pixtral-12b",
+    "pixtral-large-latest"
+  ],
+  "matching_models": [
+    {
+      "user_query": "mistral/mistral-medium-2505",
+      "official_id": "mistral-medium-2505"
+    },
+    {
+      "user_query": "mistral/mistral-medium-2508",
+      "official_id": "mistral-medium-2508"
+    },
+    {
+      "user_query": "mistral/mistral-medium-latest",
+      "official_id": "mistral-medium-latest"
+    },
+    {
+      "user_query": "mistral/mistral-medium-2505",
+      "official_id": "mistral-medium"
+    },
+    {
+      "user_query": "mistral/codestral-latest",
+      "official_id": "codestral-latest"
+    },
+    {
+      "user_query": "mistral/devstral-2512",
+      "official_id": "devstral-2512"
+    },
+    {
+      "user_query": "mistral/devstral-medium-latest",
+      "official_id": "devstral-medium-latest"
+    },
+    {
+      "user_query": "mistral/mistral-small-2603",
+      "official_id": "mistral-small-2603"
+    },
+    {
+      "user_query": "mistral/mistral-small-latest",
+      "official_id": "mistral-small-latest"
+    },
+    {
+      "user_query": "mistral/magistral-medium-latest",
+      "official_id": "magistral-medium-latest"
+    },
+    {
+      "user_query": "mistral/mistral-large-2512",
+      "official_id": "mistral-large-2512"
+    },
+    {
+      "user_query": "mistral/mistral-large-latest",
+      "official_id": "mistral-large-latest"
+    },
+    {
+      "user_query": "mistral/mistral-large-2512",
+      "official_id": "mistral-large-2512"
+    },
+    {
+      "user_query": "mistral/mistral-large-latest",
+      "official_id": "mistral-large-latest"
+    },
+    {
+      "user_query": "mistral/ministral-3b-latest",
+      "official_id": "ministral-3b-latest"
+    },
+    {
+      "user_query": "mistral/ministral-8b-latest",
+      "official_id": "ministral-8b-latest"
+    },
+    {
+      "user_query": "mistral/mistral-medium-2604",
+      "official_id": "mistral-medium-2604"
+    },
+    {
+      "user_query": "mistral/mistral-large-2411",
+      "official_id": "mistral-large-2411"
+    },
+    {
+      "user_query": "mistral/pixtral-large-latest",
+      "official_id": "pixtral-large-latest"
+    },
+    {
+      "user_query": "mistral/devstral-small-2507",
+      "official_id": "devstral-small-2507"
+    },
+    {
+      "user_query": "mistral/devstral-medium-2507",
+      "official_id": "devstral-medium-2507"
+    },
+    {
+      "user_query": "mistral/mistral-small-2506",
+      "official_id": "mistral-small-2506"
+    },
+    {
+      "user_query": "mistral/mistral-embed",
+      "official_id": "mistral-embed"
+    }
+  ]
+}
