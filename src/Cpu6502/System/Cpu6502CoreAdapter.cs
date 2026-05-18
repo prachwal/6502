@@ -7,7 +7,7 @@ namespace Cpu6502.System;
 /// Adapter dla istniejącego Cpu6502, który opakowuje go w interfejs ICpuCore.
 /// Pozwala używać Cpu6502 w nowym systemie runtime bez modyfikacji oryginalnego kodu.
 /// </summary>
-public sealed class Cpu6502CoreAdapter : ICpuCore, ICpuSignalSink
+public sealed class Cpu6502CoreAdapter : ICpuCore, ICpuSignalSink, IProgramCounterControl
 {
     private readonly Cpu6502 _cpu;
     private readonly string _cpuType;
@@ -87,6 +87,12 @@ public sealed class Cpu6502CoreAdapter : ICpuCore, ICpuSignalSink
             (long)_cpu.CycleCount,
             (long)_cpu.InstructionCount);
     }
+
+    /// <inheritdoc/>
+    public void SetProgramCounter(ulong address)
+    {
+        _cpu.PC = (ushort)address;
+    }
     
     /// <inheritdoc/>
     public void SetSignal(CpuSignal signal, bool asserted)
@@ -120,5 +126,4 @@ public sealed class Cpu6502CoreAdapter : ICpuCore, ICpuSignalSink
         }
     }
 }
-
 

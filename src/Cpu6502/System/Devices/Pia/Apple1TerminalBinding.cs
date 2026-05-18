@@ -18,31 +18,28 @@ namespace Cpu6502.System.Devices.Pia;
 /// </summary>
 public sealed class Apple1TerminalBinding : IPiaPortBinding
 {
-    private readonly BufferedTerminalLink _terminal;
+    private readonly ITerminalLink _terminal;
+    private readonly bool _isKeyboardPort;
 
     /// <summary>
     /// Creates a new Apple-1 terminal binding.
     /// </summary>
     /// <param name="terminal">The terminal link to connect to.</param>
     /// <exception cref="ArgumentNullException">Thrown when terminal is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when terminal is not a BufferedTerminalLink.</exception>
-    public Apple1TerminalBinding(ITerminalLink terminal)
+    public Apple1TerminalBinding(ITerminalLink terminal, bool isKeyboardPort = true)
     {
         if (terminal == null)
             throw new ArgumentNullException(nameof(terminal));
-        
-        // For simplicity, we require BufferedTerminalLink which has Peek support
-        if (terminal is not BufferedTerminalLink bufferedTerminal)
-            throw new ArgumentException("Apple1TerminalBinding requires a BufferedTerminalLink", nameof(terminal));
-        
-        _terminal = bufferedTerminal;
+
+        _terminal = terminal;
+        _isKeyboardPort = isKeyboardPort;
     }
 
     /// <summary>
     /// Gets whether there is input ready to be read from the terminal.
     /// This sets CRA.7 = 1 when true.
     /// </summary>
-    public bool HasInputReady => _terminal.HasInput;
+    public bool HasInputReady => _isKeyboardPort && _terminal.HasInput;
 
     /// <summary>
     /// Gets whether the output is ready for more data.
@@ -56,15 +53,16 @@ public sealed class Apple1TerminalBinding : IPiaPortBinding
     /// When a character is available, it returns the character with bit 7 set to 1.
     /// This matches the WOZ Monitor expectation: KBD returns character with high bit set.
     /// 
-    /// Note: This does NOT consume the input from the terminal. It peeks at the next
-    /// character. The input remains in the buffer until explicitly consumed.
-    /// The CRA.7 flag (checked separately via HasInputReady) indicates whether
-    /// characters are available.
+    /// Reading consumes the next character, matching the keyboard strobe behavior
+    /// expected by the monitor input loop.
     /// </summary>
     /// <returns>Byte with bit 7 = 1 if character is available, otherwise 0.</returns>
     public byte ReadPins()
     {
-        if (_terminal.HasInput && _terminal.TryPeekByte(out byte value))
+        if (!_isKeyboardPort)
+            return 0;
+
+        if (_terminal.HasInput && _terminal.TryReadByte(out byte value))
         {
             // Set bit 7 = 1 (character ready) - WOZ Monitor expects this format
             return (byte)(value | 0x80);

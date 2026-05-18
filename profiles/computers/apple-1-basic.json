@@ -1,0 +1,39 @@
+{
+  "schema": "computer-profile/v1",
+  "id": "apple-1-basic",
+  "name": "Apple-1 with Integer BASIC",
+  "status": "active",
+  "cpu": {
+    "type": "mos6502-nmos",
+    "clockHz": 1023000
+  },
+  "addressSpace": {
+    "memoryAddressBits": 16,
+    "portAddressBits": 0,
+    "hasSeparatePortSpace": false,
+    "dataBusBits": 8
+  },
+  "memory": {
+    "ram": [
+      { "id": "ram0", "start": "0x0000", "size": "0x1000" }
+    ],
+    "rom": [
+      { "id": "basic", "start": "0xE000", "size": "0x1000", "file": "roms/apple-1/basic.bin" },
+      { "id": "wozmon", "start": "0xFF00", "size": "0x0100", "file": "roms/apple-1/wozmon.bin" }
+    ]
+  },
+  "devices": [
+    {
+      "id": "pia0",
+      "type": "mos6821-pia",
+      "mapping": {
+        "kind": "memory",
+        "baseAddress": "0xD010",
+        "size": "0x0004"
+      },
+      "options": {
+        "preset": "apple-1-terminal"
+      }
+    }
+  ]
+}

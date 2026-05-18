@@ -151,7 +151,7 @@ Pelna implementacja Apple-1 wymaga najpierw warstwy skladania komputerow i reusa
 | 26 | [`faza-26-computer-profiles.md`](faza-26-computer-profiles.md) | Profile JSON, loader, `ComputerBuilder`, rejestr fabryk | ✅ Zaimplementowana |
 | 27 | [`faza-27-terminal-abstractions.md`](faza-27-terminal-abstractions.md) | Terminal/link bajtowy niezalezny od frontendu | ✅ Zaimplementowana |
 | 28 | [`faza-28-mos682x-pia-medium.md`](faza-28-mos682x-pia-medium.md) | Generyczny MOS 6820/6821 PIA reusable dla Apple-1/PET/SBC | ✅ Zaimplementowana |
-| 29 | [`faza-29-apple1-profile-wozmon.md`](faza-29-apple1-profile-wozmon.md) | Apple-1 jako profil na generycznej PIA | [ ] Nie rozpoczęte |
+| 29 | [`faza-29-apple1-profile-wozmon.md`](faza-29-apple1-profile-wozmon.md) | Apple-1 jako profil na generycznej PIA | ✅ Zaimplementowana |
 | 30 | [`faza-30-pet-ready-pia-bindings.md`](faza-30-pet-ready-pia-bindings.md) | PET-ready bindingi PIA i drugi profil walidacyjny | [ ] Nie rozpoczęte |
 | 31 | [`faza-31-apple1-runtime-api.md`](faza-31-apple1-runtime-api.md) | Publiczne API uruchamiania Apple-1 i test end-to-end |
 | 32 | [`faza-32-cross-architecture-smoke-profiles.md`](faza-32-cross-architecture-smoke-profiles.md) | Profile smoke dla wielu architektur, port-mapped I/O |

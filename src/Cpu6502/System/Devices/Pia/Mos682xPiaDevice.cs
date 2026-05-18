@@ -83,16 +83,16 @@ public sealed class Mos682xPiaDevice : IMemoryMappedDevice, IResettableDevice, I
     /// <summary>
     /// Reads a byte from the PIA device at the specified address.
     /// </summary>
-    /// <param name="address">The absolute address in memory space.</param>
+    /// <param name="address">The relative address (offset from StartAddress).</param>
     /// <returns>The byte value read from the PIA register.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when address is outside the device range.</exception>
     public byte ReadMemory(uint address)
     {
-        var offset = (int)(address - StartAddress);
+        var offset = (int)address;
         
         if (offset < 0 || offset > 3)
             throw new ArgumentOutOfRangeException(nameof(address),
-                $"Address {address:X4} is outside PIA device range [{StartAddress:X4}-{StartAddress + 3:X4}]");
+                $"Address {StartAddress + address:X4} is outside PIA device range [{StartAddress:X4}-{StartAddress + 3:X4}]");
 
         return offset switch
         {
@@ -179,16 +179,16 @@ public sealed class Mos682xPiaDevice : IMemoryMappedDevice, IResettableDevice, I
     /// <summary>
     /// Writes a byte to the PIA device at the specified address.
     /// </summary>
-    /// <param name="address">The absolute address in memory space.</param>
+    /// <param name="address">The relative address (offset from StartAddress).</param>
     /// <param name="value">The byte value to write.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when address is outside the device range.</exception>
     public void WriteMemory(uint address, byte value)
     {
-        var offset = (int)(address - StartAddress);
+        var offset = (int)address;
         
         if (offset < 0 || offset > 3)
             throw new ArgumentOutOfRangeException(nameof(address),
-                $"Address {address:X4} is outside PIA device range [{StartAddress:X4}-{StartAddress + 3:X4}]");
+                $"Address {StartAddress + address:X4} is outside PIA device range [{StartAddress:X4}-{StartAddress + 3:X4}]");
 
         switch (offset)
         {

@@ -21,10 +21,10 @@ public sealed class DevicePageHandler : IPageHandler
     }
 
     /// <inheritdoc/>
-    public byte ReadByte(uint offset) => _device.ReadMemory(_baseOffset + offset);
+    public byte ReadByte(uint offset) => _device.ReadMemory(offset - _baseOffset);
 
     /// <inheritdoc/>
-    public void WriteByte(uint offset, byte value) => _device.WriteMemory(_baseOffset + offset, value);
+    public void WriteByte(uint offset, byte value) => _device.WriteMemory(offset - _baseOffset, value);
 
     /// <summary>
     /// Zwraca referencję do urządzenia.

@@ -2,9 +2,9 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | ✅ Zaimplementowana |
 | **Zakres** | Pierwszy historyczny profil komputera |
-| **Zaleznosci** | Fazy 24-28 |
+| **Zaleznosci** | Fazy 24-28 ✅ |
 | **Cel projektowy** | Apple-1 jako konfiguracja runtime, nie specjalny emulator |
 
 ---

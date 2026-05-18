@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Apple-1 WOZ Monitor",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build all",
+      "program": "${workspaceFolder}/src/Cpu6502.Apple1/bin/Debug/net10.0/Cpu6502.Apple1.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "integratedTerminal"
+    }
+  ]
+}

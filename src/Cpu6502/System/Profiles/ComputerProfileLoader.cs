@@ -10,9 +10,11 @@ namespace Cpu6502.System.Profiles;
 /// </summary>
 /// <param name="RomDataOverrides">Optional dictionary mapping ROM file paths to byte arrays for testing.</param>
 /// <param name="BasePath">Optional base path for resolving relative file paths.</param>
+/// <param name="TerminalLinks">Optional dictionary mapping device ids to terminal links.</param>
 public sealed record ProfileLoadOptions(
     Dictionary<string, byte[]>? RomDataOverrides = null,
-    string? BasePath = null);
+    string? BasePath = null,
+    Dictionary<string, Terminal.ITerminalLink>? TerminalLinks = null);
 
 /// <summary>
 /// Exception thrown when a computer profile fails validation.
@@ -260,6 +262,12 @@ public sealed class ComputerProfileLoader
         if (element.TryGetProperty("options", out var optionsElement))
         {
             options = optionsElement.Deserialize<JsonObject>() ?? new JsonObject();
+        }
+
+        if (element.TryGetProperty("preset", out var presetElement))
+        {
+            options ??= new JsonObject();
+            options["preset"] = presetElement.GetString();
         }
 
         return new DeviceProfile(id, type, mapping, bindings, options);

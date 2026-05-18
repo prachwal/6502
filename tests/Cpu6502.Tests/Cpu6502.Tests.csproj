@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cpu6502\Cpu6502.csproj" />
+    <ProjectReference Include="..\..\src\Cpu6502.Apple1.Avalonia\Cpu6502.Apple1.Avalonia.csproj" />
   </ItemGroup>
 
   <ItemGroup>

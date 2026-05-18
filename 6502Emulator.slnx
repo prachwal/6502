@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Cpu6502/Cpu6502.csproj" />
+    <Project Path="src/Cpu6502.Apple1.Avalonia/Cpu6502.Apple1.Avalonia.csproj" />
+    <Project Path="src/Cpu6502.Apple1/Cpu6502.Apple1.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Cpu6502.Tests/Cpu6502.Tests.csproj" />

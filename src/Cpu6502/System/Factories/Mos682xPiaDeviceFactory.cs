@@ -66,9 +66,11 @@ public sealed class Mos682xPiaDeviceFactory : IDeviceFactory
         
         if (preset == PresetApple1Terminal)
         {
-            // For apple-1-terminal preset, we still use null bindings here
-            // The actual terminal binding should be set up by the caller
-            // This is a limitation that can be addressed in a future update
+            if (loadOptions?.TerminalLinks != null &&
+                loadOptions.TerminalLinks.TryGetValue(deviceProfile.Id, out var terminal))
+            {
+                return CreateApple1Terminal(baseAddress, terminal, deviceProfile.Id);
+            }
         }
 
         // Create and return the PIA device
@@ -106,12 +108,13 @@ public sealed class Mos682xPiaDeviceFactory : IDeviceFactory
         if (terminal == null)
             throw new ArgumentNullException(nameof(terminal));
 
-        var terminalBinding = new Apple1TerminalBinding(terminal);
+        var keyboardBinding = new Apple1TerminalBinding(terminal, isKeyboardPort: true);
+        var displayBinding = new Apple1TerminalBinding(terminal, isKeyboardPort: false);
 
         var device = new Mos682xPiaDevice(
             baseAddress,
-            terminalBinding,
-            terminalBinding,
+            keyboardBinding,
+            displayBinding,
             layout: null,
             id: id);
 
@@ -119,15 +122,15 @@ public sealed class Mos682xPiaDeviceFactory : IDeviceFactory
         // Note: We need to set CRA.2=0 first to access DDRA/DDRB, then set to 1 for ORA/ORB
         
         // Write to CRB first: set CRB.2 = 0 to access DDRB at offset 2
-        device.WriteMemory(baseAddress + 3, 0x00); // CRB = 0 (bit 2 = 0)
+        device.WriteMemory(3, 0x00); // CRB = 0 (bit 2 = 0)
         // Now write DDRB = 0x7F at offset 2
-        device.WriteMemory(baseAddress + 2, 0x7F); // DDRB = 0x7F
+        device.WriteMemory(2, 0x7F); // DDRB = 0x7F
         
         // Set CRB = 0xA7 (bit 2 = 1, so ORB is at offset 2)
-        device.WriteMemory(baseAddress + 3, 0xA7); // CRB = 0xA7
+        device.WriteMemory(3, 0xA7); // CRB = 0xA7
         
         // Set CRA = 0xA7 (bit 2 = 1, so ORA is at offset 0)
-        device.WriteMemory(baseAddress + 1, 0xA7); // CRA = 0xA7
+        device.WriteMemory(1, 0xA7); // CRA = 0xA7
 
         return device;
     }

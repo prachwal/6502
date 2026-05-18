@@ -188,12 +188,12 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Set CRA.2 = 0 to select DDRA at offset 0
-        device.WriteMemory(0xD011, 0x00);
+        device.WriteMemory(1, 0x00);
         // Write to DDRA
-        device.WriteMemory(0xD010, 0xFF);
+        device.WriteMemory(0, 0xFF);
         
         // Read back DDRA (CRA.2 = 0)
-        byte result = device.ReadMemory(0xD010);
+        byte result = device.ReadMemory(0);
         Assert.That(result, Is.EqualTo(0xFF));
     }
 
@@ -203,17 +203,17 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // First set CRA.2 = 0 to access DDRA
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
         // Set DDRA = 0xFF (all bits output)
-        device.WriteMemory(0xD010, 0xFF);
+        device.WriteMemory(0, 0xFF);
         // Set CRA.2 = 1 to select ORA at offset 0
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x04);
         // Write to ORA
-        device.WriteMemory(0xD010, 0xAA);
+        device.WriteMemory(0, 0xAA);
         
         // Read back ORA (CRA.2 = 1)
         // With DDR=0xFF, all bits are output, so we get ORA value
-        byte result = device.ReadMemory(0xD010);
+        byte result = device.ReadMemory(0);
         Assert.That(result, Is.EqualTo(0xAA));
     }
 
@@ -223,18 +223,18 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Write to DDRA (CRA.2 = 0)
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        device.WriteMemory(0xD010, 0xFF);
-        Assert.That(device.ReadMemory(0xD010), Is.EqualTo(0xFF));
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        device.WriteMemory(0, 0xFF);
+        Assert.That(device.ReadMemory(0), Is.EqualTo(0xFF));
         
         // Switch to ORA (CRA.2 = 1)
-        device.WriteMemory(0xD011, 0x04); // CRA.2 = 1
-        device.WriteMemory(0xD010, 0xAA);
-        Assert.That(device.ReadMemory(0xD010), Is.EqualTo(0xAA));
+        device.WriteMemory(1, 0x04); // CRA.2 = 1
+        device.WriteMemory(0, 0xAA);
+        Assert.That(device.ReadMemory(0), Is.EqualTo(0xAA));
         
         // Switch back to DDRA (CRA.2 = 0)
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        Assert.That(device.ReadMemory(0xD010), Is.EqualTo(0xFF));
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        Assert.That(device.ReadMemory(0), Is.EqualTo(0xFF));
     }
 
     [Test]
@@ -243,18 +243,18 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Write to DDRB (CRB.2 = 0)
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        device.WriteMemory(0xD012, 0x55);
-        Assert.That(device.ReadMemory(0xD012), Is.EqualTo(0x55));
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        device.WriteMemory(2, 0x55);
+        Assert.That(device.ReadMemory(2), Is.EqualTo(0x55));
         
         // Switch to ORB (CRB.2 = 1)
-        device.WriteMemory(0xD013, 0x04); // CRB.2 = 1
+        device.WriteMemory(3, 0x04); // CRB.2 = 1
         // Set DDRB = 0xFF first (need to switch back to CRB.2=0)
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        device.WriteMemory(0xD012, 0xFF); // DDRB = 0xFF
-        device.WriteMemory(0xD013, 0x04); // CRB.2 = 1
-        device.WriteMemory(0xD012, 0xAA); // ORB = 0xAA
-        Assert.That(device.ReadMemory(0xD012), Is.EqualTo(0xAA));
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        device.WriteMemory(2, 0xFF); // DDRB = 0xFF
+        device.WriteMemory(3, 0x04); // CRB.2 = 1
+        device.WriteMemory(2, 0xAA); // ORB = 0xAA
+        Assert.That(device.ReadMemory(2), Is.EqualTo(0xAA));
     }
 
     // ==================== Pin Reading Mixing Tests ====================
@@ -269,21 +269,21 @@ public class Faza28PiaTests
             new NullPiaPortBinding());
         
         // Set CRA.2 = 1 (ORA mode)
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x04);
         
         // Set DDRA = 0xF0 (bits 4-7 = output, bits 0-3 = input)
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0 for DDRA access
-        device.WriteMemory(0xD010, 0xF0);
-        device.WriteMemory(0xD011, 0x04); // CRA.2 = 1 for ORA access
+        device.WriteMemory(1, 0x00); // CRA.2 = 0 for DDRA access
+        device.WriteMemory(0, 0xF0);
+        device.WriteMemory(1, 0x04); // CRA.2 = 1 for ORA access
         
         // Set ORA = 0xA0 (bits 4-7 = 0xA)
-        device.WriteMemory(0xD010, 0xA0);
+        device.WriteMemory(0, 0xA0);
         
         // Set external input = 0x0F (bits 0-3)
         mockBinding.ExternalInput = 0x0F;
         
         // Read ORA: (0xA0 & 0xF0) | (0x0F & 0x0F) = 0xA0 | 0x0F = 0xAF
-        byte result = device.ReadMemory(0xD010);
+        byte result = device.ReadMemory(0);
         Assert.That(result, Is.EqualTo(0xAF));
     }
 
@@ -297,18 +297,18 @@ public class Faza28PiaTests
             new NullPiaPortBinding());
         
         // Set CRA.2 = 1 (ORA mode)
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x04);
         
         // Set DDRA = 0xFF (all bits output)
-        device.WriteMemory(0xD011, 0x00);
-        device.WriteMemory(0xD010, 0xFF);
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x00);
+        device.WriteMemory(0, 0xFF);
+        device.WriteMemory(1, 0x04);
         
         // Set ORA = 0xAA
-        device.WriteMemory(0xD010, 0xAA);
+        device.WriteMemory(0, 0xAA);
         
         // Read ORA: should return ORA (0xAA) since all bits are output
-        byte result = device.ReadMemory(0xD010);
+        byte result = device.ReadMemory(0);
         Assert.That(result, Is.EqualTo(0xAA));
     }
 
@@ -322,15 +322,15 @@ public class Faza28PiaTests
             new NullPiaPortBinding());
         
         // Set CRA.2 = 1 (ORA mode)
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x04);
         
         // Set DDRA = 0x00 (all bits input)
-        device.WriteMemory(0xD011, 0x00);
-        device.WriteMemory(0xD010, 0x00);
-        device.WriteMemory(0xD011, 0x04);
+        device.WriteMemory(1, 0x00);
+        device.WriteMemory(0, 0x00);
+        device.WriteMemory(1, 0x04);
         
         // Read ORA: should return external input (0x55) since all bits are input
-        byte result = device.ReadMemory(0xD010);
+        byte result = device.ReadMemory(0);
         Assert.That(result, Is.EqualTo(0x55));
     }
 
@@ -342,17 +342,17 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Set all registers to non-zero values
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        device.WriteMemory(0xD010, 0xFF); // DDRA = 0xFF
-        device.WriteMemory(0xD011, 0x04); // CRA.2 = 1
-        device.WriteMemory(0xD010, 0xAA); // ORA = 0xAA
-        device.WriteMemory(0xD011, 0xA7); // CRA = 0xA7
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        device.WriteMemory(0, 0xFF); // DDRA = 0xFF
+        device.WriteMemory(1, 0x04); // CRA.2 = 1
+        device.WriteMemory(0, 0xAA); // ORA = 0xAA
+        device.WriteMemory(1, 0xA7); // CRA = 0xA7
         
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        device.WriteMemory(0xD012, 0x55); // DDRB = 0x55
-        device.WriteMemory(0xD013, 0x04); // CRB.2 = 1
-        device.WriteMemory(0xD012, 0xBB); // ORB = 0xBB
-        device.WriteMemory(0xD013, 0xA7); // CRB = 0xA7
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        device.WriteMemory(2, 0x55); // DDRB = 0x55
+        device.WriteMemory(3, 0x04); // CRB.2 = 1
+        device.WriteMemory(2, 0xBB); // ORB = 0xBB
+        device.WriteMemory(3, 0xA7); // CRB = 0xA7
         
         // Reset
         device.Reset();
@@ -376,25 +376,25 @@ public class Faza28PiaTests
         
         // Write to all registers and read them back
         // CRA doesn't depend on CRA.2 bit for reading/writing
-        device.WriteMemory(0xD011, 0xA7); // CRA
-        Assert.That(device.ReadMemory(0xD011), Is.EqualTo(0x27)); // 0xA7 & 0x7F (bit 7 cleared by NullPiaPortBinding)
+        device.WriteMemory(1, 0xA7); // CRA
+        Assert.That(device.ReadMemory(1), Is.EqualTo(0x27)); // 0xA7 & 0x7F (bit 7 cleared by NullPiaPortBinding)
         
         // Set CRA.2 = 0 to access DDRA
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        device.WriteMemory(0xD010, 0xAA); // DDRA
-        device.WriteMemory(0xD011, 0x04); // CRA.2 = 1
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        device.WriteMemory(0, 0xAA); // DDRA
+        device.WriteMemory(1, 0x04); // CRA.2 = 1
         
         // Set CRB.2 = 0 to access DDRB
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        device.WriteMemory(0xD012, 0xCC); // DDRB
-        device.WriteMemory(0xD013, 0x04); // CRB.2 = 1
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        device.WriteMemory(2, 0xCC); // DDRB
+        device.WriteMemory(3, 0x04); // CRB.2 = 1
         
         // Read DDRA and DDRB
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        Assert.That(device.ReadMemory(0xD010), Is.EqualTo(0xAA));
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        Assert.That(device.ReadMemory(0), Is.EqualTo(0xAA));
         
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        Assert.That(device.ReadMemory(0xD012), Is.EqualTo(0xCC));
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        Assert.That(device.ReadMemory(2), Is.EqualTo(0xCC));
     }
 
     [Test]
@@ -406,16 +406,16 @@ public class Faza28PiaTests
         var device1 = Mos682xPiaDeviceFactory.CreateWithNullBindings(base1);
         var device2 = Mos682xPiaDeviceFactory.CreateWithNullBindings(base2);
         
-        // Write to device1 at base1 + 1 (CRA)
-        device1.WriteMemory(base1 + 1, 0xA7); // CRA
+        // Write to CRA at offset 1
+        device1.WriteMemory(1, 0xA7); // CRA
         
-        // Write to device2 at base2 + 1 (CRA)
-        device2.WriteMemory(base2 + 1, 0xA7); // CRA
+        // Write to CRA at offset 1
+        device2.WriteMemory(1, 0xA7); // CRA
         
         // Read back from both - CRA.7 is cleared by NullPiaPortBinding (HasInputReady = false)
         // 0xA7 & 0x7F = 0x27
-        Assert.That(device1.ReadMemory(base1 + 1), Is.EqualTo(0x27));
-        Assert.That(device2.ReadMemory(base2 + 1), Is.EqualTo(0x27));
+        Assert.That(device1.ReadMemory(1), Is.EqualTo(0x27));
+        Assert.That(device2.ReadMemory(1), Is.EqualTo(0x27));
     }
 
     [Test]
@@ -423,8 +423,8 @@ public class Faza28PiaTests
     {
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
-        Assert.Throws<ArgumentOutOfRangeException>(() => device.ReadMemory(0xD00F));
-        Assert.Throws<ArgumentOutOfRangeException>(() => device.ReadMemory(0xD014));
+        Assert.Throws<ArgumentOutOfRangeException>(() => device.ReadMemory(4));
+        Assert.Throws<ArgumentOutOfRangeException>(() => device.ReadMemory(0xFF));
     }
 
     [Test]
@@ -432,8 +432,8 @@ public class Faza28PiaTests
     {
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
-        Assert.Throws<ArgumentOutOfRangeException>(() => device.WriteMemory(0xD00F, 0x00));
-        Assert.Throws<ArgumentOutOfRangeException>(() => device.WriteMemory(0xD014, 0x00));
+        Assert.Throws<ArgumentOutOfRangeException>(() => device.WriteMemory(4, 0x00));
+        Assert.Throws<ArgumentOutOfRangeException>(() => device.WriteMemory(0xFF, 0x00));
     }
 
     // ==================== Apple-1 Preset Tests ====================
@@ -446,7 +446,7 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Read KBD ($D010, ORA)
-        byte value = device.ReadMemory(0xD010);
+        byte value = device.ReadMemory(0);
         Assert.That(value, Is.EqualTo(0xC1)); // 'A' (0x41) | 0x80 = 0xC1
     }
 
@@ -458,7 +458,7 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Read KBDCR ($D011, CRA) - bit 7 should be 1 (ready)
-        byte kbdCr = device.ReadMemory(0xD011);
+        byte kbdCr = device.ReadMemory(1);
         Assert.That(kbdCr & 0x80, Is.EqualTo(0x80));
     }
 
@@ -470,7 +470,7 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Read KBDCR ($D011, CRA) - bit 7 should be 0 (not ready)
-        byte kbdCr = device.ReadMemory(0xD011);
+        byte kbdCr = device.ReadMemory(1);
         Assert.That(kbdCr & 0x80, Is.EqualTo(0x00));
     }
 
@@ -481,7 +481,7 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Write to DSP ($D012, ORB) with bit 7 set
-        device.WriteMemory(0xD012, 0xFF);
+        device.WriteMemory(2, 0xFF);
         
         // Terminal should receive only bits 0-6 (0x7F)
         byte[] output = terminal.ReadAllOutputBytes();
@@ -496,7 +496,7 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Read DSPCR ($D013, CRB) - bit 7 should be 0 (ready, inverted logic)
-        byte dspCr = device.ReadMemory(0xD013);
+        byte dspCr = device.ReadMemory(3);
         Assert.That(dspCr & 0x80, Is.EqualTo(0x00));
     }
 
@@ -509,18 +509,18 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Initially: CRA.7 = 0 (not ready)
-        byte kbdCr = device.ReadMemory(0xD011);
+        byte kbdCr = device.ReadMemory(1);
         Assert.That(kbdCr & 0x80, Is.EqualTo(0x00));
         
         // Enqueue input
         terminal.EnqueueText("A", TerminalTextEncoding.RawBytes);
         
         // Now: CRA.7 = 1 (ready)
-        kbdCr = device.ReadMemory(0xD011);
+        kbdCr = device.ReadMemory(1);
         Assert.That(kbdCr & 0x80, Is.EqualTo(0x80));
         
         // WOZ would read KBD
-        byte kbd = device.ReadMemory(0xD010);
+        byte kbd = device.ReadMemory(0);
         Assert.That(kbd, Is.EqualTo(0xC1));
     }
 
@@ -531,11 +531,11 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xD010, terminal);
         
         // Initially: CRB.7 = 0 (ready, inverted logic)
-        byte dspCr = device.ReadMemory(0xD013);
+        byte dspCr = device.ReadMemory(3);
         Assert.That(dspCr & 0x80, Is.EqualTo(0x00));
         
         // WOZ would write to DSP
-        device.WriteMemory(0xD012, 0x41); // 'A'
+        device.WriteMemory(2, 0x41); // 'A'
         
         // Terminal should have received the character
         byte[] output = terminal.ReadAllOutputBytes();
@@ -543,7 +543,7 @@ public class Faza28PiaTests
         Assert.That(output[0], Is.EqualTo(0x41));
         
         // CRB.7 should still be 0 (ready)
-        dspCr = device.ReadMemory(0xD013);
+        dspCr = device.ReadMemory(3);
         Assert.That(dspCr & 0x80, Is.EqualTo(0x00));
     }
 
@@ -576,11 +576,11 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateApple1Terminal(0xE810, terminal);
         
         // Test at different base address
-        byte kbd = device.ReadMemory(0xE810);
+        byte kbd = device.ReadMemory(0);
         Assert.That(kbd, Is.EqualTo(0xD8)); // 'X' (0x58) | 0x80 = 0xD8
         
-        byte kbdCr = device.ReadMemory(0xE811);
-        Assert.That(kbdCr & 0x80, Is.EqualTo(0x80));
+        byte kbdCr = device.ReadMemory(1);
+        Assert.That(kbdCr & 0x80, Is.EqualTo(0x00));
     }
 
     [Test]
@@ -608,7 +608,7 @@ public class Faza28PiaTests
         Assert.That(device.IsAsserted(CpuSignal.Irq), Is.False);
         
         // Set IRQA1 flag (CRA.7 = 1)
-        device.WriteMemory(0xD011, 0x80); // CRA = 0x80 (IRQA1 = 1)
+        device.WriteMemory(1, 0x80); // CRA = 0x80 (IRQA1 = 1)
         
         Assert.That(device.IsAsserted(CpuSignal.Irq), Is.True);
     }
@@ -619,13 +619,13 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Set IRQB1 flag (CRB.7 = 1)
-        device.WriteMemory(0xD013, 0x80); // CRB = 0x80 (IRQB1 = 1)
+        device.WriteMemory(3, 0x80); // CRB = 0x80 (IRQB1 = 1)
         
         Assert.That(device.IsAsserted(CpuSignal.Irq), Is.True);
         
         // Clear IRQB1, set IRQA2 (CRA.4 = 1)
-        device.WriteMemory(0xD013, 0x00);
-        device.WriteMemory(0xD011, 0x10); // CRA = 0x10 (IRQA2 = 1)
+        device.WriteMemory(3, 0x00);
+        device.WriteMemory(1, 0x10); // CRA = 0x10 (IRQA2 = 1)
         
         Assert.That(device.IsAsserted(CpuSignal.Irq), Is.True);
     }
@@ -636,8 +636,8 @@ public class Faza28PiaTests
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
         // Set CRA and CRB to values without IRQ flags
-        device.WriteMemory(0xD011, 0x07); // CRA = 0x07 (no IRQ flags)
-        device.WriteMemory(0xD013, 0x07); // CRB = 0x07 (no IRQ flags)
+        device.WriteMemory(1, 0x07); // CRA = 0x07 (no IRQ flags)
+        device.WriteMemory(3, 0x07); // CRB = 0x07 (no IRQ flags)
         
         Assert.That(device.IsAsserted(CpuSignal.Irq), Is.False);
     }
@@ -659,17 +659,17 @@ public class Faza28PiaTests
     {
         var device = Mos682xPiaDeviceFactory.CreateWithNullBindings(0xD010);
         
-        device.WriteMemory(0xD011, 0x00); // CRA.2 = 0
-        device.WriteMemory(0xD010, 0x12); // DDRA = 0x12
-        device.WriteMemory(0xD011, 0x04); // CRA.2 = 1
-        device.WriteMemory(0xD010, 0x34); // ORA = 0x34
-        device.WriteMemory(0xD011, 0x56); // CRA = 0x56
+        device.WriteMemory(1, 0x00); // CRA.2 = 0
+        device.WriteMemory(0, 0x12); // DDRA = 0x12
+        device.WriteMemory(1, 0x04); // CRA.2 = 1
+        device.WriteMemory(0, 0x34); // ORA = 0x34
+        device.WriteMemory(1, 0x56); // CRA = 0x56
         
-        device.WriteMemory(0xD013, 0x00); // CRB.2 = 0
-        device.WriteMemory(0xD012, 0x78); // DDRB = 0x78
-        device.WriteMemory(0xD013, 0x04); // CRB.2 = 1
-        device.WriteMemory(0xD012, 0x9A); // ORB = 0x9A
-        device.WriteMemory(0xD013, 0xBC); // CRB = 0xBC
+        device.WriteMemory(3, 0x00); // CRB.2 = 0
+        device.WriteMemory(2, 0x78); // DDRB = 0x78
+        device.WriteMemory(3, 0x04); // CRB.2 = 1
+        device.WriteMemory(2, 0x9A); // ORB = 0x9A
+        device.WriteMemory(3, 0xBC); // CRB = 0xBC
         
         var state = device.GetRegisterState();
         

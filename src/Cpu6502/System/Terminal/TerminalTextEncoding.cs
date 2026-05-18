@@ -76,7 +76,15 @@ public static class TerminalTextEncodingExtensions
     {
         var upper = text.ToUpperInvariant();
         var replaced = upper.Replace("\n", "\r");
-        return Encoding.ASCII.GetBytes(replaced);
+        var bytes = Encoding.ASCII.GetBytes(replaced);
+
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            if (bytes[i] == (byte)'.')
+                bytes[i] = 0x23;
+        }
+
+        return bytes;
     }
 
     /// <summary>
@@ -84,7 +92,19 @@ public static class TerminalTextEncodingExtensions
     /// </summary>
     private static string DecodeApple1(byte[] bytes)
     {
-        var text = Encoding.ASCII.GetString(bytes);
-        return text.Replace("\r", "\n");
+        var chars = new char[bytes.Length];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            byte value = bytes[i];
+            chars[i] = value switch
+            {
+                0x0D => '\n',
+                0x23 => '.',
+                0xA3 => '.',
+                _ => (char)(value & 0x7F)
+            };
+        }
+
+        return new string(chars);
     }
 }

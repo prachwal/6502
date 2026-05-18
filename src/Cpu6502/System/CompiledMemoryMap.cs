@@ -102,14 +102,16 @@ public sealed class CompiledMemoryMap
         for (uint pageIndex = firstPage; pageIndex <= lastPage; pageIndex++)
         {
             uint pageStart = pageIndex << PageShift;
-            uint offsetInRom = pageStart - startAddress;
-            uint bytesToCopy = Math.Min((uint)InternalPageSize, (uint)data.Length - offsetInRom);
+            uint firstByteInPage = Math.Max(startAddress, pageStart);
+            uint pageOffset = firstByteInPage - pageStart;
+            uint romDataOffset = firstByteInPage - startAddress;
+            uint bytesToCopy = Math.Min(pageStart + InternalPageSize, startAddress + (uint)data.Length) - firstByteInPage;
 
             var pageData = new byte[InternalPageSize];
-            Array.Copy(data, (int)offsetInRom, pageData, 0, (int)bytesToCopy);
+            Array.Copy(data, (int)romDataOffset, pageData, (int)pageOffset, (int)bytesToCopy);
 
             // Wypełnij resztę strony 0xFF
-            for (int i = (int)bytesToCopy; i < InternalPageSize; i++)
+            for (int i = (int)(pageOffset + bytesToCopy); i < InternalPageSize; i++)
                 pageData[i] = 0xFF;
 
             _pages[pageIndex] = new RomPageHandler(pageData, writePolicy, regionName);
@@ -135,8 +137,8 @@ public sealed class CompiledMemoryMap
         for (uint pageIndex = firstPage; pageIndex <= lastPage; pageIndex++)
         {
             uint pageStart = pageIndex << PageShift;
-            uint offsetInDevice = pageStart - device.StartAddress;
-            _pages[pageIndex] = new DevicePageHandler(device, offsetInDevice);
+            uint deviceOffsetInPage = device.StartAddress - pageStart;
+            _pages[pageIndex] = new DevicePageHandler(device, deviceOffsetInPage);
         }
     }
 
