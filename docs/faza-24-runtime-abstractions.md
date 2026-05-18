@@ -2,7 +2,7 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] **Zaimplementowana** |
 | **Zakres** | Fundament runtime dla wielu architektur |
 | **Zaleznosci** | Fazy: 0-23 |
 | **Cel projektowy** | Nie przywiazywac warstwy komputerow do MOS 6502 |

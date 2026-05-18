@@ -67,6 +67,11 @@ public partial class Cpu6502
     /// </summary>
     private byte _currentOpcode;
 
+    /// <summary>
+    /// Licznik wykonanych instrukcji.
+    /// </summary>
+    private ulong _instructionCount;
+
     #endregion
 
     #region Zależności

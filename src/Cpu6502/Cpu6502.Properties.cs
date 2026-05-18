@@ -84,5 +84,15 @@ public partial class Cpu6502
     /// </summary>
     public bool Halted => _halted;
 
+    /// <summary>
+    /// Licznik wykonanych instrukcji.
+    /// </summary>
+    public ulong InstructionCount => _instructionCount;
+    
+    /// <summary>
+    /// Licznik cykli zegara.
+    /// </summary>
+    public ulong CycleCount => _cycle;
+
     #endregion
 }

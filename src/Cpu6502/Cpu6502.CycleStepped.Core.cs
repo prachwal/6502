@@ -89,6 +89,7 @@ public partial class Cpu6502
             _cycle++;
         }
 
+        _instructionCount++;
         ServicePostInstructionIrqBoundary();
     }
 

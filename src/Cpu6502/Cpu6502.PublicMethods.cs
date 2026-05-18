@@ -31,6 +31,7 @@ public partial class Cpu6502
         _cycle = 0;
         _cycleCount = 0;
         _currentOpcode = 0;
+        _instructionCount = 0;
         _irqPending = false;
         _nmiLatched = false;
         _previousNMI = false;
