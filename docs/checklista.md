@@ -36,8 +36,8 @@ Legenda statusu: `[ ]` = nie rozpoczęte | `[~]` = w trakcie | `[x]` = zakończo
 | 19 | Nieudokumentowane opkody — niestabilne + NOP + KIL | [faza-19-illegal-unstable.md](faza-19-illegal-unstable.md) | [x] | 6% | 84% |
 | 20 | Test zgodności — nestest | [faza-20-nestest.md](faza-20-nestest.md) | [x] | 4% | 88% |
 | 21 | Test zgodności — Klaus Dormann Functional Test | [faza-21-klaus.md](faza-21-klaus.md) | [x] | 4% | 93% |
-| 22 | Test zgodności — Wolfgang Lorenz | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [ ] | 5% | 97% |
-| 23 | Test zgodności — perfect6502 (opcjonalnie) | [faza-23-perfect6502.md](faza-23-perfect6502.md) | [ ] | 3% | 100% |
+| 22 | Test zgodności — Wolfgang Lorenz (pomijana, wymaga logiki C64) | [faza-22-wolfgang.md](faza-22-wolfgang.md) | [ ] | 5% | 97% |
+| 23 | Test zgodności — perfect6502 (opcjonalnie) | [faza-23-perfect6502.md](faza-23-perfect6502.md) | [x] | 3% | 100% |
 
 ---
 
@@ -48,7 +48,7 @@ Całkowity postęp:     21 / 25 faz (84%)
 
 Fazy zakończone   [x]: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18C, 19, 20, 21
 Fazy w trakcie     [~]:
-Fazy nie rozpoczęte [ ]: 21,22,23
+Fazy nie rozpoczęte [ ]: 22
 ```
 
 ---

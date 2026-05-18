@@ -8,7 +8,7 @@
 | **Zależności** | Fazy: 1–20 |
 | **Szacowany czas** | 4–8h |
 | **Data zakończenia** | 2026-05-18 |
-| **Liczba testów** | 3 |
+| **Liczba testów** | 4 |
 
 ---
 
@@ -62,6 +62,7 @@ public class KlausTestRunner
 
 1. **Bez BCD** — testuje wszystkie instrukcje poza ADC/SBC w trybie decimal
 2. **Z BCD** — pełny test z decimal mode
+3. **Cpu6502Nes** — wariant NES jest świadomie pomijany dla Klaus functional, bo ten ROM wymaga decimal mode
 
 Należy przejść oba.
 
@@ -99,9 +100,9 @@ Należy przejść oba.
 ## Definition of Done
 
 - [x] ROM Klaus załadowany i uruchomiony
-- [ ] Test non-BCD przechodzi (sukces) — **Wymaga poprawek CPU**
-- [ ] Test BCD przechodzi (sukces) — **Wymaga poprawek CPU**
-- [ ] Żadnych kodów błędów w pamięci
+- [x] Test non-BCD przechodzi (sukces)
+- [x] Test BCD przechodzi (sukces)
+- [x] Żadnych kodów błędów w pamięci
 - [x] CPU wchodzi w pętlę sukcesu (mechanizm detekcji zaimplementowany)
 
 ---
@@ -117,13 +118,14 @@ Build succeeded.
 
 ### Testy
 ```
-Total tests: 262
-     Passed: 259
-     Failed: 3 (KlausTests - timeout, wymagają poprawek CPU)
+Total tests: 264
+     Passed: 263
+     Skipped: 1
+     Failed: 0
 ```
 
 ### Uwagi
-Infrastruktura testowa dla Klaus Dormann jest gotowa. Testy nie przechodzą, ponieważ CPU ma jeszcze błędy w implementacji, które powodują, że testy wchodzą w pętle błędów zamiast pętli sukcesu. Wymaga to dodatkowej diagnostyki i poprawek cykli/timingu instrukcji.
+Infrastruktura testowa dla Klaus Dormann jest gotowa. Naprawiono decimal `ADC`, więc testy Klaus przechodzą w klasycznym wariancie CPU. Wariant `Cpu6502Nes` pozostaje celowo wyłączony z tego ROM-u, ponieważ Klaus functional wymaga zachowania decimal mode.
 
 ---
 
@@ -133,6 +135,7 @@ Infrastruktura testowa dla Klaus Dormann jest gotowa. Testy nie przechodzą, pon
 |------|-------|--------|
 | `tests/Cpu6502.Tests/KlausTests.cs` | Utworzony | ✅ |
 | `tests/Cpu6502.Tests/TestHelpers/KlausTestRunner.cs` | Utworzony | ✅ |
+| `tests/Cpu6502.Tests/TestHelpers/KlausLogGenerator.cs` | Utworzony | ✅ |
 | `tests/Cpu6502.Tests/Data/6502_functional_test.bin` | Dodany | ✅ |
 | `tests/Cpu6502.Tests/Cpu6502.Tests.csproj` | Zaktualizowany (CopyToOutputDirectory) | ✅ |
 | `src/Cpu6502/Variants/Cpu6502Classic.cs` | Utworzony (Faza 20.5) | ✅ |

@@ -28,17 +28,19 @@ public partial class Cpu6502
 
         // Binary sum
         ushort sum = (ushort)(_a + operand + (c ? 1 : 0));
-        byte result = (byte)(sum & 0xFF);
-        bool carry = sum > 0xFF;
+        ushort adjusted = sum;
+        bool carry = false;
 
-        // BCD correction
+        // BCD correction must use the full adjusted sum, not a wrapped byte.
         if ((al + ml + (c ? 1 : 0)) > 9)
-            result += 6;
-        if (result > 0x99)
+            adjusted += 6;
+        if (adjusted > 0x99)
         {
-            result += 0x60;
+            adjusted += 0x60;
             carry = true;
         }
+
+        byte result = (byte)(adjusted & 0xFF);
 
         // Overflow must be derived from the pre-adjusted binary sum.
         bool overflow = ((oldA ^ (byte)sum) & (operand ^ (byte)sum) & 0x80) != 0;

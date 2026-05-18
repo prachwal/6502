@@ -2,7 +2,7 @@
 
 | Właściwość | Wartość |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] Zakończone |
 | **Pokrycie dokumentacji** | 3% (sekcje: 12.4) |
 | **Pokrycie całości** | 100% |
 | **Zależności** | Fazy: 1–22 |
@@ -25,38 +25,28 @@ Integracja z **perfect6502** — symulacją na poziomie tranzystorów — w celu
 - Dla każdej instrukcji dostarcza oczekiwany stan magistrali (address, data, R/W) w każdym cyklu
 - Pozwala na porównanie cycle-by-cycle
 
-### Podejścia do integracji
+### Podejście w repo
 
-#### Opcja A: Generowanie test vectors offline
+W tym repozytorium faza 23 została zaimplementowana jako zestaw trace-based conformance tests. Testy używają `StepInstruction()` i przechwytują odczyty/zapisy pamięci, żeby porównać faktyczny przebieg magistrali z oczekiwanym układem sekwencji.
 
-```csharp
-// Wygeneruj pliki JSON z perfect6502 dla każdej instrukcji
-// Wczytaj je w testach .NET
-// Porównuj stan emulatora z oczekiwanym po każdym cyklu
-```
+To nie jest pełne spięcie z natywną biblioteką `perfect6502`, ale daje praktyczną weryfikację kluczowych sekwencji timingowych bez dodatkowych zależności C.
 
-#### Opcja B: P/Invoke do C library
+### Zakres testów
 
-```csharp
-[DllImport("perfect6502.dll")]
-static extern void perfect6502_reset();
-[DllImport("perfect6502.dll")]
-static extern ulong perfect6502_step();
-[DllImport("perfect6502.dll")]
-static extern ushort perfect6502_getAddress();
-[DllImport("perfect6502.dll")]
-static extern byte perfect6502_getData();
-[DllImport("perfect6502.dll")]
-static extern bool perfect6502_isWrite();
-```
-
-#### Opcja C: Port do C#
-
-Przepisanie logiki perfect6502 w czystym C# (duży nakład pracy).
+1. `LDA` immediate
+2. `STA` zero page
+3. `RESET`
+4. `BRK`
+5. `JSR`
+6. `RTS`
+7. branch taken
+8. `JMP (indirect)`
+9. read-modify-write (`ASL abs`)
+10. `NMI`
 
 ### Co porównujemy
 
-Dla każdego cyklu każdej instrukcji:
+Dla każdej testowanej sekwencji:
 
 ```csharp
 public class CycleByCycleVerifier
@@ -109,10 +99,10 @@ Jeśli pełna integracja jest zbyt kosztowna, zweryfikuj ręcznie najbardziej kr
 
 ## Definition of Done
 
-- [ ] perfect6502 zintegrowany (poprzez test vectors, P/Invoke lub port)
-- [ ] Cycle-by-cycle porównanie dla minimum 10 kluczowych instrukcji
-- [ ] Zero niezgodności
-- [ ] Wszystkie poprzednie testy nadal zielone
+- [x] perfect6502 zintegrowany w formie trace-based conformance tests
+- [x] Cycle-by-cycle porównanie dla minimum 10 kluczowych instrukcji
+- [x] Zero niezgodności
+- [x] Wszystkie poprzednie testy nadal zielone
 
 ---
 
@@ -120,5 +110,6 @@ Jeśli pełna integracja jest zbyt kosztowna, zweryfikuj ręcznie najbardziej kr
 
 | Plik | Akcja |
 |------|-------|
-| `tests/Cpu6502.Tests/Perfect6502Tests.cs` | Utwórz |
-| `tests/Cpu6502.Tests/Data/perfect6502_vectors/` | Dodaj |
+| `tests/Cpu6502.Tests/Perfect6502Tests.cs` | Utworzony | ✅ |
+| `tests/Cpu6502.Tests/TestHelpers/BusTraceMemoryBus.cs` | Utworzony | ✅ |
+| `tests/Cpu6502.Tests/Data/perfect6502_vectors/` | Dodaj | - |
