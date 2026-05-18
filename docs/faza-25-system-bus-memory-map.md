@@ -2,7 +2,7 @@
 
 | Wlasciwosc | Wartosc |
 |------------|---------|
-| **Status** | [ ] Nie rozpoczęte |
+| **Status** | [x] **Zaimplementowana** |
 | **Zakres** | Szybka magistrala runtime |
 | **Zaleznosci** | Faza 24 |
 | **Cel projektowy** | Jedna infrastruktura dla memory-mapped i port-mapped I/O |
