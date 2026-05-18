@@ -76,6 +76,21 @@ public class BcdTests
     }
 
     [Test]
+    public void ADC_BCD_99Plus99PlusCarryEquals99WithCarry()
+    {
+        LoadProgram(0x69, 0x99); // ADC #$99
+        cpu!.A = 0x99;
+        cpu.P = Cpu6502.FlagD | Cpu6502.FlagC;
+
+        ExecuteOne();
+
+        Assert.That(cpu.A, Is.EqualTo(0x99));
+        Assert.That(cpu.GetFlag(Cpu6502.FlagC), Is.True);
+        Assert.That(cpu.GetFlag(Cpu6502.FlagZ), Is.False);
+        Assert.That(cpu.GetFlag(Cpu6502.FlagN), Is.True);
+    }
+
+    [Test]
     public void ADC_BCD_50Plus50Equals00WithCarryAndOverflow()
     {
         // Test: $50 + $50 = $00 with carry and overflow in BCD mode
